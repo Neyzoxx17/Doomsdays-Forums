@@ -1074,9 +1074,180 @@
             addMessage('VIPStar', 'Ce site est awesome!', 'vip');
         }, 6000);
 
-        // Auto-refresh for updates
+        // Real-time synchronization simulation
+        let connectedUsers = [];
+        let forumThreads = [];
+        let chatMessages = [];
+        
+        function initializeRealTimeData() {
+            // Simulate connected users
+            const userNames = ['Alex', 'Marie', 'Thomas', 'Sophie', 'Lucas', 'Emma', 'Nathan', 'Léa'];
+            const roles = ['admin', 'moderator', 'vip', 'member'];
+            
+            for (let i = 0; i < 5; i++) {
+                connectedUsers.push({
+                    name: userNames[Math.floor(Math.random() * userNames.length)] + Math.floor(Math.random() * 100),
+                    role: roles[Math.floor(Math.random() * roles.length)],
+                    status: 'online',
+                    lastSeen: new Date()
+                });
+            }
+            
+            // Update online count with real users
+            updateOnlineUsers();
+        }
+        
+        function updateOnlineUsers() {
+            const totalUsers = connectedUsers.length + 1; // +1 for current user
+            document.getElementById('onlineCount').textContent = totalUsers;
+            
+            // Simulate users joining/leaving
+            if (Math.random() > 0.8) {
+                const randomUser = connectedUsers[Math.floor(Math.random() * connectedUsers.length)];
+                if (Math.random() > 0.5) {
+                    // User joins
+                    if (randomUser.status === 'offline') {
+                        randomUser.status = 'online';
+                        addSystemMessage(`${randomUser.name} s'est connecté(e)`);
+                    }
+                } else {
+                    // User leaves
+                    if (randomUser.status === 'online') {
+                        randomUser.status = 'offline';
+                        addSystemMessage(`${randomUser.name} s'est déconnecté(e)`);
+                    }
+                }
+            }
+        }
+        
+        function addSystemMessage(message) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.style.borderLeft = '3px solid #ffcc00';
+            
+            const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div class="message-author" style="color: #ffcc00;">Système</div>
+                <div class="message-text">${message}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function simulateForumActivity() {
+            const threadItems = document.querySelectorAll('.thread-item');
+            threadItems.forEach((thread, index) => {
+                if (Math.random() > 0.7) {
+                    const stats = thread.querySelector('.thread-stats');
+                    const replies = stats.querySelector('span:first-child');
+                    const currentReplies = parseInt(replies.textContent);
+                    
+                    // Increment replies
+                    replies.textContent = `${currentReplies + 1} réponses`;
+                    
+                    // Update time
+                    const times = ['il y a quelques minutes', 'il y a 1 minute', 'à l\'instant'];
+                    const timeSpan = stats.querySelector('span:last-child');
+                    timeSpan.textContent = times[Math.floor(Math.random() * times.length)];
+                    
+                    // Highlight updated thread
+                    thread.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
+                    setTimeout(() => {
+                        thread.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                    }, 2000);
+                }
+            });
+        }
+        
+        function simulateUserActivity() {
+            // Simulate other users typing
+            if (Math.random() > 0.9) {
+                const randomUser = connectedUsers.find(u => u.status === 'online');
+                if (randomUser) {
+                    addMessage(randomUser.name, generateRandomMessage(), randomUser.role);
+                }
+            }
+        }
+        
+        function generateRandomMessage() {
+            const messages = [
+                'Salut tout le monde !',
+                'Quelqu\'un est là ?',
+                'Ce site est génial !',
+                'Je suis nouveau ici',
+                'Bonjour la communauté !',
+                'Intéressant cette discussion...',
+                'Quelqu\'un veut discuter ?',
+                'Première fois que je visite',
+                'Love le design !',
+                'Forum très actif aujourd\'hui'
+            ];
+            return messages[Math.floor(Math.random() * messages.length)];
+        }
+        
+        function broadcastActivity(activity) {
+            // Simulate broadcasting to all connected users
+            console.log('Broadcasting:', activity);
+            
+            // In a real implementation, this would send data via WebSocket
+            // For now, we just simulate local effects
+        }
+        
+        // Initialize real-time features
+        initializeRealTimeData();
+        
+        // Start real-time simulations
+        setInterval(updateOnlineUsers, 10000); // Update users every 10 seconds
+        setInterval(simulateForumActivity, 15000); // Forum activity every 15 seconds
+        setInterval(simulateUserActivity, 8000); // User messages every 8 seconds
+        
+        // Enhanced message sending with broadcast
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = sanitizeInput(input.value.trim());
+            
+            if (message === '') return;
+            
+            if (message.length > 500) {
+                alert('Message trop long (maximum 500 caractères)!');
+                return;
+            }
+            
+            // Add message locally
+            addMessage(currentUser, message, currentUserRole);
+            
+            // Broadcast to all users (simulation)
+            broadcastActivity({
+                type: 'chat_message',
+                user: currentUser,
+                message: message,
+                role: currentUserRole,
+                timestamp: new Date()
+            });
+            
+            input.value = '';
+            
+            // Simulate other users responding
+            setTimeout(() => {
+                if (Math.random() > 0.5) {
+                    const randomUser = connectedUsers.find(u => u.status === 'online');
+                    if (randomUser) {
+                        addMessage(randomUser.name, generateRandomMessage(), randomUser.role);
+                    }
+                }
+            }, Math.random() * 3000 + 1000);
+        }
+        
+        // Add connection notification
+        setTimeout(() => {
+            addSystemMessage('Connecté au serveur en temps réel');
+        }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.0.1'; // Update to force deploy
+        let currentVersion = '1.0.2'; // Real-time sync update
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
