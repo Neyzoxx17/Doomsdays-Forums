@@ -826,22 +826,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",
-            authDomain: "doomsday-forums.firebaseapp.com",
-            databaseURL: "https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "doomsday-forums",
-            storageBucket: "doomsday-forums.firebasestorage.app",
-            messagingSenderId: "345452079794",
-            appId: "1:345452079794:web:14b4978afb203a9d84b7ab",
-            measurementId: "G-W1YDYYQKRR"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
         // Real-time Firebase functions
         function sendMessageToFirebase(message) {
             console.log('sendMessageToFirebase appelé avec:', message);
@@ -1049,6 +1033,22 @@
             // Reset form
             event.target.reset();
         }
+
+        // Firebase configuration - MUST be declared before functions
+        const firebaseConfig = {
+            apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",
+            authDomain: "doomsday-forums.firebaseapp.com",
+            databaseURL: "https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "doomsday-forums",
+            storageBucket: "doomsday-forums.firebasestorage.app",
+            messagingSenderId: "345452079794",
+            appId: "1:345452079794:web:14b4978afb203a9d84b7ab",
+            measurementId: "G-W1YDYYQKRR"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         // Chat variables - MUST be declared before functions
         let currentUser = 'Membre';
@@ -1361,7 +1361,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.1.1'; // Fixed CSP and removed chatOpen completely
+        let currentVersion = '1.1.2'; // Fixed Firebase initialization order
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
