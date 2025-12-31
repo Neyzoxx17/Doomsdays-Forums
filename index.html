@@ -855,11 +855,18 @@
         }
 
         function listenToMessages() {
+            console.log('Démarrage écoute des messages Firebase');
             database.ref('messages').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
+                console.log('Messages reçus de Firebase:', snapshot.val());
                 const messages = snapshot.val();
                 const messagesContainer = document.getElementById('chatMessages');
                 
-                // Clear existing messages except system message
+                if (!messagesContainer) {
+                    console.error('Container des messages non trouvé');
+                    return;
+                }
+                
+                // Clear existing messages except system messages
                 const systemMessages = messagesContainer.querySelectorAll('.message-author[style*="color: #ffcc00"]');
                 messagesContainer.innerHTML = '';
                 
@@ -872,17 +879,26 @@
                 if (messages) {
                     Object.values(messages).forEach(msg => {
                         const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                        console.log('Ajout du message:', msg);
                         addMessageFromFirebase(msg.user, msg.text, msg.role, time);
                     });
                 }
                 
                 // Scroll to bottom
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                console.log('Messages affichés, total:', Object.keys(messages || {}).length);
             });
         }
 
         function addMessageFromFirebase(author, text, role, time) {
+            console.log('addMessageFromFirebase appelé avec:', {author, text, role, time});
             const messagesContainer = document.getElementById('chatMessages');
+            
+            if (!messagesContainer) {
+                console.error('Container des messages non trouvé dans addMessageFromFirebase');
+                return;
+            }
+            
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
             
@@ -902,7 +918,9 @@
                 <div class="message-time">${time}</div>
             `;
             
+            console.log('Message HTML créé:', messageDiv.innerHTML);
             messagesContainer.appendChild(messageDiv);
+            console.log('Message ajouté au DOM');
         }
 
         function updateOnlineUsersInFirebase() {
@@ -1361,7 +1379,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.1.5'; // Disabled CSP for Firebase functionality
+        let currentVersion = '1.1.6'; // Added debug for message display
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
