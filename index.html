@@ -2,8 +2,21 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="apple-mobile-web-app-title" content="Doomsday Forums">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMDAwMDAwIi8+Cjx0ZXh0IHg9Ijk2IiB5PSI5NiIgZmlsbD0iI2ZmMDAwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCI+RDwvdGV4dD4KPHRleHQgeD0iOTYiIHk9IjEyMCIgZmlsbD0iI2ZmMDAwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCI+Rm9ydW1zPC90ZXh0Pgo8L3N2Zz4=">
     <title>Doomsday Forums</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <style>
         * {
             margin: 0;
@@ -14,22 +27,18 @@
         body {
             background-color: #000000;
             color: #ffffff;
-            font-family: 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
             position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            touch-action: manipulation;
         }
 
         /* Header */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            position: relative;
             padding: 20px 40px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
         }
 
         .logo-container {
@@ -43,26 +52,24 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 3px;
-            text-shadow: 0 0 20px #ff0000;
-            animation: glow 2s ease-in-out infinite alternate;
+            color: #ff0000;
         }
 
-        @keyframes glow {
-            from { text-shadow: 0 0 20px #ff0000; }
-            to { text-shadow: 0 0 30px #ff0000, 0 0 40px #ff0000; }
-        }
 
         .auth-buttons {
             display: flex;
             gap: 15px;
+            position: absolute;
+            top: 20px;
+            right: 40px;
         }
 
         .btn {
             background-color: #ff0000;
             color: #ffffff;
             border: 2px solid #ff0000;
-            padding: 12px 25px;
-            font-size: 1rem;
+            padding: 8px 18px;
+            font-size: 0.9rem;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
@@ -70,6 +77,10 @@
             border-radius: 5px;
             text-decoration: none;
             display: inline-block;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            min-height: 44px;
+            min-width: 44px;
         }
 
         .btn:hover {
@@ -199,11 +210,203 @@
             font-size: 0.8rem;
         }
 
+        /* Chat Section */
+        .chat-section {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 400px;
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .chat-header {
+            background-color: #ff0000;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #ff0000;
+        }
+
+        .message-author {
+            font-weight: bold;
+            color: #ff0000;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .role-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+        }
+
+        .role-admin {
+            background-color: #ff0000;
+            color: #ffffff;
+        }
+
+        .role-moderator {
+            background-color: #ff6600;
+            color: #ffffff;
+        }
+
+        .role-vip {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+
+        .role-member {
+            background-color: #666666;
+            color: #ffffff;
+        }
+
+        .message-text {
+            color: #ffffff;
+            margin-top: 5px;
+            word-wrap: break-word;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: #cccccc;
+            margin-top: 3px;
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            border-top: 1px solid #ff0000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #ff0000;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+        }
+
+        .chat-send-btn {
+            background-color: #ff0000;
+            color: #ffffff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .chat-send-btn:hover {
+            background-color: #cc0000;
+        }
+
+        .chat-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff0000;
+            color: #ffffff;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .chat-toggle:hover {
+            background-color: #cc0000;
+            transform: scale(1.1);
+        }
+
+        .chat-hidden {
+            display: none;
+        }
+
+        .online-users {
+            padding: 10px 15px;
+            background-color: rgba(255, 0, 0, 0.1);
+            border-bottom: 1px solid #ff0000;
+            font-size: 0.8rem;
+            color: #cccccc;
+        }
+
+        .online-count {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .role-selector {
+            padding: 10px 15px;
+            background-color: rgba(255, 0, 0, 0.05);
+            border-bottom: 1px solid #ff0000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .role-selector label {
+            font-size: 0.8rem;
+            color: #cccccc;
+        }
+
+        .role-selector select {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid #ff0000;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+
+        .role-selector select:focus {
+            outline: none;
+            border-color: #ff0000;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             header {
-                flex-direction: column;
-                gap: 20px;
                 padding: 15px 20px;
             }
 
@@ -211,18 +414,181 @@
                 position: relative;
                 transform: none;
                 left: auto;
+                text-align: center;
+                margin-bottom: 15px;
+            }
+
+            .logo {
+                font-size: 1.8rem;
+                letter-spacing: 1px;
             }
 
             .auth-buttons {
-                order: 2;
+                position: static;
+                justify-content: center;
+                width: 100%;
+                gap: 10px;
+            }
+
+            .btn {
+                font-size: 0.8rem;
+                padding: 10px 15px;
+                flex: 1;
+                text-align: center;
             }
 
             .hero-title {
-                font-size: 2.5rem;
+                font-size: 2rem;
+                letter-spacing: 2px;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+                padding: 0 20px;
             }
 
             .discussion-section {
+                padding: 20px 15px;
+                margin: 0 10px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .thread-item {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+
+            .thread-title {
+                font-size: 1rem;
+            }
+
+            .thread-stats {
+                flex-direction: column;
+                gap: 5px;
+                font-size: 0.75rem;
+            }
+
+            .chat-section {
+                width: 100%;
+                height: 100vh;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .chat-toggle {
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .chat-header {
+                padding: 15px;
+                font-size: 1.1rem;
+            }
+
+            .role-selector {
+                padding: 8px 15px;
+            }
+
+            .role-selector select {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+
+            .chat-messages {
+                padding: 10px;
+            }
+
+            .message {
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+
+            .message-author {
+                font-size: 0.85rem;
+            }
+
+            .message-text {
+                font-size: 0.9rem;
+            }
+
+            .chat-input-container {
+                padding: 10px 15px;
+                gap: 8px;
+            }
+
+            .chat-input {
+                font-size: 1rem;
+                padding: 12px;
+            }
+
+            .chat-send-btn {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 20px;
                 padding: 20px;
+            }
+
+            .modal-title {
+                font-size: 1.3rem;
+            }
+
+            .form-group input {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .discussion-section {
+                margin: 0 5px;
+                padding: 15px 10px;
+            }
+
+            .chat-toggle {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* iPhone X and newer safe area */
+        @supports (padding: max(0px)) {
+            .chat-section {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+            
+            .chat-toggle {
+                bottom: max(20px, env(safe-area-inset-bottom));
             }
         }
 
@@ -378,6 +744,39 @@
         </section>
     </main>
 
+    <!-- Chat Section -->
+    <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">💬</button>
+    
+    <div class="chat-section chat-hidden" id="chatSection">
+        <div class="chat-header">
+            <span>Chat Global</span>
+            <span onclick="toggleChat()" style="cursor: pointer;">×</span>
+        </div>
+        <div class="online-users">
+            <span class="online-count" id="onlineCount">3</span> utilisateurs en ligne
+        </div>
+        <div class="role-selector">
+            <label for="roleSelect">Votre rôle:</label>
+            <select id="roleSelect" onchange="updateUserRole()">
+                <option value="member">Membre</option>
+                <option value="vip">VIP</option>
+                <option value="moderator">Modérateur</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message">
+                <div class="message-author">System</div>
+                <div class="message-text">Bienvenue sur le chat global de Doomsday Forums!</div>
+                <div class="message-time">Maintenant</div>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Tapez votre message..." onkeypress="handleChatKeyPress(event)">
+            <button class="chat-send-btn" onclick="sendMessage()">Envoyer</button>
+        </div>
+    </div>
+
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
@@ -442,13 +841,39 @@
         }
 
         // Form handlers
+        function sanitizeInput(input) {
+            return input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                       .replace(/javascript:/gi, '')
+                       .replace(/on\w+\s*=/gi, '')
+                       .replace(/[<>]/g, '');
+        }
+
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 8;
+        }
+
         function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+            const email = sanitizeInput(document.getElementById('loginEmail').value);
+            const password = sanitizeInput(document.getElementById('loginPassword').value);
+            
+            if (!validateEmail(email)) {
+                alert('Email invalide!');
+                return;
+            }
+            
+            if (!validatePassword(password)) {
+                alert('Mot de passe trop court (minimum 8 caractères)!');
+                return;
+            }
             
             // Here you would normally send this data to your server
-            console.log('Login attempt:', { email, password });
+            console.log('Login attempt:', { email, password: '***' });
             
             // Simulate successful login
             alert('Connexion réussie! (Simulation)');
@@ -460,19 +885,34 @@
 
         function handleRegister(event) {
             event.preventDefault();
-            const username = document.getElementById('registerUsername').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const username = sanitizeInput(document.getElementById('registerUsername').value);
+            const email = sanitizeInput(document.getElementById('registerEmail').value);
+            const password = sanitizeInput(document.getElementById('registerPassword').value);
+            const confirmPassword = sanitizeInput(document.getElementById('registerConfirmPassword').value);
             
-            // Validate passwords match
+            // Validate inputs
+            if (username.length < 3) {
+                alert('Nom d\'utilisateur trop court (minimum 3 caractères)!');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                alert('Email invalide!');
+                return;
+            }
+            
+            if (!validatePassword(password)) {
+                alert('Mot de passe trop court (minimum 8 caractères)!');
+                return;
+            }
+            
             if (password !== confirmPassword) {
                 alert('Les mots de passe ne correspondent pas!');
                 return;
             }
             
             // Here you would normally send this data to your server
-            console.log('Registration attempt:', { username, email, password });
+            console.log('Registration attempt:', { username, email, password: '***' });
             
             // Simulate successful registration
             alert('Compte créé avec succès! (Simulation)');
@@ -487,6 +927,222 @@
             console.log('Opening thread:', threadId);
             alert('Ouverture du fil de discussion ' + threadId + ' (Simulation)');
         }
+
+        // Chat functions
+        let chatOpen = false;
+        let currentUser = 'Membre';
+        let currentUserRole = 'member';
+        let onlineUsers = ['System', currentUser];
+
+        function toggleChat() {
+            const chatSection = document.getElementById('chatSection');
+            const chatToggle = document.getElementById('chatToggle');
+            
+            chatOpen = !chatOpen;
+            
+            if (chatOpen) {
+                chatSection.classList.remove('chat-hidden');
+                chatToggle.classList.add('chat-hidden');
+                document.getElementById('chatInput').focus();
+            } else {
+                chatSection.classList.add('chat-hidden');
+                chatToggle.classList.remove('chat-hidden');
+            }
+        }
+
+        function updateUserRole() {
+            const roleSelect = document.getElementById('roleSelect');
+            currentUserRole = roleSelect.value;
+            
+            // Update username based on role
+            const roleNames = {
+                'admin': 'Admin',
+                'moderator': 'Modérateur',
+                'vip': 'VIP',
+                'member': 'Membre'
+            };
+            
+            currentUser = roleNames[currentUserRole];
+            
+            // Add system message
+            addMessage('System', `Vous êtes maintenant ${roleNames[currentUserRole]}`);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = sanitizeInput(input.value.trim());
+            
+            if (message === '') return;
+            
+            if (message.length > 500) {
+                alert('Message trop long (maximum 500 caractères)!');
+                return;
+            }
+            
+            addMessage(currentUser, message, currentUserRole);
+            input.value = '';
+            
+            // Simulate other users responding
+            simulateOtherUsers();
+        }
+
+        function addMessage(author, text, role = 'member') {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            
+            const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            
+            // Role display names
+            const roleDisplayNames = {
+                'admin': 'Admin',
+                'moderator': 'Modo',
+                'vip': 'VIP',
+                'member': 'Membre'
+            };
+            
+            messageDiv.innerHTML = `
+                <div class="message-author">
+                    ${author}
+                    <span class="role-badge role-${role}">${roleDisplayNames[role]}</span>
+                </div>
+                <div class="message-text">${text}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function simulateOtherUsers() {
+            const responses = [
+                'Intéressant!',
+                'Je suis d\'accord',
+                'Pas sûr de comprendre',
+                'Quelqu\'un peut expliquer?',
+                'Cool!',
+                'Bonjour à tous!',
+                'De où venez-vous?',
+                'Ce site est génial!',
+                'Première fois ici',
+                'Quelqu\'un est là?'
+            ];
+            
+            const users = [
+                { name: 'Admin42', role: 'admin' },
+                { name: 'ModoAlex', role: 'moderator' },
+                { name: 'VIPStar', role: 'vip' },
+                { name: 'User123', role: 'member' },
+                { name: 'Mystère', role: 'member' },
+                { name: 'Curieux', role: 'member' }
+            ];
+            
+            setTimeout(() => {
+                if (Math.random() > 0.3) {
+                    const randomUser = users[Math.floor(Math.random() * users.length)];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage(randomUser.name, randomResponse, randomUser.role);
+                }
+            }, Math.random() * 3000 + 1000);
+        }
+
+        function updateOnlineCount() {
+            const count = 3 + Math.floor(Math.random() * 5);
+            document.getElementById('onlineCount').textContent = count;
+        }
+
+        // Update online count periodically
+        setInterval(updateOnlineCount, 15000);
+
+        // Add some initial messages with roles
+        setTimeout(() => {
+            addMessage('Admin42', 'Salut tout le monde!', 'admin');
+        }, 2000);
+
+        setTimeout(() => {
+            addMessage('ModoAlex', 'Bienvenue sur le chat!', 'moderator');
+        }, 4000);
+
+        setTimeout(() => {
+            addMessage('VIPStar', 'Ce site est awesome!', 'vip');
+        }, 6000);
+
+        // Auto-refresh for updates
+        let lastVersion = localStorage.getItem('siteVersion') || '0';
+        let currentVersion = '1.0.0'; // Change this number when you update
+        
+        function checkForUpdates() {
+            if (lastVersion !== currentVersion) {
+                localStorage.setItem('siteVersion', currentVersion);
+                if (lastVersion !== '0') {
+                    // Show update notification
+                    const updateNotification = document.createElement('div');
+                    updateNotification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: linear-gradient(135deg, #ff0000, #cc0000);
+                        color: white;
+                        padding: 15px 25px;
+                        border-radius: 10px;
+                        font-weight: bold;
+                        z-index: 10000;
+                        box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4);
+                        animation: slideDown 0.5s ease-out;
+                    `;
+                    updateNotification.innerHTML = `
+                        🔄 Mise à jour disponible ! 
+                        <button onclick="location.reload()" style="
+                            background: white;
+                            color: #ff0000;
+                            border: none;
+                            padding: 5px 15px;
+                            border-radius: 5px;
+                            margin-left: 10px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">Actualiser</button>
+                    `;
+                    document.body.appendChild(updateNotification);
+                    
+                    // Auto-remove after 10 seconds
+                    setTimeout(() => {
+                        if (updateNotification.parentNode) {
+                            updateNotification.remove();
+                        }
+                    }, 10000);
+                }
+            }
+        }
+
+        // Check for updates on page load
+        checkForUpdates();
+
+        // Check for updates every 5 minutes
+        setInterval(checkForUpdates, 300000);
+
+        // Add slide down animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from {
+                    transform: translate(-50%, -100px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translate(-50%, 0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
 
         // Add some dynamic behavior
         document.addEventListener('DOMContentLoaded', function() {
