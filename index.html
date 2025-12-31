@@ -824,7 +824,118 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyKeyForDemo",
+            authDomain: "doomsday-forums.firebaseapp.com",
+            databaseURL: "https://doomsday-forums-default-rtdb.firebaseio.com",
+            projectId: "doomsday-forums",
+            storageBucket: "doomsday-forums.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Real-time Firebase functions
+        function sendMessageToFirebase(message) {
+            const messageData = {
+                user: currentUser,
+                text: message,
+                role: currentUserRole,
+                timestamp: Date.now()
+            };
+            
+            database.ref('messages').push(messageData);
+        }
+
+        function listenToMessages() {
+            database.ref('messages').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
+                const messages = snapshot.val();
+                const messagesContainer = document.getElementById('chatMessages');
+                
+                // Clear existing messages except system message
+                const systemMessages = messagesContainer.querySelectorAll('.message-author[style*="color: #ffcc00"]');
+                messagesContainer.innerHTML = '';
+                
+                // Re-add system messages
+                systemMessages.forEach(msg => {
+                    messagesContainer.appendChild(msg.parentElement);
+                });
+                
+                // Add all Firebase messages
+                if (messages) {
+                    Object.values(messages).forEach(msg => {
+                        const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                        addMessageFromFirebase(msg.user, msg.text, msg.role, time);
+                    });
+                }
+                
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+        }
+
+        function addMessageFromFirebase(author, text, role, time) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            
+            const roleDisplayNames = {
+                'admin': 'Admin',
+                'moderator': 'Modo',
+                'vip': 'VIP',
+                'member': 'Membre'
+            };
+            
+            messageDiv.innerHTML = `
+                <div class="message-author">
+                    ${author}
+                    <span class="role-badge role-${role}">${roleDisplayNames[role]}</span>
+                </div>
+                <div class="message-text">${text}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+        }
+
+        function updateOnlineUsersInFirebase() {
+            const userData = {
+                name: currentUser,
+                role: currentUserRole,
+                status: 'online',
+                lastSeen: Date.now()
+            };
+            
+            database.ref('users/' + currentUser.replace(/[^a-zA-Z0-9]/g, '_')).set(userData);
+            
+            // Remove user when they leave
+            window.addEventListener('beforeunload', () => {
+                database.ref('users/' + currentUser.replace(/[^a-zA-Z0-9]/g, '_')).remove();
+            });
+        }
+
+        function listenToOnlineUsers() {
+            database.ref('users').on('value', (snapshot) => {
+                const users = snapshot.val();
+                const onlineCount = users ? Object.keys(users).length : 0;
+                document.getElementById('onlineCount').textContent = onlineCount;
+            });
+        }
+
+        // Initialize Firebase listeners
+        setTimeout(() => {
+            listenToMessages();
+            listenToOnlineUsers();
+            updateOnlineUsersInFirebase();
+            addSystemMessage('Connecté à Firebase - Synchronisation active !');
+        }, 1000);
         // Modal functions
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
@@ -1205,7 +1316,7 @@
         setInterval(simulateForumActivity, 15000); // Forum activity every 15 seconds
         setInterval(simulateUserActivity, 8000); // User messages every 8 seconds
         
-        // Enhanced message sending with broadcast
+        // Enhanced message sending with Firebase
         function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = sanitizeInput(input.value.trim());
@@ -1217,29 +1328,10 @@
                 return;
             }
             
-            // Add message locally
-            addMessage(currentUser, message, currentUserRole);
-            
-            // Broadcast to all users (simulation)
-            broadcastActivity({
-                type: 'chat_message',
-                user: currentUser,
-                message: message,
-                role: currentUserRole,
-                timestamp: new Date()
-            });
+            // Send to Firebase instead of local
+            sendMessageToFirebase(message);
             
             input.value = '';
-            
-            // Simulate other users responding
-            setTimeout(() => {
-                if (Math.random() > 0.5) {
-                    const randomUser = connectedUsers.find(u => u.status === 'online');
-                    if (randomUser) {
-                        addMessage(randomUser.name, generateRandomMessage(), randomUser.role);
-                    }
-                }
-            }, Math.random() * 3000 + 1000);
         }
         
         // Add connection notification
@@ -1247,7 +1339,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.0.2'; // Real-time sync update
+        let currentVersion = '1.0.3'; // Firebase real-time sync
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
