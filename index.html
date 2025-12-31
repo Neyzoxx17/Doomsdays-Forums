@@ -1092,11 +1092,10 @@
                 return;
             }
             
-            addMessage(currentUser, message, currentUserRole);
-            input.value = '';
+            // Send to Firebase instead of local
+            sendMessageToFirebase(message);
             
-            // Simulate other users responding
-            simulateOtherUsers();
+            input.value = '';
         }
 
         function addMessage(author, text, role = 'member') {
@@ -1317,30 +1316,13 @@
         setInterval(simulateForumActivity, 15000); // Forum activity every 15 seconds
         setInterval(simulateUserActivity, 8000); // User messages every 8 seconds
         
-        // Enhanced message sending with Firebase
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = sanitizeInput(input.value.trim());
-            
-            if (message === '') return;
-            
-            if (message.length > 500) {
-                alert('Message trop long (maximum 500 caractères)!');
-                return;
-            }
-            
-            // Send to Firebase instead of local
-            sendMessageToFirebase(message);
-            
-            input.value = '';
-        }
-        
+                
         // Add connection notification
         setTimeout(() => {
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.0.5'; // Real Firebase keys integrated
+        let currentVersion = '1.0.6'; // Fixed chat button issue
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
