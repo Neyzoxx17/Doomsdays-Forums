@@ -824,8 +824,8 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -1339,7 +1339,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.0.3'; // Firebase real-time sync
+        let currentVersion = '1.0.4'; // Security update - Firebase 10.13.1
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
