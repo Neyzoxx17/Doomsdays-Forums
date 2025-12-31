@@ -845,6 +845,8 @@
 
         // Real-time Firebase functions
         function sendMessageToFirebase(message) {
+            console.log('sendMessageToFirebase appelé avec:', message);
+            
             const messageData = {
                 user: currentUser,
                 text: message,
@@ -852,7 +854,21 @@
                 timestamp: Date.now()
             };
             
-            database.ref('messages').push(messageData);
+            console.log('Données du message:', messageData);
+            
+            if (!database) {
+                console.error('Database Firebase non initialisée');
+                throw new Error('Database Firebase non initialisée');
+            }
+            
+            database.ref('messages').push(messageData)
+                .then(() => {
+                    console.log('Message envoyé avec succès à Firebase');
+                })
+                .catch((error) => {
+                    console.error('Erreur Firebase:', error);
+                    throw error;
+                });
         }
 
         function listenToMessages() {
@@ -1092,10 +1108,23 @@
                 return;
             }
             
-            // Send to Firebase instead of local
-            sendMessageToFirebase(message);
+            console.log('Tentative d\'envoi du message:', message);
+            console.log('Firebase database:', database);
+            console.log('Utilisateur actuel:', currentUser);
             
-            input.value = '';
+            try {
+                // Send to Firebase
+                sendMessageToFirebase(message);
+                console.log('Message envoyé à Firebase');
+                input.value = '';
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi:', error);
+                alert('Erreur lors de l\'envoi du message: ' + error.message);
+                
+                // Fallback: add message locally
+                addMessage(currentUser, message, currentUserRole);
+                input.value = '';
+            }
         }
 
         function addMessage(author, text, role = 'member') {
@@ -1322,7 +1351,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.0.6'; // Fixed chat button issue
+        let currentVersion = '1.0.7'; // Debug chat button with detailed logging
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
