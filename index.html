@@ -1069,7 +1069,7 @@
         // Chat functions
 
         function toggleChat() {
-            console.log('toggleChat appelé, chatOpen actuel:', chatOpen);
+            console.log('toggleChat appelé');
             
             const chatSection = document.getElementById('chatSection');
             const chatToggle = document.getElementById('chatToggle');
@@ -1079,19 +1079,17 @@
                 return;
             }
             
-            // Simple toggle without using the variable
+            // Toggle sans utiliser la variable chatOpen du tout
             if (chatSection.classList.contains('chat-hidden')) {
                 // Open chat
                 chatSection.classList.remove('chat-hidden');
                 chatToggle.classList.add('chat-hidden');
                 document.getElementById('chatInput').focus();
-                chatOpen = true;
                 console.log('Chat ouvert');
             } else {
                 // Close chat
                 chatSection.classList.add('chat-hidden');
                 chatToggle.classList.remove('chat-hidden');
-                chatOpen = false;
                 console.log('Chat fermé');
             }
         }
@@ -1365,7 +1363,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.0.9'; // Simplified toggleChat function
+        let currentVersion = '1.1.0'; // Removed chatOpen variable completely
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
