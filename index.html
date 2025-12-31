@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doomsday Forums</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px #ff0000;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #ff0000; }
+            to { text-shadow: 0 0 30px #ff0000, 0 0 40px #ff0000; }
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            background-color: #ff0000;
+            color: #ffffff;
+            border: 2px solid #ff0000;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: #cc0000;
+            border-color: #cc0000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        /* Main Content */
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 120px 20px 40px;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #cccccc;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Discussion Thread Section */
+        .discussion-section {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            border-radius: 10px;
+            padding: 30px;
+            animation: fadeIn 1s ease-out 1s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ff0000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .thread-list {
+            list-style: none;
+        }
+
+        .thread-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .thread-item:hover {
+            background-color: rgba(255, 0, 0, 0.2);
+            transform: translateX(5px);
+        }
+
+        .thread-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .thread-meta {
+            font-size: 0.9rem;
+            color: #cccccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .thread-author {
+            color: #ff0000;
+        }
+
+        .thread-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+                padding: 15px 20px;
+            }
+
+            .logo-container {
+                position: relative;
+                transform: none;
+                left: auto;
+            }
+
+            .auth-buttons {
+                order: 2;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .discussion-section {
+                padding: 20px;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background-color: #000000;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ff0000;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #cccccc;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: #ff0000;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .close-btn:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1 class="logo">Doomsday Forums</h1>
+        </div>
+        <div class="auth-buttons">
+            <button class="btn" onclick="openModal('loginModal')">Se Connecter</button>
+            <button class="btn" onclick="openModal('registerModal')">Créer un Compte</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <h2 class="hero-title">Bienvenue sur Doomsday Forums</h2>
+            <p class="hero-subtitle">Discutez, partagez et explorez des sujets fascinants</p>
+        </section>
+
+        <section class="discussion-section">
+            <h3 class="section-title">Dernières Discussions</h3>
+            <ul class="thread-list" id="threadList">
+                <li class="thread-item" onclick="openThread(1)">
+                    <div class="thread-title">Bienvenue sur Doomsday Forums</div>
+                    <div class="thread-meta">
+                        <span class="thread-author">Par Admin</span>
+                        <div class="thread-stats">
+                            <span>15 réponses</span>
+                            <span>il y a 2 heures</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="thread-item" onclick="openThread(2)">
+                    <div class="thread-title">Règles du forum</div>
+                    <div class="thread-meta">
+                        <span class="thread-author">Par Moderateur</span>
+                        <div class="thread-stats">
+                            <span>8 réponses</span>
+                            <span>il y a 5 heures</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="thread-item" onclick="openThread(3)">
+                    <div class="thread-title">Présentation des membres</div>
+                    <div class="thread-meta">
+                        <span class="thread-author">Par Community</span>
+                        <div class="thread-stats">
+                            <span>42 réponses</span>
+                            <span>il y a 1 jour</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="thread-item" onclick="openThread(4)">
+                    <div class="thread-title">Suggestions pour le forum</div>
+                    <div class="thread-meta">
+                        <span class="thread-author">Par User123</span>
+                        <div class="thread-stats">
+                            <span>23 réponses</span>
+                            <span>il y a 2 jours</span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+            <h2 class="modal-title">Connexion</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Se Connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('registerModal')">&times;</button>
+            <h2 class="modal-title">Créer un Compte</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerUsername">Nom d'utilisateur</label>
+                    <input type="text" id="registerUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mot de passe</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Confirmer le mot de passe</label>
+                    <input type="password" id="registerConfirmPassword" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Créer un Compte</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Form handlers
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Here you would normally send this data to your server
+            console.log('Login attempt:', { email, password });
+            
+            // Simulate successful login
+            alert('Connexion réussie! (Simulation)');
+            closeModal('loginModal');
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                alert('Les mots de passe ne correspondent pas!');
+                return;
+            }
+            
+            // Here you would normally send this data to your server
+            console.log('Registration attempt:', { username, email, password });
+            
+            // Simulate successful registration
+            alert('Compte créé avec succès! (Simulation)');
+            closeModal('registerModal');
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        // Thread click handler
+        function openThread(threadId) {
+            console.log('Opening thread:', threadId);
+            alert('Ouverture du fil de discussion ' + threadId + ' (Simulation)');
+        }
+
+        // Add some dynamic behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effect to threads
+            const threads = document.querySelectorAll('.thread-item');
+            threads.forEach(thread => {
+                thread.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+                });
+                thread.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                });
+            });
+
+            // Simulate real-time updates
+            setInterval(function() {
+                const stats = document.querySelectorAll('.thread-stats span:last-child');
+                const times = ['il y a quelques minutes', 'il y a 1 heure', 'il y a 3 heures'];
+                stats.forEach(stat => {
+                    if (Math.random() > 0.7) {
+                        stat.textContent = times[Math.floor(Math.random() * times.length)];
+                    }
+                });
+            }, 30000); // Update every 30 seconds
+        });
+    </script>
+</body>
+</html>
