@@ -829,13 +829,14 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDummyKeyForDemo",
+            apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",
             authDomain: "doomsday-forums.firebaseapp.com",
-            databaseURL: "https://doomsday-forums-default-rtdb.firebaseio.com",
+            databaseURL: "https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "doomsday-forums",
-            storageBucket: "doomsday-forums.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+            storageBucket: "doomsday-forums.firebasestorage.app",
+            messagingSenderId: "345452079794",
+            appId: "1:345452079794:web:14b4978afb203a9d84b7ab",
+            measurementId: "G-W1YDYYQKRR"
         };
 
         // Initialize Firebase
@@ -1339,7 +1340,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.0.4'; // Security update - Firebase 10.13.1
+        let currentVersion = '1.0.5'; // Real Firebase keys integrated
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
