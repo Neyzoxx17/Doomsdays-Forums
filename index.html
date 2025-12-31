@@ -1051,6 +1051,15 @@
             event.target.reset();
         }
 
+        // Chat variables - MUST be declared before functions
+        let chatOpen = false;
+        let currentUser = 'Membre';
+        let currentUserRole = 'member';
+        let onlineUsers = ['System', currentUser];
+        let connectedUsers = [];
+        let forumThreads = [];
+        let chatMessages = [];
+
         // Thread click handler
         function openThread(threadId) {
             console.log('Opening thread:', threadId);
@@ -1058,10 +1067,6 @@
         }
 
         // Chat functions
-        let chatOpen = false;
-        let currentUser = 'Membre';
-        let currentUserRole = 'member';
-        let onlineUsers = ['System', currentUser];
 
         function toggleChat() {
             const chatSection = document.getElementById('chatSection');
@@ -1215,9 +1220,6 @@
         }, 6000);
 
         // Real-time synchronization simulation
-        let connectedUsers = [];
-        let forumThreads = [];
-        let chatMessages = [];
         
         function initializeRealTimeData() {
             // Simulate connected users
@@ -1351,7 +1353,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.0.7'; // Debug chat button with detailed logging
+        let currentVersion = '1.0.8'; // Fixed variable declaration order
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
