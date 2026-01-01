@@ -1139,9 +1139,11 @@
                 const userData = snapshot.val();
                 if (userData && userData.role) {
                     currentUserRole = userData.role;
+                    console.log('Rôle chargé:', currentUserRole);
                 } else {
                     currentUserRole = 'member';
                 }
+                // Don't update currentUser here - it should stay as the username
                 updateOnlineUsersInFirebase();
             });
         }
@@ -1182,13 +1184,21 @@
 
         function updateUserRole() {
             const roleSelect = document.getElementById('roleSelect');
-            currentUserRole = roleSelect.value;
+            const newRole = roleSelect.value;
+            
+            console.log('Changement de rôle demandé:', newRole);
+            console.log('Pseudo actuel avant changement:', currentUser);
+            
+            currentUserRole = newRole;
             
             // Keep the same username, only change the role
             // Don't change currentUser - it should stay as the username
             
+            console.log('Pseudo après changement:', currentUser);
+            console.log('Rôle après changement:', currentUserRole);
+            
             // Add system message
-            addMessage('System', `Votre rôle est maintenant: ${currentUserRole}`);
+            addMessage('System', `Votre rôle est maintenant: ${newRole}`);
         }
 
         function sendMessage() {
@@ -1453,7 +1463,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.2.4'; // Fixed username preservation when changing role
+        let currentVersion = '1.2.5'; // Added debug logs for username preservation
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
