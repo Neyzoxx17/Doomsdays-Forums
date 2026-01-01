@@ -1184,18 +1184,11 @@
             const roleSelect = document.getElementById('roleSelect');
             currentUserRole = roleSelect.value;
             
-            // Update username based on role
-            const roleNames = {
-                'admin': 'Admin',
-                'moderator': 'Modérateur',
-                'vip': 'VIP',
-                'member': 'Membre'
-            };
-            
-            currentUser = roleNames[currentUserRole];
+            // Keep the same username, only change the role
+            // Don't change currentUser - it should stay as the username
             
             // Add system message
-            addMessage('System', `Vous êtes maintenant ${roleNames[currentUserRole]}`);
+            addMessage('System', `Votre rôle est maintenant: ${currentUserRole}`);
         }
 
         function sendMessage() {
@@ -1460,7 +1453,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.2.3'; // Added unique username validation
+        let currentVersion = '1.2.4'; // Fixed username preservation when changing role
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
