@@ -44,18 +44,20 @@
         }
 
         .nav-link {
-            color: #ff0000;
+            color: #dc143c;
             text-decoration: none;
             padding: 8px 16px;
-            border: 1px solid #ff0000;
+            border: 1px solid #dc143c;
             border-radius: 20px;
             transition: all 0.3s;
             font-size: 0.9rem;
+            background: rgba(220, 20, 60, 0.1);
         }
 
         .nav-link:hover {
-            background: #ff0000;
+            background: #dc143c;
             color: white;
+            transform: translateY(-2px);
         }
 
         .messages-container {
@@ -366,14 +368,14 @@
         </div>
 
         <div class="nav-links">
-            <a href="index.html" class="nav-link">🏠 Forum</a>
-            <a href="profile.html" class="nav-link">👤 Mon Profil</a>
-            <a href="admin.html" class="nav-link">⚙️ Admin</a>
+            <a href="index.html" class="nav-link">◄ Forum</a>
+            <a href="profile.html" class="nav-link">◈ Profil</a>
+            <a href="admin.html" class="nav-link">⚙ Admin</a>
         </div>
 
         <div class="messages-container">
             <div class="conversations-list" id="conversationsList">
-                <button class="new-message-btn" onclick="openNewMessageModal()">✉️ Nouveau message</button>
+                <button class="new-message-btn" onclick="openNewMessageModal()">◉ Nouveau message</button>
                 <div id="conversationsContainer">
                     <!-- Conversations will be loaded here -->
                 </div>
@@ -385,7 +387,7 @@
                 </div>
                 <div class="messages-list" id="messagesList">
                     <div class="empty-state">
-                        <h3>📭 Aucune conversation sélectionnée</h3>
+                        <h3>◭ Aucune conversation sélectionnée</h3>
                         <p>Choisissez une conversation dans la liste ou commencez un nouveau message</p>
                     </div>
                 </div>

@@ -44,20 +44,43 @@
         }
 
         .nav-link {
-            color: #ff0000;
+            color: #dc143c;
             text-decoration: none;
             padding: 8px 16px;
-            border: 1px solid #ff0000;
+            border: 1px solid #dc143c;
             border-radius: 20px;
             transition: all 0.3s;
             font-size: 0.9rem;
-            background: rgba(255, 0, 0, 0.1);
+            background: rgba(220, 20, 60, 0.1);
         }
 
         .nav-link:hover {
-            background: #ff0000;
+            background: #dc143c;
             color: white;
             transform: translateY(-2px);
+        }
+
+        .btn-account {
+            background: rgba(220, 20, 60, 0.3);
+            color: #dc143c;
+            border: 1px solid #dc143c;
+            padding: 4px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-account:hover {
+            background: #dc143c;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(220, 20, 60, 0.4);
         }
 
         .back-link {
@@ -613,7 +636,7 @@
         <div class="header">
             <div class="nav-links">
                 <a href="index.html" class="back-link">← Retour au forum</a>
-                <a href="messages.html" class="nav-link">✉️ Messages Privés</a>
+                <a href="messages.html" class="nav-link">◉ Messages Privés</a>
             </div>
             <h1>Mon Profil</h1>
         </div>
@@ -622,21 +645,21 @@
             <div class="profile-header">
                 <div class="avatar-container">
                     <img id="profileAvatar" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNzUiIHI9Ijc1IiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4/PC90ZXh0Pgo8L3N2Zz4=" alt="Avatar" class="avatar">
-                    <button class="edit-avatar-btn" onclick="openAvatarModal()">✏️</button>
+                    <button class="edit-avatar-btn" onclick="openAvatarModal()">✎</button>
                 </div>
                 <div class="profile-info">
                     <div class="username-section">
                         <div class="username-display" id="profileUsername">Chargement...</div>
-                        <button class="edit-username-btn" onclick="toggleUsernameEdit()">✏️</button>
+                        <button class="edit-username-btn" onclick="toggleUsernameEdit()">✎</button>
                     </div>
                     <div class="username-edit" id="usernameEdit" style="display: none;">
                         <input type="text" id="usernameInput" class="username-input" placeholder="Nouveau pseudo">
-                        <button class="save-username-btn" onclick="saveUsername()">💾</button>
-                        <button class="cancel-username-btn" onclick="cancelUsernameEdit()">❌</button>
+                        <button class="save-username-btn" onclick="saveUsername()">✓</button>
+                        <button class="cancel-username-btn" onclick="cancelUsernameEdit()">✗</button>
                     </div>
                     <div class="role-badge" id="profileRole">Admin</div>
                     <div class="user-id" id="profileUserId">ID: Chargement...</div>
-                    <button class="logout-btn" onclick="handleLogout()">🚪 Déconnexion</button>
+                    <button class="logout-btn" onclick="handleLogout()">⚡ Déconnexion</button>
                 </div>
             </div>
 

@@ -66,9 +66,9 @@
         }
 
         .btn-account {
-            background: rgba(139, 0, 0, 0.3);
-            color: #cc0000;
-            border: 1px solid #8b0000;
+            background: rgba(220, 20, 60, 0.3);
+            color: #dc143c;
+            border: 1px solid #dc143c;
             padding: 4px 8px;
             border-radius: 12px;
             cursor: pointer;
@@ -82,10 +82,10 @@
         }
 
         .btn-account:hover {
-            background: #8b0000;
+            background: #dc143c;
             color: white;
             transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(139, 0, 0, 0.4);
+            box-shadow: 0 2px 8px rgba(220, 20, 60, 0.4);
         }
 
         .auth-buttons {
@@ -160,9 +160,9 @@
         }
 
         .btn {
-            background-color: #8b0000;
+            background-color: #dc143c;
             color: #ffffff;
-            border: 2px solid #8b0000;
+            border: 2px solid #dc143c;
             padding: 6px 14px;
             font-size: 0.8rem;
             font-weight: bold;
@@ -179,10 +179,10 @@
         }
 
         .btn:hover {
-            background-color: #660000;
-            border-color: #660000;
+            background-color: #b91c3c;
+            border-color: #b91c3c;
             transform: translateY(-1px);
-            box-shadow: 0 3px 12px rgba(139, 0, 0, 0.4);
+            box-shadow: 0 3px 12px rgba(220, 20, 60, 0.4);
         }
 
         /* Main Content */
@@ -813,8 +813,8 @@
         
         <!-- Account buttons in top right -->
         <div class="account-buttons" id="accountButtons" style="display: none;">
-            <button class="btn btn-account" onclick="window.location.href='messages.html'">📧 Messages</button>
-            <button class="btn btn-account" onclick="window.location.href='admin.html'">⚙️ Admin</button>
+            <button class="btn btn-account" onclick="window.location.href='messages.html'">◉ Messages</button>
+            <button class="btn btn-account" onclick="window.location.href='admin.html'">⚙ Admin</button>
         </div>
         
         <div class="user-profile" id="userProfile" style="display: none;">
@@ -975,7 +975,7 @@
     <div id="customizationModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">🎨 Personnaliser votre pseudo</h3>
+                <h3 class="modal-title">◈ Personnaliser votre pseudo</h3>
                 <button class="close-btn" onclick="closeModal('customizationModal')">&times;</button>
             </div>
             <div class="form-group">
@@ -1721,18 +1721,6 @@
             }
         }
 
-        // Check and show admin link
-        function checkAndShowAdminLink() {
-            if (currentUserRole === 'admin' || currentUserRole === 'moderator') {
-                const adminLink = document.createElement('a');
-                adminLink.href = 'admin.html?admin=neyzoxx2024';
-                adminLink.className = 'btn';
-                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; z-index: 1000;';
-                adminLink.innerHTML = '🔐 Admin';
-                adminLink.id = 'adminLink';
-                document.body.appendChild(adminLink);
-            }
-        }
 
         // Check and show customization link
         function checkAndShowCustomizationLink() {
@@ -1741,7 +1729,7 @@
                 customLink.href = '#';
                 customLink.className = 'btn';
                 customLink.style.cssText = 'position: fixed; top: 20px; right: 140px; background: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; z-index: 1000;';
-                customLink.innerHTML = '🎨 Personnaliser';
+                customLink.innerHTML = '◈ Personnaliser';
                 customLink.id = 'customLink';
                 customLink.onclick = openCustomizationModal;
                 document.body.appendChild(customLink);
