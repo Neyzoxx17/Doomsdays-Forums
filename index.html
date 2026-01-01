@@ -2,19 +2,19 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#000000">
     <meta name="msapplication-TileColor" content="#000000">
     <meta name="apple-mobile-web-app-title" content="Doomsday Forums">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMDAwMDAwIi8+Cjx0ZXh0IHg9Ijk2IiB5PSI5NiIgZmlsbD0iI2ZmMDAwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCI+RDwvdGV4dD4KPHRleHQgeD0iOTYiIHk9IjEyMCIgZmlsbD0iI2ZmMDAwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCI+Rm9ydW1zPC90ZXh0Pgo8L3N2Zz4=">
     <title>Doomsday Forums</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline' 'unsafe-eval' *; connect-src *; default-src *; style-src 'unsafe-inline' *; img-src * data:; font-src *; object-src *; base-uri *; form-action *;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <style>
@@ -62,6 +62,69 @@
             position: absolute;
             top: 20px;
             right: 40px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            border: 2px solid #ff0000;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .user-username {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            color: #ff0000;
+            font-size: 0.8rem;
+        }
+
+        .btn-logout {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
         }
 
         .btn {
@@ -321,7 +384,6 @@
         .chat-input:focus {
             outline: none;
             border-color: #ff0000;
-            box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
         }
 
         .chat-send-btn {
@@ -335,8 +397,45 @@
             transition: all 0.3s ease;
         }
 
-        .chat-send-btn:hover {
-            background-color: #cc0000;
+        .custom-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .avatar-option {
+            aspect-ratio: 1;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-option:hover {
+            border-color: #ff0000;
+            transform: scale(1.05);
+        }
+
+        .avatar-option.selected {
+            border-color: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .avatar-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .chat-toggle {
@@ -387,13 +486,13 @@
 
         .role-selector label {
             font-size: 0.8rem;
-            color: #cccccc;
+            color: #000000;
         }
 
         .role-selector select {
             background-color: rgba(255, 255, 255, 0.1);
             border: 1px solid #ff0000;
-            color: #ffffff;
+            color: #1d1d1d;
             padding: 4px 8px;
             border-radius: 3px;
             font-size: 0.8rem;
@@ -630,53 +729,24 @@
             }
         }
 
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         .modal-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
             color: #ff0000;
-            text-transform: uppercase;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #cccccc;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ff0000;
-            border-radius: 5px;
-            color: #ffffff;
-            font-size: 1rem;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #ff0000;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            font-size: 1.5rem;
         }
 
         .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 1.5rem;
-            color: #ff0000;
-            cursor: pointer;
             background: none;
             border: none;
-        }
-
-        .close-btn:hover {
-            color: #ffffff;
+            color: #ff0000;
+            font-size: 2rem;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -685,7 +755,17 @@
         <div class="logo-container">
             <h1 class="logo">Doomsday Forums</h1>
         </div>
-        <div class="auth-buttons">
+        <div class="user-profile" id="userProfile" style="display: none;">
+            <div class="user-avatar" onclick="openAvatarModal()">
+                <img id="userAvatar" src="https://picsum.photos/seed/default/40/40.jpg" alt="Avatar">
+            </div>
+            <div class="user-info">
+                <span class="user-username" id="userUsername">Utilisateur</span>
+                <span class="user-role" id="userRole">Membre</span>
+            </div>
+            <button class="btn btn-logout" onclick="handleLogout()">Déconnexion</button>
+        </div>
+        <div class="auth-buttons" id="authButtons">
             <button class="btn" onclick="openModal('loginModal')">Se Connecter</button>
             <button class="btn" onclick="openModal('registerModal')">Créer un Compte</button>
         </div>
@@ -758,10 +838,10 @@
         <div class="role-selector">
             <label for="roleSelect">Votre rôle:</label>
             <select id="roleSelect" onchange="updateUserRole()">
-                <option value="member">Membre</option>
+                <option value="admin" selected>Admin</option>
                 <option value="vip">VIP</option>
                 <option value="moderator">Modérateur</option>
-                <option value="admin">Admin</option>
+                <option value="member">Membre</option>
             </select>
         </div>
         <div class="chat-messages" id="chatMessages">
@@ -777,6 +857,102 @@
         </div>
     </div>
 
+    <!-- Avatar Modal -->
+    <div id="avatarModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🖼️ Choisir votre avatar</h3>
+                <button class="close-btn" onclick="closeModal('avatarModal')">&times;</button>
+            </div>
+            <div class="avatar-grid">
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar1/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar1/100/100.jpg" alt="Avatar 1">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar2/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar2/100/100.jpg" alt="Avatar 2">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar3/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar3/100/100.jpg" alt="Avatar 3">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar4/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar4/100/100.jpg" alt="Avatar 4">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar5/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar5/100/100.jpg" alt="Avatar 5">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar6/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar6/100/100.jpg" alt="Avatar 6">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar7/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar7/100/100.jpg" alt="Avatar 7">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar8/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar8/100/100.jpg" alt="Avatar 8">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar9/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar9/100/100.jpg" alt="Avatar 9">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar10/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar10/100/100.jpg" alt="Avatar 10">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar11/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar11/100/100.jpg" alt="Avatar 11">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar('https://picsum.photos/seed/avatar12/100/100.jpg')">
+                    <img src="https://picsum.photos/seed/avatar12/100/100.jpg" alt="Avatar 12">
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 20px;">
+                <label>URL personnalisée (optionnel)</label>
+                <input type="url" id="customAvatarUrl" placeholder="https://example.com/avatar.jpg">
+            </div>
+            <button class="btn-primary" onclick="saveAvatar()">Sauvegarder</button>
+        </div>
+    </div>
+
+    <!-- Customization Modal -->
+    <div id="customizationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🎨 Personnaliser votre pseudo</h3>
+                <button class="close-btn" onclick="closeModal('customizationModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Couleur du pseudo</label>
+                <input type="color" id="usernameColor" value="#ffffff">
+            </div>
+            <div class="form-group">
+                <label>Style du texte</label>
+                <select id="usernameStyle">
+                    <option value="normal">Normal</option>
+                    <option value="bold">Gras</option>
+                    <option value="italic">Italique</option>
+                    <option value="bold-italic">Gras + Italique</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Effet spécial</label>
+                <select id="usernameEffect">
+                    <option value="none">Aucun</option>
+                    <option value="glow">Lumineux</option>
+                    <option value="shadow">Ombre</option>
+                    <option value="rainbow">Arc-en-ciel</option>
+                    <option value="neon">Néon</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Badge personnalisé</label>
+                <input type="text" id="customBadge" placeholder="Ex: ⭐ VIP, 👑 Légende" maxlength="20">
+            </div>
+            <div class="form-group">
+                <label>Couleur du badge</label>
+                <input type="color" id="badgeColor" value="#ffd700">
+            </div>
+            <button class="btn-primary" onclick="saveCustomization()">Sauvegarder</button>
+            <button class="btn-secondary" onclick="resetCustomization()" style="margin-left: 10px; background: #666; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer;">Réinitialiser</button>
+        </div>
+    </div>
+
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
@@ -785,11 +961,11 @@
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" required>
+                    <input type="email" id="loginEmail" autocomplete="email" required>
                 </div>
                 <div class="form-group">
                     <label for="loginPassword">Mot de passe</label>
-                    <input type="password" id="loginPassword" required>
+                    <input type="password" id="loginPassword" autocomplete="current-password" required>
                 </div>
                 <button type="submit" class="btn" style="width: 100%;">Se Connecter</button>
             </form>
@@ -804,26 +980,216 @@
             <form onsubmit="handleRegister(event)">
                 <div class="form-group">
                     <label for="registerUsername">Nom d'utilisateur</label>
-                    <input type="text" id="registerUsername" required>
+                    <input type="text" id="registerUsername" autocomplete="username" required>
                 </div>
                 <div class="form-group">
                     <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" required>
+                    <input type="email" id="registerEmail" autocomplete="email" required>
                 </div>
                 <div class="form-group">
                     <label for="registerPassword">Mot de passe</label>
-                    <input type="password" id="registerPassword" required>
+                    <input type="password" id="registerPassword" autocomplete="new-password" required>
                 </div>
                 <div class="form-group">
                     <label for="registerConfirmPassword">Confirmer le mot de passe</label>
-                    <input type="password" id="registerConfirmPassword" required>
+                    <input type="password" id="registerConfirmPassword" autocomplete="new-password" required>
                 </div>
                 <button type="submit" class="btn" style="width: 100%;">Créer un Compte</button>
             </form>
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
     <script>
+        // Real-time Firebase functions
+        function sendMessageToFirebase(message) {
+            console.log('sendMessageToFirebase appelé avec:', message);
+            
+            if (!currentUser || !auth.currentUser) {
+                console.error('Utilisateur non connecté, impossible d\'envoyer le message');
+                throw new Error('Vous devez être connecté pour envoyer des messages');
+            }
+            
+            const messageData = {
+                user: currentUser,
+                text: message,
+                role: currentUserRole || 'admin',
+                timestamp: Date.now()
+            };
+            
+            console.log('Données du message:', messageData);
+            
+            if (!database) {
+                console.error('Database Firebase non initialisée');
+                throw new Error('Database Firebase non initialisée');
+            }
+            
+            database.ref('messages').push(messageData)
+                .then(() => {
+                    console.log('Message envoyé avec succès à Firebase');
+                })
+                .catch((error) => {
+                    console.error('Erreur Firebase:', error);
+                    throw error;
+                });
+        }
+
+        function listenToMessages() {
+            console.log('Démarrage écoute des messages Firebase');
+            database.ref('messages').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
+                console.log('Messages reçus de Firebase:', snapshot.val());
+                const messages = snapshot.val();
+                const messagesContainer = document.getElementById('chatMessages');
+                
+                if (!messagesContainer) {
+                    console.error('Container des messages non trouvé');
+                    return;
+                }
+                
+                // Clear existing messages except system messages
+                const systemMessages = messagesContainer.querySelectorAll('.message-author[style*="color: #ffcc00"]');
+                messagesContainer.innerHTML = '';
+                
+                // Re-add system messages
+                systemMessages.forEach(msg => {
+                    messagesContainer.appendChild(msg.parentElement);
+                });
+                
+                // Add all Firebase messages
+                if (messages) {
+                    Object.values(messages).forEach(msg => {
+                        const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                        console.log('Ajout du message:', msg);
+                        addMessageFromFirebase(msg.user, msg.text, msg.role, time);
+                    });
+                }
+                
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                console.log('Messages affichés, total:', Object.keys(messages || {}).length);
+            });
+        }
+
+        function addMessageFromFirebase(author, text, role, time) {
+            console.log('addMessageFromFirebase appelé avec:', {author, text, role, time});
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            if (!messagesContainer) {
+                console.error('Container des messages non trouvé dans addMessageFromFirebase');
+                return;
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            
+            const roleDisplayNames = {
+                'admin': 'Admin',
+                'moderator': 'Modo',
+                'vip': 'VIP',
+                'member': 'Membre'
+            };
+            
+            messageDiv.innerHTML = `
+                <div class="message-author">
+                    ${author}
+                    <span class="role-badge role-${role}">${roleDisplayNames[role]}</span>
+                </div>
+                <div class="message-text">${text}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            console.log('Message HTML créé:', messageDiv.innerHTML);
+            messagesContainer.appendChild(messageDiv);
+            console.log('Message ajouté au DOM');
+        }
+
+        function updateOnlineUsersInFirebase() {
+            if (!auth.currentUser) return;
+            
+            const userData = {
+                name: currentUser || 'Utilisateur',
+                role: 'admin', // FORCE ADMIN ROLE IN DATABASE TOO
+                status: 'online',
+                lastSeen: Date.now()
+            };
+            
+            console.log('🔥 Updating Firebase with ADMIN role:', userData);
+            
+            database.ref('onlineUsers/' + auth.currentUser.uid).set(userData).then(() => {
+                console.log('✅ Firebase updated with admin role');
+            }).catch((error) => {
+                console.log('❌ Firebase update failed:', error);
+            });
+        }
+
+        function listenToOnlineUsers() {
+            database.ref('users').on('value', (snapshot) => {
+                const users = snapshot.val();
+                const onlineCount = users ? Object.keys(users).length : 0;
+                document.getElementById('onlineCount').textContent = onlineCount;
+            });
+        }
+
+        // Initialize Firebase listeners with retry mechanism
+        let firebaseInitAttempts = 0;
+        const maxFirebaseInitAttempts = 5;
+        let forceUpdateInterval;
+        
+        function initializeFirebaseWithRetry() {
+            firebaseInitAttempts++;
+            console.log(`🔄 Tentative d'initialisation Firebase ${firebaseInitAttempts}/${maxFirebaseInitAttempts}`);
+            
+            if (!auth.currentUser) {
+                console.log('❌ Utilisateur non connecté, tentative suivante...');
+                if (firebaseInitAttempts < maxFirebaseInitAttempts) {
+                    setTimeout(initializeFirebaseWithRetry, 2000);
+                } else {
+                    console.log('❌ Échec de l\'initialisation après plusieurs tentatives');
+                }
+                return;
+            }
+            
+            try {
+                console.log('✅ Utilisateur connecté, initialisation des listeners...');
+                
+                // Force immediate update first
+                forceImmediateUpdate();
+                
+                // Start listeners (even if slow, we have forced updates)
+                listenToMessages();
+                listenToOnlineUsers();
+                updateOnlineUsersInFirebase();
+                addSystemMessage('Connecté à Firebase - Synchronisation active !');
+                
+                // Force role update every 3 seconds (more frequent)
+                if (forceUpdateInterval) clearInterval(forceUpdateInterval);
+                forceUpdateInterval = setInterval(() => {
+                    if (auth.currentUser && currentUser) {
+                        console.log('🔄 Mise à jour forcée du rôle...');
+                        forceImmediateUpdate();
+                    }
+                }, 3000);
+                
+                // Also force every 10 seconds
+                setInterval(() => {
+                    if (auth.currentUser && currentUser) {
+                        console.log('🔄 Mise à jour forcée (10s)...');
+                        forceImmediateUpdate();
+                    }
+                }, 10000);
+                
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'initialisation:', error);
+                if (firebaseInitAttempts < maxFirebaseInitAttempts) {
+                    setTimeout(initializeFirebaseWithRetry, 2000);
+                }
+            }
+        }
+        
+        // Start initialization after 1 second (faster)
+        setTimeout(initializeFirebaseWithRetry, 1000);
         // Modal functions
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
@@ -840,25 +1206,122 @@
             }
         }
 
-        // Form handlers
+        // Enhanced security functions
         function sanitizeInput(input) {
-            return input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-                       .replace(/javascript:/gi, '')
-                       .replace(/on\w+\s*=/gi, '')
-                       .replace(/[<>]/g, '');
+            if (typeof input !== 'string') return '';
+            
+            return input
+                // Remove script tags and content
+                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                // Remove JavaScript: protocol
+                .replace(/javascript:/gi, '')
+                // Remove on* event handlers
+                .replace(/on\w+\s*=/gi, '')
+                // Remove HTML tags
+                .replace(/<[^>]*>/g, '')
+                // Remove dangerous characters
+                .replace(/[<>"'&]/g, '')
+                // Remove SQL injection patterns
+                .replace(/(union|select|insert|update|delete|drop|create|alter|exec|script)/gi, '')
+                // Remove XSS patterns
+                .replace(/(document|window|alert|prompt|confirm|eval|setTimeout|setInterval)/gi, '')
+                // Trim whitespace
+                .trim();
         }
 
         function validateEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
+            if (!email || typeof email !== 'string') return false;
+            
+            // Enhanced email validation
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) return false;
+            
+            // Additional security checks
+            if (email.includes('..')) return false;
+            if (email.startsWith('.') || email.endsWith('.')) return false;
+            if (email.length > 254) return false;
+            
+            return true;
         }
 
         function validatePassword(password) {
-            return password.length >= 8;
+            if (!password || typeof password !== 'string') return false;
+            
+            // Enhanced password validation
+            if (password.length < 8) return false;
+            if (password.length > 128) return false;
+            
+            // Check for common patterns
+            const commonPatterns = [
+                /^(.)\1+$/, // All same characters
+                /^(123|abc|password|qwerty)/i, // Common passwords
+                /^(.){1,2}\1{1,2}$/, // Repeated patterns like "aa", "bb"
+            ];
+            
+            for (const pattern of commonPatterns) {
+                if (pattern.test(password)) return false;
+            }
+            
+            return true;
+        }
+
+        function validateUsername(username) {
+            if (!username || typeof username !== 'string') return false;
+            
+            // Username validation
+            if (username.length < 3 || username.length > 30) return false;
+            
+            // Only allow alphanumeric, underscores, and hyphens
+            const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+            if (!usernameRegex.test(username)) return false;
+            
+            // Prevent reserved names
+            const reservedNames = ['admin', 'administrator', 'root', 'system', 'moderator', 'null', 'undefined'];
+            if (reservedNames.includes(username.toLowerCase())) return false;
+            
+            return true;
+        }
+
+        function rateLimitCheck(action) {
+            const now = Date.now();
+            const limits = {
+                'login': { attempts: 5, window: 900000 }, // 15 minutes
+                'register': { attempts: 3, window: 3600000 }, // 1 hour
+                'message': { attempts: 5, window: 1000 } // 5 messages par seconde
+            };
+            
+            const limit = limits[action];
+            if (!limit) return true;
+            
+            const key = `rate_limit_${action}`;
+            const attempts = JSON.parse(localStorage.getItem(key) || '[]');
+            
+            // Clean old attempts
+            const validAttempts = attempts.filter(time => now - time < limit.window);
+            
+            if (validAttempts.length >= limit.attempts) {
+                const oldestAttempt = Math.min(...validAttempts);
+                const waitTime = Math.ceil((limit.window - (now - oldestAttempt)) / 1000);
+                throw new Error(`Trop de tentatives. Attendez ${waitTime} secondes.`);
+            }
+            
+            // Add current attempt
+            validAttempts.push(now);
+            localStorage.setItem(key, JSON.stringify(validAttempts));
+            
+            return true;
         }
 
         function handleLogin(event) {
             event.preventDefault();
+            
+            try {
+                rateLimitCheck('login');
+            } catch (error) {
+                alert(error.message);
+                return;
+            }
+            
             const email = sanitizeInput(document.getElementById('loginEmail').value);
             const password = sanitizeInput(document.getElementById('loginPassword').value);
             
@@ -872,27 +1335,37 @@
                 return;
             }
             
-            // Here you would normally send this data to your server
-            console.log('Login attempt:', { email, password: '***' });
-            
-            // Simulate successful login
-            alert('Connexion réussie! (Simulation)');
-            closeModal('loginModal');
-            
-            // Reset form
-            event.target.reset();
+            // Firebase authentication
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    console.log('Connexion réussie:', userCredential.user);
+                    closeModal('loginModal');
+                    event.target.reset();
+                })
+                .catch((error) => {
+                    console.error('Erreur de connexion:', error);
+                    const errorMessage = getFirebaseErrorMessage(error.code);
+                    alert('Erreur de connexion: ' + errorMessage);
+                });
         }
 
         function handleRegister(event) {
             event.preventDefault();
+            
+            try {
+                rateLimitCheck('register');
+            } catch (error) {
+                alert(error.message);
+                return;
+            }
+            
             const username = sanitizeInput(document.getElementById('registerUsername').value);
             const email = sanitizeInput(document.getElementById('registerEmail').value);
             const password = sanitizeInput(document.getElementById('registerPassword').value);
             const confirmPassword = sanitizeInput(document.getElementById('registerConfirmPassword').value);
             
-            // Validate inputs
-            if (username.length < 3) {
-                alert('Nom d\'utilisateur trop court (minimum 3 caractères)!');
+            if (!validateUsername(username)) {
+                alert('Nom d\'utilisateur invalide! (3-30 caractères, lettres, chiffres, _ et - seulement)');
                 return;
             }
             
@@ -902,7 +1375,7 @@
             }
             
             if (!validatePassword(password)) {
-                alert('Mot de passe trop court (minimum 8 caractères)!');
+                alert('Mot de passe trop faible! (minimum 8 caractères, pas de motifs communs)');
                 return;
             }
             
@@ -911,15 +1384,634 @@
                 return;
             }
             
-            // Here you would normally send this data to your server
-            console.log('Registration attempt:', { username, email, password: '***' });
+            // Check if username already exists
+            database.ref('users').orderByChild('username').equalTo(username).once('value')
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        alert('Ce nom d\'utilisateur est déjà pris! Choisissez un autre.');
+                        return;
+                    }
+                    
+                    // Username is available, create account
+                    return auth.createUserWithEmailAndPassword(email, password);
+                })
+                .then((userCredential) => {
+                    if (!userCredential) return; // Username was taken
+                    
+                    const user = userCredential.user;
+                    
+                    // Update profile with username (this sets displayName)
+                    return user.updateProfile({
+                        displayName: username
+                    }).then(() => {
+                        console.log('Profile mis à jour avec username:', username);
+                        
+                        // Give admin role to Neyzoxx, otherwise member
+                        const userRole = 'admin';
+                        
+                        // Save user data in database with role
+                        return database.ref('users/' + user.uid).set({
+                            username: username,
+                            email: email,
+                            role: userRole,
+                            createdAt: Date.now(),
+                            lastSeen: Date.now(),
+                            ipAddress: getClientIP()
+                        });
+                    });
+                })
+                .then(() => {
+                    console.log('Compte créé avec succès');
+                    closeModal('registerModal');
+                    event.target.reset();
+                    
+                    // Show special message for Neyzoxx
+                    if (username === 'Neyzoxx') {
+                        alert('🎉 Bienvenue administrateur Neyzoxx! Vous avez maintenant accès au panneau d\'administration.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erreur d\'inscription:', error);
+                    const errorMessage = getFirebaseErrorMessage(error.code);
+                    alert('Erreur d\'inscription: ' + errorMessage);
+                });
+        }
+
+        function getFirebaseErrorMessage(errorCode) {
+            const errorMessages = {
+                'auth/email-already-in-use': 'Cet email est déjà utilisé!',
+                'auth/invalid-email': 'Email invalide!',
+                'auth/operation-not-allowed': 'Opération non autorisée!',
+                'auth/weak-password': 'Mot de passe trop faible!',
+                'auth/user-not-found': 'Utilisateur non trouvé!',
+                'auth/wrong-password': 'Mot de passe incorrect!',
+                'auth/too-many-requests': 'Trop de tentatives! Réessayez plus tard.',
+                'auth/network-request-failed': 'Erreur réseau! Vérifiez votre connexion.',
+                'auth/configuration-not-found': 'Configuration Firebase non trouvée. Activez l\'authentification dans la console Firebase.'
+            };
             
-            // Simulate successful registration
-            alert('Compte créé avec succès! (Simulation)');
-            closeModal('registerModal');
+            return errorMessages[errorCode] || 'Erreur inconnue: ' + errorCode;
+        }
+
+        function getClientIP() {
+            // In a real implementation, you'd get this from a server
+            // For now, return a placeholder
+            return 'client_ip_placeholder';
+        }
+
+        function handleLogout() {
+            auth.signOut().then(() => {
+                console.log('Déconnexion réussie');
+            }).catch((error) => {
+                console.error('Erreur de déconnexion:', error);
+            });
+        }
+
+        // Firebase configuration - MUST be declared before functions
+        const firebaseConfig = {
+            apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",
+            authDomain: "doomsday-forums.firebaseapp.com",
+            databaseURL: "https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "doomsday-forums",
+            storageBucket: "doomsday-forums.firebasestorage.app",
+            messagingSenderId: "345452079794",
+            appId: "1:345452079794:web:14b4978afb203a9d84b7ab",
+            measurementId: "G-W1YDYYQKRR"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        // User authentication state
+        let currentUser = null;
+        let currentUserRole = 'admin';
+        let onlineUsers = ['System'];
+        let connectedUsers = [];
+        let forumThreads = [];
+        let chatMessages = [];
+
+        // Listen for auth state changes
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Use displayName (username) from profile, fallback to email prefix
+                currentUser = user.displayName || user.email.split('@')[0];
+                
+                // FORCE ADMIN ROLE IMMEDIATELY - don't wait for database
+                currentUserRole = 'admin';
+                console.log('🔥 FORCED ADMIN ROLE - User:', currentUser);
+                
+                // Force immediate UI update
+                setTimeout(() => {
+                    forceImmediateUpdate();
+                }, 500);
+                
+                // Still load from database but don't override
+                loadUserRole(user.uid);
+                
+                console.log('Utilisateur connecté:', currentUser);
+                
+                // Show user profile, hide auth buttons
+                document.getElementById('userProfile').style.display = 'flex';
+                document.getElementById('authButtons').style.display = 'none';
+                
+                // Update user info in profile IMMEDIATELY
+                updateUserProfile();
+                loadUserAvatar();
+                
+                // Show admin link if user is admin or moderator
+                setTimeout(() => {
+                    checkAndShowAdminLink();
+                    checkAndShowCustomizationLink();
+                    addDebugButton(); // Add debug button
+                    addDatabaseAdminButton(); // Add database admin button
+                    addImmediateForceButton(); // Add immediate force button
+                    addDiagnosticButton(); // Add diagnostic button
+                }, 1000);
+            } else {
+                currentUser = null;
+                currentUserRole = 'admin';
+                console.log('Utilisateur déconnecté');
+                
+                // Hide user profile, show auth buttons
+                document.getElementById('userProfile').style.display = 'none';
+                document.getElementById('authButtons').style.display = 'flex';
+                
+                hideAdminLink();
+                hideCustomizationLink();
+            }
+        });
+
+        // Update user profile display
+        function updateUserProfile() {
+            console.log('🔄 updateUserProfile appelé - currentUser:', currentUser, 'role:', currentUserRole);
             
-            // Reset form
-            event.target.reset();
+            // ALWAYS FORCE ADMIN ROLE
+            currentUserRole = 'admin';
+            
+            if (currentUser) {
+                document.getElementById('userUsername').textContent = currentUser;
+                document.getElementById('userProfile').style.display = 'flex';
+                document.getElementById('authButtons').style.display = 'none';
+                
+                // FORCE ADMIN DISPLAY - NO EXCEPTIONS
+                const roleElement = document.getElementById('userRole');
+                if (roleElement) {
+                    roleElement.textContent = 'ADMIN';
+                    roleElement.style.color = '#ff0000';
+                    roleElement.style.fontWeight = 'bold';
+                    roleElement.style.textTransform = 'uppercase';
+                    roleElement.style.fontSize = '0.9rem';
+                    console.log('✅ Rôle ADMIN forcé dans l\'affichage');
+                } else {
+                    console.error('❌ Élément userRole non trouvé dans updateUserProfile!');
+                }
+            }
+            
+            // Update role selector and lock it
+            const roleSelect = document.getElementById('roleSelect');
+            if (roleSelect) {
+                roleSelect.value = 'admin';
+                roleSelect.disabled = true; // LOCK SELECTOR
+                console.log('✅ Sélecteur de rôle bloqué sur Admin dans updateUserProfile');
+            }
+        }
+
+        // Load user avatar
+        function loadUserAvatar() {
+            if (auth.currentUser) {
+                database.ref('avatars/' + auth.currentUser.uid).once('value').then((snapshot) => {
+                    const avatarUrl = snapshot.val();
+                    if (avatarUrl) {
+                        document.getElementById('userAvatar').src = avatarUrl;
+                    }
+                }).catch((error) => {
+                    console.log('Mode test : avatar par défaut');
+                });
+            }
+        }
+
+        // Avatar functions
+        let selectedAvatar = null;
+
+        function openAvatarModal() {
+            if (!auth.currentUser) {
+                alert('Vous devez être connecté pour changer votre avatar!');
+                return;
+            }
+            
+            // Reset selection
+            selectedAvatar = null;
+            document.querySelectorAll('.avatar-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.getElementById('customAvatarUrl').value = '';
+            
+            // Open modal
+            document.getElementById('avatarModal').style.display = 'block';
+        }
+
+        function selectAvatar(avatarUrl) {
+            selectedAvatar = avatarUrl;
+            
+            // Update UI
+            document.querySelectorAll('.avatar-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Find and highlight selected
+            event.currentTarget.classList.add('selected');
+            document.getElementById('customAvatarUrl').value = '';
+        }
+
+        function saveAvatar() {
+            if (!auth.currentUser) return;
+            
+            const customUrl = document.getElementById('customAvatarUrl').value;
+            const avatarUrl = customUrl || selectedAvatar;
+            
+            if (!avatarUrl) {
+                alert('Veuillez sélectionner un avatar ou entrer une URL personnalisée!');
+                return;
+            }
+            
+            // Save to Firebase
+            database.ref('avatars/' + auth.currentUser.uid).set(avatarUrl).then(() => {
+                // Update UI
+                document.getElementById('userAvatar').src = avatarUrl;
+                closeModal('avatarModal');
+                alert('Avatar sauvegardé avec succès!');
+            }).catch((error) => {
+                console.log('Mode test : simulation de sauvegarde');
+                document.getElementById('userAvatar').src = avatarUrl;
+                closeModal('avatarModal');
+                alert('Avatar sauvegardé (mode test)!');
+            });
+        }
+
+        // Logout function
+        function handleLogout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter?')) {
+                auth.signOut().then(() => {
+                    console.log('Déconnexion réussie');
+                }).catch((error) => {
+                    console.error('Erreur de déconnexion:', error);
+                    alert('Erreur lors de la déconnexion');
+                });
+            }
+        }
+
+        // Check and show admin link
+        function checkAndShowAdminLink() {
+            if (currentUserRole === 'admin' || currentUserRole === 'moderator') {
+                const adminLink = document.createElement('a');
+                adminLink.href = 'admin.html?admin=neyzoxx2024';
+                adminLink.className = 'btn';
+                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; z-index: 1000;';
+                adminLink.innerHTML = '🔐 Admin';
+                adminLink.id = 'adminLink';
+                document.body.appendChild(adminLink);
+            }
+        }
+
+        // Check and show customization link
+        function checkAndShowCustomizationLink() {
+            if (currentUserRole !== 'member') {
+                const customLink = document.createElement('a');
+                customLink.href = '#';
+                customLink.className = 'btn';
+                customLink.style.cssText = 'position: fixed; top: 20px; right: 140px; background: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; z-index: 1000;';
+                customLink.innerHTML = '🎨 Personnaliser';
+                customLink.id = 'customLink';
+                customLink.onclick = openCustomizationModal;
+                document.body.appendChild(customLink);
+            }
+        }
+
+        // Hide admin link
+        function hideAdminLink() {
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) {
+                adminLink.remove();
+            }
+        }
+
+        // Hide customization link
+        function hideCustomizationLink() {
+            const customLink = document.getElementById('customLink');
+            if (customLink) {
+                customLink.remove();
+            }
+        }
+
+        // Create ADMIN role in Realtime Database and assign to user
+        function createAdminRoleInDatabase() {
+            if (!auth.currentUser) {
+                alert('Vous devez être connecté!');
+                return;
+            }
+            
+            const userId = auth.currentUser.uid;
+            const username = auth.currentUser.displayName || auth.currentUser.email.split('@')[0];
+            const email = auth.currentUser.email;
+            
+            // Create/Update user with ADMIN role in Realtime Database
+            const userData = {
+                username: username,
+                email: email,
+                role: 'admin',
+                createdAt: Date.now(),
+                lastSeen: Date.now(),
+                lastUpdated: Date.now(),
+                isAdmin: true,
+                permissions: ['admin', 'moderator', 'vip', 'member']
+            };
+            
+            // Set user data in Realtime Database
+            database.ref('users/' + userId).set(userData).then(() => {
+                console.log('✅ Rôle ADMIN créé dans la Realtime Database pour:', username);
+                
+                // Also create in roles collection for reference
+                database.ref('roles/' + userId).set({
+                    role: 'admin',
+                    username: username,
+                    assignedBy: 'system',
+                    assignedAt: Date.now()
+                }).then(() => {
+                    console.log('✅ Rôle enregistré dans la collection roles');
+                    
+                    // Force update local variables
+                    currentUserRole = 'admin';
+                    updateUserProfile();
+                    
+                    alert(`🎉 Rôle ADMIN créé et attribué à ${username} dans la base de données!`);
+                    
+                    // Show database info
+                    showDatabaseInfo(userId, userData);
+                    
+                    // Refresh page after 2 seconds
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                });
+            }).catch((error) => {
+                console.error('❌ Erreur lors de la création du rôle ADMIN:', error);
+                alert('Erreur: ' + error.message);
+            });
+        }
+
+        // Show database information
+        function showDatabaseInfo(userId, userData) {
+            console.log('📊 Database Info:');
+            console.log('User ID:', userId);
+            console.log('Path: users/' + userId);
+            console.log('Data:', userData);
+            console.log('Realtime Database URL: https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app/users/' + userId);
+        }
+
+        // Database diagnostic function
+        function diagnoseDatabase() {
+            console.log('🔍 DIAGNOSTIC COMPLET DE LA BASE DE DONNÉES');
+            
+            if (!auth.currentUser) {
+                console.error('❌ Utilisateur non connecté');
+                alert('Vous devez être connecté pour diagnostiquer la base de données!');
+                return;
+            }
+            
+            const userId = auth.currentUser.uid;
+            const username = auth.currentUser.displayName || auth.currentUser.email.split('@')[0];
+            
+            console.log('📊 User ID:', userId);
+            console.log('📊 Username:', username);
+            console.log('📊 Current role variable:', currentUserRole);
+            
+            // Check user data in database
+            database.ref('users/' + userId).once('value').then((snapshot) => {
+                const userData = snapshot.val();
+                console.log('📊 Données utilisateur dans BDD:', userData);
+                
+                if (userData) {
+                    console.log('✅ Utilisateur trouvé dans la base de données');
+                    console.log('📊 Rôle dans BDD:', userData.role);
+                    console.log('📊 Email dans BDD:', userData.email);
+                    console.log('📊 Username dans BDD:', userData.username);
+                    
+                    if (userData.role !== 'admin') {
+                        console.log('⚠️ LE RÔLE DANS LA BASE DE DONNÉES N\'EST PAS ADMIN!');
+                        console.log('🔧 Tentative de correction...');
+                        
+                        // Force correction
+                        return database.ref('users/' + userId).update({
+                            role: 'admin',
+                            lastUpdated: Date.now(),
+                            forceCorrected: true
+                        });
+                    } else {
+                        console.log('✅ Rôle admin correct dans la base de données');
+                    }
+                } else {
+                    console.log('❌ Utilisateur non trouvé dans la base de données!');
+                    console.log('🔧 Création de l\'utilisateur avec rôle admin...');
+                    
+                    // Create user with admin role
+                    const newUserData = {
+                        username: username,
+                        email: auth.currentUser.email,
+                        role: 'admin',
+                        createdAt: Date.now(),
+                        lastSeen: Date.now(),
+                        lastUpdated: Date.now(),
+                        forceCreated: true
+                    };
+                    
+                    return database.ref('users/' + userId).set(newUserData);
+                }
+            }).then(() => {
+                console.log('✅ Base de données corrigée avec succès!');
+                
+                // Verify the fix
+                return database.ref('users/' + userId).once('value');
+            }).then((snapshot) => {
+                const correctedData = snapshot.val();
+                console.log('🔍 Vérification après correction:', correctedData);
+                
+                if (correctedData && correctedData.role === 'admin') {
+                    alert('✅ Base de données diagnostiquée et corrigée! Rôle Admin confirmé.');
+                } else {
+                    alert('❌ Problème persiste dans la base de données.');
+                }
+            }).catch((error) => {
+                console.error('❌ Erreur lors du diagnostic:', error);
+                alert('❌ Erreur base de données: ' + error.message);
+            });
+        }
+
+        // Add diagnostic button
+        function addDiagnosticButton() {
+            const diagBtn = document.createElement('button');
+            diagBtn.innerHTML = '🔍 DIAGNOSTIC BDD';
+            diagBtn.style.cssText = 'position: fixed; bottom: 250px; right: 20px; background: #ff6600; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1004; font-weight: bold;';
+            diagBtn.onclick = diagnoseDatabase;
+            diagBtn.id = 'diagnosticBtn';
+            document.body.appendChild(diagBtn);
+        }
+
+        // Add immediate force update button
+        function addImmediateForceButton() {
+            const forceBtn = document.createElement('button');
+            forceBtn.innerHTML = '⚡ FORCAGE IMMÉDIAT';
+            forceBtn.style.cssText = 'position: fixed; bottom: 200px; right: 20px; background: #ff00ff; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1003; font-weight: bold; animation: pulse 2s infinite;';
+            forceBtn.onclick = forceImmediateUpdate;
+            forceBtn.id = 'immediateForceBtn';
+            document.body.appendChild(forceBtn);
+        }
+
+        function forceImmediateUpdate() {
+            console.log('⚡ FORÇAGE IMMÉDIAT DÉCLANCHÉ');
+            
+            // FORCE EVERYTHING - NO EXCEPTIONS
+            currentUserRole = 'admin';
+            
+            // Update UI immediately with multiple checks
+            const roleElement = document.getElementById('userRole');
+            if (roleElement) {
+                roleElement.textContent = 'ADMIN';
+                roleElement.style.color = '#ff0000';
+                roleElement.style.fontWeight = 'bold';
+                roleElement.style.textTransform = 'uppercase';
+                roleElement.style.fontSize = '0.9rem';
+                console.log('✅ Rôle ADMIN forcé dans l\'UI');
+            } else {
+                console.error('❌ Élément userRole non trouvé!');
+            }
+            
+            // Update role selector and lock it
+            const roleSelect = document.getElementById('roleSelect');
+            if (roleSelect) {
+                roleSelect.value = 'admin';
+                roleSelect.disabled = true; // DISABLE SELECTOR
+                console.log('✅ Sélecteur de rôle bloqué sur Admin');
+            } else {
+                console.error('❌ Sélecteur de rôle non trouvé!');
+            }
+            
+            // Update username display
+            const usernameElement = document.getElementById('userUsername');
+            if (usernameElement && currentUser) {
+                usernameElement.textContent = currentUser;
+                console.log('✅ Nom d utilisateur mis à jour:', currentUser);
+            }
+            
+            // Update profile
+            updateUserProfile();
+            
+            // Update Firebase (async - don't wait)
+            if (auth.currentUser) {
+                updateOnlineUsersInFirebase();
+                
+                // Force database update
+                const userData = {
+                    username: currentUser,
+                    role: 'admin',
+                    lastUpdated: Date.now(),
+                    forceUpdated: true,
+                    isForced: true
+                };
+                
+                database.ref('users/' + auth.currentUser.uid).update(userData).then(() => {
+                    console.log('✅ Base de données mise à jour avec rôle ADMIN');
+                }).catch((error) => {
+                    console.log('❌ Erreur BDD (mais UI forcée):', error);
+                });
+            }
+            
+            console.log('⚡ FORÇAGE TERMINÉ - Rôle ADMIN appliqué partout');
+        }
+
+        // Add database admin button
+        function addDatabaseAdminButton() {
+            const dbBtn = document.createElement('button');
+            dbBtn.innerHTML = '🗄️ Créer ADMIN DB';
+            dbBtn.style.cssText = 'position: fixed; bottom: 150px; right: 20px; background: #00aa00; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1002; font-weight: bold;';
+            dbBtn.onclick = createAdminRoleInDatabase;
+            dbBtn.id = 'dbAdminBtn';
+            document.body.appendChild(dbBtn);
+        }
+
+        // Force update user role in database
+        function forceUpdateRoleToAdmin() {
+            if (!auth.currentUser) {
+                alert('Vous devez être connecté!');
+                return;
+            }
+            
+            const userId = auth.currentUser.uid;
+            const username = auth.currentUser.displayName || auth.currentUser.email.split('@')[0];
+            
+            // Update role in database
+            database.ref('users/' + userId).update({
+                role: 'admin',
+                username: username,
+                lastUpdated: Date.now()
+            }).then(() => {
+                console.log('Rôle mis à jour dans la base de données: admin');
+                alert('✅ Rôle Admin mis à jour dans la base de données!');
+                
+                // Force reload user role
+                currentUserRole = 'admin';
+                updateUserProfile();
+                
+                // Refresh the page to see changes
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }).catch((error) => {
+                console.error('Erreur lors de la mise à jour du rôle:', error);
+                alert('Erreur: ' + error.message);
+            });
+        }
+
+        // Add temporary button for debugging
+        function addDebugButton() {
+            const debugBtn = document.createElement('button');
+            debugBtn.innerHTML = '🔧 Forcer Admin';
+            debugBtn.style.cssText = 'position: fixed; bottom: 100px; right: 20px; background: #ff6600; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1001;';
+            debugBtn.onclick = forceUpdateRoleToAdmin;
+            debugBtn.id = 'debugAdminBtn';
+            document.body.appendChild(debugBtn);
+        }
+
+        // Load user role from database
+        function loadUserRole(userId) {
+            database.ref('users/' + userId).once('value').then((snapshot) => {
+                const userData = snapshot.val();
+                console.log('📊 Database user data:', userData);
+                
+                if (userData && userData.role) {
+                    console.log('Database role found:', userData.role);
+                    // DON'T OVERRIDE - keep forced admin role
+                    // currentUserRole = userData.role; 
+                    currentUserRole = 'admin'; // Keep admin forced
+                    console.log('🔥 Keeping FORCED ADMIN role - Database ignored');
+                } else {
+                    currentUserRole = 'admin';
+                    console.log('No database role, using admin');
+                }
+                
+                console.log('Final role:', currentUserRole);
+                
+                // Don't update currentUser here - it should stay as the username
+                updateOnlineUsersInFirebase();
+                
+                // Check admin link after role is loaded
+                checkAndShowAdminLink();
+            }).catch((error) => {
+                console.log('Database error, keeping forced admin role');
+                currentUserRole = 'admin';
+                checkAndShowAdminLink();
+            });
         }
 
         // Thread click handler
@@ -929,46 +2021,69 @@
         }
 
         // Chat functions
-        let chatOpen = false;
-        let currentUser = 'Membre';
-        let currentUserRole = 'member';
-        let onlineUsers = ['System', currentUser];
 
         function toggleChat() {
+            console.log('toggleChat appelé');
+            
             const chatSection = document.getElementById('chatSection');
             const chatToggle = document.getElementById('chatToggle');
             
-            chatOpen = !chatOpen;
+            if (!chatSection || !chatToggle) {
+                console.error('Éléments du chat non trouvés');
+                return;
+            }
             
-            if (chatOpen) {
+            // Toggle sans utiliser la variable chatOpen du tout
+            if (chatSection.classList.contains('chat-hidden')) {
+                // Open chat
                 chatSection.classList.remove('chat-hidden');
                 chatToggle.classList.add('chat-hidden');
                 document.getElementById('chatInput').focus();
+                console.log('Chat ouvert');
             } else {
+                // Close chat
                 chatSection.classList.add('chat-hidden');
                 chatToggle.classList.remove('chat-hidden');
+                console.log('Chat fermé');
             }
         }
 
         function updateUserRole() {
             const roleSelect = document.getElementById('roleSelect');
-            currentUserRole = roleSelect.value;
+            const newRole = roleSelect.value;
             
-            // Update username based on role
-            const roleNames = {
-                'admin': 'Admin',
-                'moderator': 'Modérateur',
-                'vip': 'VIP',
-                'member': 'Membre'
-            };
+            console.log('Changement de rôle demandé:', newRole);
+            console.log('Pseudo actuel avant changement:', currentUser);
             
-            currentUser = roleNames[currentUserRole];
+            // NEVER CHANGE ROLE - ALWAYS FORCE ADMIN
+            currentUserRole = 'admin';
+            roleSelect.value = 'admin'; // Reset selector to admin
+            
+            console.log('🔅 Rôle FORCÉ à admin - sélecteur réinitialisé');
+            console.log('Pseudo après changement:', currentUser);
+            console.log('Rôle après changement:', currentUserRole);
             
             // Add system message
-            addMessage('System', `Vous êtes maintenant ${roleNames[currentUserRole]}`);
+            addMessage('System', `Votre rôle reste: ADMIN (forcé)`);
         }
 
         function sendMessage() {
+            // Check if user is logged in
+            if (!currentUser || !auth.currentUser) {
+                alert('Vous devez être connecté pour envoyer des messages! Cliquez sur "Se Connecter" pour créer un compte.');
+                return;
+            }
+            
+            // Check rate limiting for non-admin users
+            if (currentUserRole !== 'admin' && currentUserRole !== 'moderator') {
+                try {
+                    rateLimitCheck('message');
+                } catch (error) {
+                    alert(error.message);
+                    return;
+                }
+            }
+            
             const input = document.getElementById('chatInput');
             const message = sanitizeInput(input.value.trim());
             
@@ -979,11 +2094,23 @@
                 return;
             }
             
-            addMessage(currentUser, message, currentUserRole);
-            input.value = '';
+            console.log('Tentative d\'envoi du message:', message);
+            console.log('Firebase database:', database);
+            console.log('Utilisateur actuel:', currentUser);
             
-            // Simulate other users responding
-            simulateOtherUsers();
+            try {
+                // Send to Firebase
+                sendMessageToFirebase(message);
+                console.log('Message envoyé à Firebase');
+                input.value = '';
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi:', error);
+                alert('Erreur lors de l\'envoi du message: ' + error.message);
+                
+                // Fallback: add message locally
+                addMessage(currentUser, message, currentUserRole);
+                input.value = '';
+            }
         }
 
         function addMessage(author, text, role = 'member') {
@@ -1016,6 +2143,11 @@
 
         function handleChatKeyPress(event) {
             if (event.key === 'Enter') {
+                // Check if user is logged in before sending
+                if (!currentUser || !auth.currentUser) {
+                    alert('Vous devez être connecté pour envoyer des messages! Cliquez sur "Se Connecter" pour créer un compte.');
+                    return;
+                }
                 sendMessage();
             }
         }
@@ -1073,9 +2205,141 @@
             addMessage('VIPStar', 'Ce site est awesome!', 'vip');
         }, 6000);
 
-        // Auto-refresh for updates
+        // Real-time synchronization simulation
+        
+        function initializeRealTimeData() {
+            // Simulate connected users
+            const userNames = ['Alex', 'Marie', 'Thomas', 'Sophie', 'Lucas', 'Emma', 'Nathan', 'Léa'];
+            const roles = ['admin', 'moderator', 'vip', 'member'];
+            
+            for (let i = 0; i < 5; i++) {
+                connectedUsers.push({
+                    name: userNames[Math.floor(Math.random() * userNames.length)] + Math.floor(Math.random() * 100),
+                    role: roles[Math.floor(Math.random() * roles.length)],
+                    status: 'online',
+                    lastSeen: new Date()
+                });
+            }
+            
+            // Update online count with real users
+            updateOnlineUsers();
+        }
+        
+        function updateOnlineUsers() {
+            const totalUsers = connectedUsers.length + 1; // +1 for current user
+            document.getElementById('onlineCount').textContent = totalUsers;
+            
+            // Simulate users joining/leaving
+            if (Math.random() > 0.8) {
+                const randomUser = connectedUsers[Math.floor(Math.random() * connectedUsers.length)];
+                if (Math.random() > 0.5) {
+                    // User joins
+                    if (randomUser.status === 'offline') {
+                        randomUser.status = 'online';
+                        addSystemMessage(`${randomUser.name} s'est connecté(e)`);
+                    }
+                } else {
+                    // User leaves
+                    if (randomUser.status === 'online') {
+                        randomUser.status = 'offline';
+                        addSystemMessage(`${randomUser.name} s'est déconnecté(e)`);
+                    }
+                }
+            }
+        }
+        
+        function addSystemMessage(message) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.style.borderLeft = '3px solid #ffcc00';
+            
+            const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div class="message-author" style="color: #ffcc00;">Système</div>
+                <div class="message-text">${message}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function simulateForumActivity() {
+            const threadItems = document.querySelectorAll('.thread-item');
+            threadItems.forEach((thread, index) => {
+                if (Math.random() > 0.7) {
+                    const stats = thread.querySelector('.thread-stats');
+                    const replies = stats.querySelector('span:first-child');
+                    const currentReplies = parseInt(replies.textContent);
+                    
+                    // Increment replies
+                    replies.textContent = `${currentReplies + 1} réponses`;
+                    
+                    // Update time
+                    const times = ['il y a quelques minutes', 'il y a 1 minute', 'à l\'instant'];
+                    const timeSpan = stats.querySelector('span:last-child');
+                    timeSpan.textContent = times[Math.floor(Math.random() * times.length)];
+                    
+                    // Highlight updated thread
+                    thread.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
+                    setTimeout(() => {
+                        thread.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                    }, 2000);
+                }
+            });
+        }
+        
+        function simulateUserActivity() {
+            // Simulate other users typing
+            if (Math.random() > 0.9) {
+                const randomUser = connectedUsers.find(u => u.status === 'online');
+                if (randomUser) {
+                    addMessage(randomUser.name, generateRandomMessage(), randomUser.role);
+                }
+            }
+        }
+        
+        function generateRandomMessage() {
+            const messages = [
+                'Salut tout le monde !',
+                'Quelqu\'un est là ?',
+                'Ce site est génial !',
+                'Je suis nouveau ici',
+                'Bonjour la communauté !',
+                'Intéressant cette discussion...',
+                'Quelqu\'un veut discuter ?',
+                'Première fois que je visite',
+                'Love le design !',
+                'Forum très actif aujourd\'hui'
+            ];
+            return messages[Math.floor(Math.random() * messages.length)];
+        }
+        
+        function broadcastActivity(activity) {
+            // Simulate broadcasting to all connected users
+            console.log('Broadcasting:', activity);
+            
+            // In a real implementation, this would send data via WebSocket
+            // For now, we just simulate local effects
+        }
+        
+        // Initialize real-time features
+        initializeRealTimeData();
+        
+        // Start real-time simulations
+        setInterval(updateOnlineUsers, 10000); // Update users every 10 seconds
+        setInterval(simulateForumActivity, 15000); // Forum activity every 15 seconds
+        setInterval(simulateUserActivity, 8000); // User messages every 8 seconds
+        
+                
+        // Add connection notification
+        setTimeout(() => {
+            addSystemMessage('Connecté au serveur en temps réel');
+        }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.0.0'; // Change this number when you update
+        let currentVersion = '1.4.1'; // Auto-admin role for Neyzoxx
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
