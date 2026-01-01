@@ -35,12 +35,36 @@
             margin-bottom: 10px;
         }
 
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .nav-link {
+            color: #ff0000;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #ff0000;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        .nav-link:hover {
+            background: #ff0000;
+            color: white;
+            transform: translateY(-2px);
+        }
+
         .back-link {
             color: #ff0000;
             text-decoration: none;
             font-size: 1.1rem;
             display: inline-block;
-            margin-bottom: 30px;
             transition: color 0.3s;
         }
 
@@ -133,6 +157,28 @@
             padding: 5px 10px;
             border-radius: 5px;
             display: inline-block;
+            margin: 10px 0;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
         }
 
         .description-section {
@@ -318,17 +364,163 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 0;
+            }
+
+            .header {
+                margin-bottom: 20px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .back-link {
+                font-size: 1rem;
+                text-align: center;
+            }
+
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+
             .profile-header {
                 flex-direction: column;
                 text-align: center;
+                gap: 20px;
             }
 
             .avatar-container {
                 margin: 0 auto;
             }
 
+            .avatar {
+                width: 120px;
+                height: 120px;
+            }
+
+            .edit-avatar-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+
+            .username {
+                font-size: 1.5rem;
+            }
+
+            .role-badge {
+                font-size: 0.8rem;
+                padding: 4px 12px;
+            }
+
+            .user-id {
+                font-size: 0.8rem;
+                padding: 4px 8px;
+            }
+
+            .logout-btn {
+                font-size: 0.8rem;
+                padding: 8px 16px;
+                margin-top: 10px;
+            }
+
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .description-text {
+                font-size: 0.9rem;
+                padding: 12px;
+                min-height: 80px;
+            }
+
+            .save-btn {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+                padding: 20px;
+            }
+
+            .avatar-options {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .avatar-option {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .avatar {
+                width: 100px;
+                height: 100px;
+            }
+
+            .edit-avatar-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+                top: 0;
+                right: 0;
+            }
+
+            .username {
+                font-size: 1.3rem;
+            }
+
+            .profile-card {
+                padding: 15px;
+            }
+
+            .avatar-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .avatar-option {
+                width: 50px;
+                height: 50px;
             }
         }
     </style>
@@ -336,7 +528,10 @@
 <body>
     <div class="container">
         <div class="header">
-            <a href="index.html" class="back-link">← Retour au forum</a>
+            <div class="nav-links">
+                <a href="index.html" class="back-link">← Retour au forum</a>
+                <a href="messages.html" class="nav-link">✉️ Messages Privés</a>
+            </div>
             <h1>Mon Profil</h1>
         </div>
 
@@ -350,6 +545,7 @@
                     <div class="username" id="profileUsername">Chargement...</div>
                     <div class="role-badge" id="profileRole">Admin</div>
                     <div class="user-id" id="profileUserId">ID: Chargement...</div>
+                    <button class="logout-btn" onclick="handleLogout()">🚪 Déconnexion</button>
                 </div>
             </div>
 
@@ -387,8 +583,8 @@
             <h2 style="color: #ff0000; margin-bottom: 20px;">Changer d'avatar</h2>
             
             <div class="form-group">
-                <label>URL de l'image personnalisée</label>
-                <input type="url" id="customAvatarUrl" placeholder="https://example.com/avatar.jpg">
+                <label>📁 Choisir depuis votre appareil</label>
+                <input type="file" id="avatarFileInput" accept="image/*" onchange="handleFileSelect(event)" style="width: 100%; padding: 10px; background: #222; border: 1px solid #444; border-radius: 5px; color: white;">
             </div>
 
             <div class="form-group">
@@ -427,6 +623,7 @@
 
         let currentUser = null;
         let selectedAvatar = null;
+        let uploadedFileData = null;
 
         // Predefined avatars
         const predefinedAvatars = [
@@ -453,9 +650,31 @@
         // Select avatar
         function selectAvatar(avatar, element) {
             selectedAvatar = avatar;
+            uploadedFileData = null; // Clear uploaded file when selecting predefined
             document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
-            document.getElementById('customAvatarUrl').value = '';
+            document.getElementById('avatarFileInput').value = ''; // Clear file input
+        }
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    alert('L\'image est trop grande. Veuillez choisir une image de moins de 5MB.');
+                    event.target.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedFileData = e.target.result;
+                    selectedAvatar = null; // Clear selected predefined avatar
+                    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+                    console.log('✅ File uploaded successfully');
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         // Open avatar modal
@@ -476,11 +695,10 @@
         function saveAvatar() {
             if (!auth.currentUser) return;
             
-            const customUrl = document.getElementById('customAvatarUrl').value;
-            const avatarUrl = customUrl || selectedAvatar;
+            const avatarUrl = uploadedFileData || selectedAvatar;
             
             if (!avatarUrl) {
-                alert('Veuillez choisir un avatar ou entrer une URL personnalisée!');
+                alert('Veuillez choisir un avatar ou uploader une image!');
                 return;
             }
             
@@ -493,6 +711,17 @@
             }).catch((error) => {
                 console.error('Erreur lors de la sauvegarde de l\'avatar:', error);
                 alert('Erreur lors de la sauvegarde de l\'avatar!');
+            });
+        }
+
+        // Logout function
+        function handleLogout() {
+            auth.signOut().then(() => {
+                console.log('✅ User logged out successfully');
+                window.location.href = 'index.html';
+            }).catch((error) => {
+                console.error('❌ Logout error:', error);
+                alert('Erreur lors de la déconnexion');
             });
         }
 
