@@ -1048,10 +1048,12 @@
                 .then((userCredential) => {
                     const user = userCredential.user;
                     
-                    // Update profile with username
+                    // Update profile with username (this sets displayName)
                     return user.updateProfile({
                         displayName: username
                     }).then(() => {
+                        console.log('Profile mis à jour avec username:', username);
+                        
                         // Save user data in database with default role
                         return database.ref('users/' + user.uid).set({
                             username: username,
@@ -1109,6 +1111,7 @@
         // Listen for auth state changes
         auth.onAuthStateChanged((user) => {
             if (user) {
+                // Use displayName (username) from profile, fallback to email prefix
                 currentUser = user.displayName || user.email.split('@')[0];
                 loadUserRole(user.uid);
                 console.log('Utilisateur connecté:', currentUser);
@@ -1435,7 +1438,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.2.0'; // Added Firebase Authentication
+        let currentVersion = '1.2.1'; // Fixed username display priority
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
