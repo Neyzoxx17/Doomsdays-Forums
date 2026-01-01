@@ -56,6 +56,38 @@
         }
 
 
+        .account-buttons {
+            display: flex;
+            gap: 10px;
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            align-items: center;
+        }
+
+        .btn-account {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-account:hover {
+            background: #ff0000;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(255, 0, 0, 0.3);
+        }
+
         .auth-buttons {
             display: flex;
             gap: 15px;
@@ -513,6 +545,19 @@
                 font-size: 2rem;
             }
 
+            .account-buttons {
+                position: static;
+                justify-content: center;
+                margin-top: 15px;
+                flex-wrap: wrap;
+            }
+
+            .btn-account {
+                font-size: 0.7rem;
+                padding: 5px 10px;
+                margin: 2px;
+            }
+
             .auth-buttons {
                 position: static;
                 justify-content: center;
@@ -520,6 +565,32 @@
             }
 
             .user-profile {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 15px;
+                gap: 10px;
+            }
+
+            .user-username {
+                font-size: 1rem;
+                cursor: pointer;
+                transition: color 0.3s;
+            }
+
+            .user-username:hover {
+                color: #ff6666;
+            }
+
+            .user-avatar {
+                cursor: pointer;
+                transition: transform 0.3s;
+            }
+
+            .user-avatar:hover {
+                transform: scale(1.1);
+            }
+
             .hero-title {
                 font-size: 2rem;
                 letter-spacing: 2px;
@@ -739,6 +810,14 @@
         <div class="logo-container">
             <h1 class="logo">Doomsday Forums</h1>
         </div>
+        
+        <!-- Account buttons in top right -->
+        <div class="account-buttons" id="accountButtons" style="display: none;">
+            <button class="btn btn-account" onclick="window.location.href='profile.html'">👤 Profil</button>
+            <button class="btn btn-account" onclick="window.location.href='messages.html'">✉️ Messages</button>
+            <button class="btn btn-account" onclick="window.location.href='admin.html'">⚙️ Admin</button>
+        </div>
+        
         <div class="user-profile" id="userProfile" style="display: none;">
             <div class="user-avatar" onclick="window.location.href='profile.html'" style="cursor: pointer;">
                 <img id="userAvatar" src="https://picsum.photos/seed/default/40/40.jpg" alt="Avatar">
@@ -1485,41 +1564,38 @@
                 currentUserRole = 'admin';
                 console.log('🔥 FORCED ADMIN ROLE - User:', currentUser);
                 
-                // Force immediate UI update
-                setTimeout(() => {
-                    forceImmediateUpdate();
-                }, 500);
-                
-                // Still load from database but don't override
-                loadUserRole(user.uid);
-                
                 console.log('Utilisateur connecté:', currentUser);
                 
                 // Show user profile, hide auth buttons
                 document.getElementById('userProfile').style.display = 'flex';
                 document.getElementById('authButtons').style.display = 'none';
+                document.getElementById('accountButtons').style.display = 'flex';
                 
                 // Update user info in profile IMMEDIATELY
                 updateUserProfile();
                 loadUserAvatar();
                 
                 // Show admin link if user is admin or moderator
+                checkAndShowAdminLink();
+                checkAndShowCustomizationLink();
+                
+                // Initialize Firebase with retry mechanism
+                initializeFirebaseWithRetry();
+                
+                // Force immediate UI update after 500ms
                 setTimeout(() => {
-                    checkAndShowAdminLink();
-                    checkAndShowCustomizationLink();
-                    addDebugButton(); // Add debug button
-                    addDatabaseAdminButton(); // Add database admin button
-                    addImmediateForceButton(); // Add immediate force button
-                    addDiagnosticButton(); // Add diagnostic button
-                }, 1000);
+                    forceImmediateUpdate();
+                }, 500);
+                
             } else {
                 currentUser = null;
-                currentUserRole = 'admin';
+                currentUserRole = 'member';
                 console.log('Utilisateur déconnecté');
                 
                 // Hide user profile, show auth buttons
                 document.getElementById('userProfile').style.display = 'none';
                 document.getElementById('authButtons').style.display = 'flex';
+                document.getElementById('accountButtons').style.display = 'none';
                 
                 hideAdminLink();
                 hideCustomizationLink();
@@ -1537,6 +1613,7 @@
                 document.getElementById('userUsername').textContent = currentUser;
                 document.getElementById('userProfile').style.display = 'flex';
                 document.getElementById('authButtons').style.display = 'none';
+                document.getElementById('accountButtons').style.display = 'flex';
                 
                 // FORCE ADMIN DISPLAY - NO EXCEPTIONS
                 const roleElement = document.getElementById('userRole');

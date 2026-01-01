@@ -137,6 +137,89 @@
             margin-bottom: 10px;
         }
 
+        .username-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .username-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff0000;
+        }
+
+        .edit-username-btn {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .edit-username-btn:hover {
+            background: #ff0000;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .username-edit {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .username-input {
+            flex: 1;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .username-input:focus {
+            outline: none;
+            border-color: #ff0000;
+        }
+
+        .save-username-btn, .cancel-username-btn {
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .save-username-btn {
+            background: #00aa00;
+            color: white;
+        }
+
+        .save-username-btn:hover {
+            background: #008800;
+        }
+
+        .cancel-username-btn {
+            background: #aa0000;
+            color: white;
+        }
+
+        .cancel-username-btn:hover {
+            background: #880000;
+        }
+
         .role-badge {
             display: inline-block;
             background: #ff0000;
@@ -542,7 +625,15 @@
                     <button class="edit-avatar-btn" onclick="openAvatarModal()">✏️</button>
                 </div>
                 <div class="profile-info">
-                    <div class="username" id="profileUsername">Chargement...</div>
+                    <div class="username-section">
+                        <div class="username-display" id="profileUsername">Chargement...</div>
+                        <button class="edit-username-btn" onclick="toggleUsernameEdit()">✏️</button>
+                    </div>
+                    <div class="username-edit" id="usernameEdit" style="display: none;">
+                        <input type="text" id="usernameInput" class="username-input" placeholder="Nouveau pseudo">
+                        <button class="save-username-btn" onclick="saveUsername()">💾</button>
+                        <button class="cancel-username-btn" onclick="cancelUsernameEdit()">❌</button>
+                    </div>
                     <div class="role-badge" id="profileRole">Admin</div>
                     <div class="user-id" id="profileUserId">ID: Chargement...</div>
                     <button class="logout-btn" onclick="handleLogout()">🚪 Déconnexion</button>
@@ -712,6 +803,60 @@
                 console.error('Erreur lors de la sauvegarde de l\'avatar:', error);
                 alert('Erreur lors de la sauvegarde de l\'avatar!');
             });
+        }
+
+        // Username editing functions
+        function toggleUsernameEdit() {
+            const displaySection = document.querySelector('.username-section');
+            const editSection = document.getElementById('usernameEdit');
+            const currentUsername = document.getElementById('profileUsername').textContent;
+            
+            displaySection.style.display = 'none';
+            editSection.style.display = 'flex';
+            document.getElementById('usernameInput').value = currentUsername;
+            document.getElementById('usernameInput').focus();
+        }
+
+        function saveUsername() {
+            const newUsername = document.getElementById('usernameInput').value.trim();
+            
+            if (!newUsername) {
+                alert('Le pseudo ne peut pas être vide!');
+                return;
+            }
+            
+            if (newUsername.length < 3) {
+                alert('Le pseudo doit contenir au moins 3 caractères!');
+                return;
+            }
+            
+            // Update Firebase
+            database.ref('users/' + auth.currentUser.uid).update({
+                username: newUsername,
+                lastUpdated: Date.now()
+            }).then(() => {
+                // Update UI
+                document.getElementById('profileUsername').textContent = newUsername;
+                currentUser = newUsername;
+                
+                // Reset edit mode
+                cancelUsernameEdit();
+                
+                showSuccess('Pseudo mis à jour avec succès!');
+                console.log('✅ Username updated to:', newUsername);
+            }).catch((error) => {
+                console.error('❌ Error updating username:', error);
+                alert('Erreur lors de la mise à jour du pseudo');
+            });
+        }
+
+        function cancelUsernameEdit() {
+            const displaySection = document.querySelector('.username-section');
+            const editSection = document.getElementById('usernameEdit');
+            
+            displaySection.style.display = 'flex';
+            editSection.style.display = 'none';
+            document.getElementById('usernameInput').value = '';
         }
 
         // Logout function
