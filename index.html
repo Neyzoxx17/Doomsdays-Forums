@@ -1188,6 +1188,12 @@
         }
 
         function sendMessage() {
+            // Check if user is logged in
+            if (!currentUser || !auth.currentUser) {
+                alert('Vous devez être connecté pour envoyer des messages! Cliquez sur "Se Connecter" pour créer un compte.');
+                return;
+            }
+            
             const input = document.getElementById('chatInput');
             const message = sanitizeInput(input.value.trim());
             
@@ -1247,6 +1253,11 @@
 
         function handleChatKeyPress(event) {
             if (event.key === 'Enter') {
+                // Check if user is logged in before sending
+                if (!currentUser || !auth.currentUser) {
+                    alert('Vous devez être connecté pour envoyer des messages! Cliquez sur "Se Connecter" pour créer un compte.');
+                    return;
+                }
                 sendMessage();
             }
         }
@@ -1438,7 +1449,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.2.1'; // Fixed username display priority
+        let currentVersion = '1.2.2'; // Added login requirement for chat
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
