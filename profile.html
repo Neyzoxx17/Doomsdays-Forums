@@ -411,7 +411,7 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDk8cX2sXhHl1Q7nKQ2vR3m4t5u6v7w8x9",
+            apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",
             authDomain: "doomsday-forums.firebaseapp.com",
             databaseURL: "https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "doomsday-forums",
@@ -527,63 +527,111 @@
 
         // Load profile data
         function loadProfileData() {
-            if (!auth.currentUser) return;
+            console.log('🔄 Starting to load profile data...');
+            
+            if (!auth.currentUser) {
+                console.error('❌ No current user found!');
+                return;
+            }
             
             const userId = auth.currentUser.uid;
             const username = auth.currentUser.displayName || auth.currentUser.email.split('@')[0];
+            
+            console.log('📊 User ID:', userId);
+            console.log('📊 Username:', username);
             
             // Update basic info
             document.getElementById('profileUsername').textContent = username;
             document.getElementById('profileUserId').textContent = `ID: ${userId}`;
             document.getElementById('profileRole').textContent = 'ADMIN';
             
+            console.log('✅ Basic info updated in UI');
+            
             // Load avatar
+            console.log('🖼️ Loading avatar...');
             database.ref('avatars/' + userId).once('value').then((snapshot) => {
                 const avatarUrl = snapshot.val();
+                console.log('🖼️ Avatar data:', avatarUrl);
                 if (avatarUrl) {
                     document.getElementById('profileAvatar').src = avatarUrl;
+                    console.log('✅ Avatar loaded and displayed');
+                } else {
+                    console.log('ℹ️ No custom avatar found, using default');
                 }
+            }).catch((error) => {
+                console.error('❌ Error loading avatar:', error);
             });
             
             // Load profile data
+            console.log('📝 Loading profile data...');
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
+                console.log('📊 User data from database:', userData);
+                
                 if (userData) {
                     if (userData.description) {
                         document.getElementById('profileDescription').value = userData.description;
+                        console.log('✅ Description loaded');
                     }
                     
                     // Load stats
                     if (userData.createdAt) {
                         const joinDate = new Date(userData.createdAt).toLocaleDateString('fr-FR');
                         document.getElementById('joinDate').textContent = joinDate;
+                        console.log('✅ Join date loaded:', joinDate);
                     }
                     
                     if (userData.lastSeen) {
                         const lastSeen = new Date(userData.lastSeen).toLocaleDateString('fr-FR');
                         document.getElementById('lastSeen').textContent = lastSeen;
+                        console.log('✅ Last seen loaded:', lastSeen);
                     }
+                } else {
+                    console.log('ℹ️ No user data found in database');
                 }
+            }).catch((error) => {
+                console.error('❌ Error loading profile data:', error);
             });
             
             // Load message count
+            console.log('💬 Loading message count...');
             database.ref('messages').orderByChild('user').equalTo(username).once('value').then((snapshot) => {
                 const messages = snapshot.val();
                 const messageCount = messages ? Object.keys(messages).length : 0;
                 document.getElementById('messageCount').textContent = messageCount;
+                console.log('✅ Message count loaded:', messageCount);
+            }).catch((error) => {
+                console.error('❌ Error loading message count:', error);
             });
+            
+            console.log('🏁 Profile data loading initiated');
         }
 
         // Check auth state
         auth.onAuthStateChanged((user) => {
+            console.log('🔍 Auth state changed in profile page:', user);
+            
             if (user) {
                 currentUser = user.displayName || user.email.split('@')[0];
+                console.log('✅ User authenticated, loading profile data for:', currentUser);
                 loadProfileData();
             } else {
+                console.log('❌ User not authenticated, redirecting to login...');
                 // Redirect to login if not authenticated
+                alert('Vous devez être connecté pour accéder à votre profil!');
                 window.location.href = 'index.html';
             }
         });
+
+        // Add error handling for Firebase initialization
+        try {
+            console.log('🔥 Initializing Firebase for profile page...');
+            // Firebase already initialized above
+            console.log('✅ Firebase initialized successfully');
+        } catch (error) {
+            console.error('❌ Firebase initialization error:', error);
+            alert('Erreur de connexion à la base de données. Veuillez réessayer plus tard.');
+        }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
