@@ -1171,11 +1171,14 @@
                     }).then(() => {
                         console.log('Profile mis à jour avec username:', username);
                         
-                        // Save user data in database with default role
+                        // Give admin role to Neyzoxx, otherwise member
+                        const userRole = (username === 'Neyzoxx') ? 'admin' : 'member';
+                        
+                        // Save user data in database with role
                         return database.ref('users/' + user.uid).set({
                             username: username,
                             email: email,
-                            role: 'member',
+                            role: userRole,
                             createdAt: Date.now(),
                             lastSeen: Date.now(),
                             ipAddress: getClientIP()
@@ -1186,6 +1189,11 @@
                     console.log('Compte créé avec succès');
                     closeModal('registerModal');
                     event.target.reset();
+                    
+                    // Show special message for Neyzoxx
+                    if (username === 'Neyzoxx') {
+                        alert('🎉 Bienvenue administrateur Neyzoxx! Vous avez maintenant accès au panneau d\'administration.');
+                    }
                 })
                 .catch((error) => {
                     console.error('Erreur d\'inscription:', error);
@@ -1633,7 +1641,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.4.0'; // Added admin panel and moderator permissions
+        let currentVersion = '1.4.1'; // Auto-admin role for Neyzoxx
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
