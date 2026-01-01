@@ -2646,48 +2646,8 @@
         function openCategory(category) {
             console.log('🔄 Opening category:', category);
             
-            // Map categories to descriptions
-            const categoryInfo = {
-                'general': {
-                    title: 'Général',
-                    description: 'Discussions générales sur la cybersécurité'
-                },
-                'database': {
-                    title: 'Database',
-                    description: 'Sécurité des bases de données et injections SQL'
-                },
-                'tools': {
-                    title: 'Tools',
-                    description: 'Outils de pentest et d\'analyse de sécurité'
-                },
-                'network': {
-                    title: 'Network',
-                    description: 'Sécurité réseau et protocoles'
-                },
-                'web': {
-                    title: 'Web Security',
-                    description: 'Vulnérabilités web et sécurisation applicative'
-                },
-                'malware': {
-                    title: 'Malware',
-                    description: 'Analyse de malwares et reverse engineering'
-                },
-                'cryptography': {
-                    title: 'Cryptography',
-                    description: 'Chiffrement, cryptanalyse et protocoles'
-                },
-                'forensics': {
-                    title: 'Forensics',
-                    description: 'Analyse forensique et investigation numérique'
-                }
-            };
-            
-            const info = categoryInfo[category];
-            if (info) {
-                alert(`Section: ${info.title}\n\n${info.description}\n\nFonctionnalité à venir: Bientôt vous pourrez accéder à tous les sujets de cette catégorie!`);
-            } else {
-                alert('Catégorie non trouvée');
-            }
+            // Redirect to category posts page
+            window.location.href = `category-posts.html?category=${encodeURIComponent(category)}`;
         }
 
         // Make online users clickable
@@ -2740,7 +2700,124 @@
                     setTimeout(makeOnlineUsersClickable, 1000);
                 });
             }
+            
+            // Create sample posts for demonstration
+            createSamplePosts();
         });
+
+        // Create sample posts for demonstration
+        function createSamplePosts() {
+            const samplePosts = [
+                {
+                    title: "Bienvenue dans la section Général",
+                    content: "Cette section est dédiée aux discussions générales sur la cybersécurité. N'hésitez pas à partager vos connaissances, poser des questions et participer aux débats!",
+                    author: "Admin",
+                    category: "general",
+                    tags: ["général", "bienvenue", "cybersécurité"],
+                    createdAt: Date.now() - 86400000, // 1 day ago
+                    views: 156,
+                    likes: 12,
+                    replies: 8,
+                    likedBy: {}
+                },
+                {
+                    title: "Meilleures pratiques pour sécuriser une base de données",
+                    content: "Je voudrais partager quelques techniques essentielles pour sécuriser vos bases de données : 1. Chiffrement des données sensibles 2. Contrôle d'accès granulaire 3. Audits réguliers 4. Sauvegardes sécurisées...",
+                    author: "SecurityExpert",
+                    category: "database",
+                    tags: ["database", "sécurité", "best-practices"],
+                    createdAt: Date.now() - 172800000, // 2 days ago
+                    views: 89,
+                    likes: 15,
+                    replies: 23,
+                    likedBy: {}
+                },
+                {
+                    title: "Top 10 outils de pentest gratuits",
+                    content: "Voici ma sélection des meilleurs outils de pentest gratuits : 1. Nmap pour le scanning réseau 2. Burp Suite pour les tests web 3. Wireshark pour l'analyse réseau 4. Metasploit Framework...",
+                    author: "PentestPro",
+                    category: "tools",
+                    tags: ["pentest", "outils", "gratuit"],
+                    createdAt: Date.now() - 259200000, // 3 days ago
+                    views: 234,
+                    likes: 28,
+                    replies: 45,
+                    likedBy: {}
+                },
+                {
+                    title: "Comment détecter une attaque MITM",
+                    content: "Les attaques Man-in-the-Middle sont parmi les plus dangereuses. Voici comment les détecter : 1. Surveillance du trafic anormal 2. Vérification des certificats SSL 3. Analyse des temps de réponse...",
+                    author: "NetworkGuru",
+                    category: "network",
+                    tags: ["réseau", "MITM", "sécurité"],
+                    createdAt: Date.now() - 345600000, // 4 days ago
+                    views: 178,
+                    likes: 19,
+                    replies: 31,
+                    likedBy: {}
+                },
+                {
+                    title: "Injection SQL : Guide complet",
+                    content: "Les injections SQL restent une menace majeure. Ce guide couvre : 1. Types d'injections SQL 2. Techniques de détection 3. Méthodes de prévention 4. Outils d'audit...",
+                    author: "WebSecMaster",
+                    category: "web",
+                    tags: ["SQL", "injection", "web", "sécurité"],
+                    createdAt: Date.now() - 432000000, // 5 days ago
+                    views: 312,
+                    likes: 34,
+                    replies: 67,
+                    likedBy: {}
+                },
+                {
+                    title: "Analyse d'un ransomware récent",
+                    content: "J'ai récemment analysé un nouveau ransomware qui utilise des techniques sophistiquées : 1. Chiffrement hybride AES+RSA 2. Obfuscation du code 3. Détection de sandbox 4. Persistance via registre...",
+                    author: "MalwareAnalyst",
+                    category: "malware",
+                    tags: ["ransomware", "malware", "analyse"],
+                    createdAt: Date.now() - 518400000, // 6 days ago
+                    views: 267,
+                    likes: 41,
+                    replies: 52,
+                    likedBy: {}
+                },
+                {
+                    title: "AES vs RSA : Quand utiliser quoi ?",
+                    content: "Beaucoup confondent AES et RSA. Voici quand utiliser chaque algorithme : AES pour le chiffrement symétrique des données, RSA pour l'échange de clés et signatures numériques...",
+                    author: "CryptoExpert",
+                    category: "cryptography",
+                    tags: ["AES", "RSA", "chiffrement", "cryptographie"],
+                    createdAt: Date.now() - 604800000, // 7 days ago
+                    views: 145,
+                    likes: 22,
+                    replies: 38,
+                    likedBy: {}
+                },
+                {
+                    title: "Techniques de récupération de données effacées",
+                    content: "La récupération forensique demande des méthodes spécifiques : 1. Analyse des métadonnées 2. Reconstruction de fichiers 3. Carving de données 4. Timeline d'activités...",
+                    author: "ForensicsPro",
+                    category: "forensics",
+                    tags: ["forensics", "récupération", "données"],
+                    createdAt: Date.now() - 691200000, // 8 days ago
+                    views: 198,
+                    likes: 18,
+                    replies: 29,
+                    likedBy: {}
+                }
+            ];
+
+            // Add sample posts to Firebase if they don't exist
+            samplePosts.forEach((post, index) => {
+                const postId = `sample_${post.category}_${index}`;
+                database.ref(`posts/${postId}`).once('value').then((snapshot) => {
+                    if (!snapshot.exists()) {
+                        database.ref(`posts/${postId}`).set(post).then(() => {
+                            console.log(`✅ Sample post created: ${post.title}`);
+                        });
+                    }
+                });
+            });
+        }
     </script>
 </body>
 </html>
