@@ -1043,9 +1043,20 @@
                 return;
             }
             
-            // Create user in Firebase Auth
-            auth.createUserWithEmailAndPassword(email, password)
+            // Check if username already exists
+            database.ref('users').orderByChild('username').equalTo(username).once('value')
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        alert('Ce nom d\'utilisateur est déjà pris! Choisissez un autre.');
+                        return;
+                    }
+                    
+                    // Username is available, create account
+                    return auth.createUserWithEmailAndPassword(email, password);
+                })
                 .then((userCredential) => {
+                    if (!userCredential) return; // Username was taken
+                    
                     const user = userCredential.user;
                     
                     // Update profile with username (this sets displayName)
@@ -1449,7 +1460,7 @@
             addSystemMessage('Connecté au serveur en temps réel');
         }, 1000);
         let lastVersion = localStorage.getItem('siteVersion') || '0';
-        let currentVersion = '1.2.2'; // Added login requirement for chat
+        let currentVersion = '1.2.3'; // Added unique username validation
         
         function checkForUpdates() {
             if (lastVersion !== currentVersion) {
