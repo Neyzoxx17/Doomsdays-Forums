@@ -296,7 +296,73 @@
         }
 
         .thread-author {
-            color: #ff0000;
+            color: #dc143c;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .thread-author:hover {
+            color: #ff6666;
+            text-decoration: underline;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 1px solid #dc143c;
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(220, 20, 60, 0.3);
+            border-color: #ff6666;
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            color: #dc143c;
+            margin-bottom: 15px;
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .category-description {
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            min-height: 40px;
+        }
+
+        .category-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .category-stats span {
+            background: #333;
+            padding: 4px 8px;
+            border-radius: 10px;
         }
 
         .thread-stats {
@@ -839,12 +905,97 @@
         </section>
 
         <section class="discussion-section">
-            <h3 class="section-title">Dernières Discussions</h3>
+            <h3 class="section-title">◭ Sections de Cybersécurité</h3>
+            <div class="categories-grid">
+                <div class="category-card" onclick="openCategory('general')">
+                    <div class="category-icon">◈</div>
+                    <div class="category-title">Général</div>
+                    <div class="category-description">Discussions générales sur la cybersécurité</div>
+                    <div class="category-stats">
+                        <span>156 sujets</span>
+                        <span>1.2k messages</span>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="openCategory('database')">
+                    <div class="category-icon">◉</div>
+                    <div class="category-title">Database</div>
+                    <div class="category-description">Sécurité des bases de données et injections SQL</div>
+                    <div class="category-stats">
+                        <span>89 sujets</span>
+                        <span>756 messages</span>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="openCategory('tools')">
+                    <div class="category-icon">⚙</div>
+                    <div class="category-title">Tools</div>
+                    <div class="category-description">Outils de pentest et d'analyse de sécurité</div>
+                    <div class="category-stats">
+                        <span>124 sujets</span>
+                        <span>943 messages</span>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="openCategory('network')">
+                    <div class="category-icon">◭</div>
+                    <div class="category-title">Network</div>
+                    <div class="category-description">Sécurité réseau et protocoles</div>
+                    <div class="category-stats">
+                        <span>67 sujets</span>
+                        <span>512 messages</span>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="openCategory('web')">
+                    <div class="category-icon">◈</div>
+                    <div class="category-title">Web Security</div>
+                    <div class="category-description">Vulnérabilités web et sécurisation applicative</div>
+                    <div class="category-stats">
+                        <span>203 sujets</span>
+                        <span>1.8k messages</span>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="openCategory('malware')">
+                    <div class="category-icon">◉</div>
+                    <div class="category-title">Malware</div>
+                    <div class="category-description">Analyse de malwares et reverse engineering</div>
+                    <div class="category-stats">
+                        <span>45 sujets</span>
+                        <span>234 messages</span>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="openCategory('cryptography')">
+                    <div class="category-icon">⚙</div>
+                    <div class="category-title">Cryptography</div>
+                    <div class="category-description">Chiffrement, cryptanalyse et protocoles</div>
+                    <div class="category-stats">
+                        <span>78 sujets</span>
+                        <span>445 messages</span>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="openCategory('forensics')">
+                    <div class="category-icon">◭</div>
+                    <div class="category-title">Forensics</div>
+                    <div class="category-description">Analyse forensique et investigation numérique</div>
+                    <div class="category-stats">
+                        <span>92 sujets</span>
+                        <span>678 messages</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="discussion-section">
+            <h3 class="section-title">◭ Dernières Discussions</h3>
             <ul class="thread-list" id="threadList">
                 <li class="thread-item" onclick="openThread(1)">
                     <div class="thread-title">Bienvenue sur Doomsday Forums</div>
                     <div class="thread-meta">
-                        <span class="thread-author">Par Admin</span>
+                        <span class="thread-author" onclick="viewProfile('Admin'); event.stopPropagation();">Par Admin</span>
                         <div class="thread-stats">
                             <span>15 réponses</span>
                             <span>il y a 2 heures</span>
@@ -854,7 +1005,7 @@
                 <li class="thread-item" onclick="openThread(2)">
                     <div class="thread-title">Règles du forum</div>
                     <div class="thread-meta">
-                        <span class="thread-author">Par Moderateur</span>
+                        <span class="thread-author" onclick="viewProfile('Moderateur'); event.stopPropagation();">Par Moderateur</span>
                         <div class="thread-stats">
                             <span>8 réponses</span>
                             <span>il y a 5 heures</span>
@@ -864,7 +1015,7 @@
                 <li class="thread-item" onclick="openThread(3)">
                     <div class="thread-title">Présentation des membres</div>
                     <div class="thread-meta">
-                        <span class="thread-author">Par Community</span>
+                        <span class="thread-author" onclick="viewProfile('Community'); event.stopPropagation();">Par Community</span>
                         <div class="thread-stats">
                             <span>42 réponses</span>
                             <span>il y a 1 jour</span>
@@ -874,7 +1025,7 @@
                 <li class="thread-item" onclick="openThread(4)">
                     <div class="thread-title">Suggestions pour le forum</div>
                     <div class="thread-meta">
-                        <span class="thread-author">Par User123</span>
+                        <span class="thread-author" onclick="viewProfile('User123'); event.stopPropagation();">Par User123</span>
                         <div class="thread-stats">
                             <span>23 réponses</span>
                             <span>il y a 2 jours</span>
@@ -2478,6 +2629,117 @@
                     }
                 });
             }, 30000); // Update every 30 seconds
+        });
+
+        // View user profile
+        function viewProfile(username) {
+            if (!username) {
+                console.error('❌ No username provided');
+                return;
+            }
+            
+            console.log('🔄 Opening profile for:', username);
+            window.open(`public-profile.html?username=${encodeURIComponent(username)}`, '_blank');
+        }
+
+        // Open category
+        function openCategory(category) {
+            console.log('🔄 Opening category:', category);
+            
+            // Map categories to descriptions
+            const categoryInfo = {
+                'general': {
+                    title: 'Général',
+                    description: 'Discussions générales sur la cybersécurité'
+                },
+                'database': {
+                    title: 'Database',
+                    description: 'Sécurité des bases de données et injections SQL'
+                },
+                'tools': {
+                    title: 'Tools',
+                    description: 'Outils de pentest et d\'analyse de sécurité'
+                },
+                'network': {
+                    title: 'Network',
+                    description: 'Sécurité réseau et protocoles'
+                },
+                'web': {
+                    title: 'Web Security',
+                    description: 'Vulnérabilités web et sécurisation applicative'
+                },
+                'malware': {
+                    title: 'Malware',
+                    description: 'Analyse de malwares et reverse engineering'
+                },
+                'cryptography': {
+                    title: 'Cryptography',
+                    description: 'Chiffrement, cryptanalyse et protocoles'
+                },
+                'forensics': {
+                    title: 'Forensics',
+                    description: 'Analyse forensique et investigation numérique'
+                }
+            };
+            
+            const info = categoryInfo[category];
+            if (info) {
+                alert(`Section: ${info.title}\n\n${info.description}\n\nFonctionnalité à venir: Bientôt vous pourrez accéder à tous les sujets de cette catégorie!`);
+            } else {
+                alert('Catégorie non trouvée');
+            }
+        }
+
+        // Make online users clickable
+        function makeOnlineUsersClickable() {
+            const onlineUsersList = document.getElementById('onlineUsersList');
+            if (onlineUsersList) {
+                const users = onlineUsersList.querySelectorAll('.online-user');
+                users.forEach(user => {
+                    user.style.cursor = 'pointer';
+                    user.addEventListener('click', function() {
+                        const username = this.textContent.trim();
+                        viewProfile(username);
+                    });
+                    user.addEventListener('mouseenter', function() {
+                        this.style.color = '#ff6666';
+                        this.style.textDecoration = 'underline';
+                    });
+                    user.addEventListener('mouseleave', function() {
+                        this.style.color = '#00ff00';
+                        this.style.textDecoration = 'none';
+                    });
+                });
+            }
+        }
+
+        // Initialize clickable elements
+        function initializeClickableElements() {
+            // Make thread authors clickable
+            const threadAuthors = document.querySelectorAll('.thread-author');
+            threadAuthors.forEach(author => {
+                author.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const username = this.textContent.replace('Par ', '');
+                    viewProfile(username);
+                });
+            });
+            
+            // Make online users clickable
+            makeOnlineUsersClickable();
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeClickableElements();
+            
+            // Re-initialize when chat is opened
+            const chatToggle = document.getElementById('chatToggle');
+            if (chatToggle) {
+                chatToggle.addEventListener('click', function() {
+                    setTimeout(makeOnlineUsersClickable, 1000);
+                });
+            }
         });
     </script>
 </body>

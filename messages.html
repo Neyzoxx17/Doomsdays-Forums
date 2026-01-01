@@ -544,7 +544,7 @@
                     
                     return `
                         <div class="message ${isSent ? 'sent' : 'received'}">
-                            <div class="message-author">${msg.sender}</div>
+                            <div class="message-author" onclick="viewProfile('${msg.sender}'); event.stopPropagation();" style="cursor: pointer; color: ${isSent ? '#fff' : '#dc143c'};">${msg.sender}</div>
                             <div class="message-text">${msg.text}</div>
                             <div class="message-time">${time}</div>
                         </div>
@@ -598,6 +598,17 @@
                 event.preventDefault();
                 sendMessage();
             }
+        }
+
+        // View user profile
+        function viewProfile(username) {
+            if (!username) {
+                console.error('❌ No username provided');
+                return;
+            }
+            
+            console.log('🔄 Opening profile for:', username);
+            window.open(`public-profile.html?username=${encodeURIComponent(username)}`, '_blank');
         }
 
         // Open new message modal (simplified version)

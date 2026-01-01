@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Utilisateur - Doomsday Forums</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #dc143c;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .nav-link {
+            color: #dc143c;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #dc143c;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            background: rgba(220, 20, 60, 0.1);
+        }
+
+        .nav-link:hover {
+            background: #dc143c;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .back-link {
+            color: #dc143c;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: inline-block;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #ff6666;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(220, 20, 60, 0.3);
+            border: 1px solid #dc143c;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #dc143c;
+            background: #333;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .username {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #dc143c;
+            margin-bottom: 10px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: #dc143c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .user-id {
+            color: #888;
+            font-size: 0.9rem;
+            font-family: monospace;
+            background: #222;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .stats-section {
+            background: #222;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stats-title {
+            color: #dc143c;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #444;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #dc143c;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .description-section {
+            background: #222;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: #dc143c;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .description-text {
+            color: #ccc;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #dc143c, #b91c3c);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #dc143c;
+            background: rgba(220, 20, 60, 0.1);
+            border: 1px solid #dc143c;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="nav-links">
+                <a href="index.html" class="back-link">← Retour au forum</a>
+                <a href="messages.html" class="nav-link">◉ Messages</a>
+                <a href="profile.html" class="nav-link">◈ Mon Profil</a>
+            </div>
+            <h1>Profil Utilisateur</h1>
+        </div>
+
+        <div id="profileContent">
+            <div class="loading">
+                <h3>◭ Chargement du profil...</h3>
+                <p>Veuillez patienter pendant que nous chargeons les informations de l'utilisateur.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",
+            authDomain: "doomsday-forums.firebaseapp.com",
+            databaseURL: "https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "doomsday-forums",
+            storageBucket: "doomsday-forums.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef1234567890abcdef"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let targetUsername = null;
+        let currentUser = null;
+
+        // Get username from URL parameter
+        function getUsernameFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('username');
+        }
+
+        // Load public profile
+        function loadPublicProfile(username) {
+            if (!username) {
+                showError('Aucun utilisateur spécifié');
+                return;
+            }
+
+            console.log('🔄 Loading public profile for:', username);
+            
+            // Search for user in database
+            database.ref('users').orderByChild('username').equalTo(username).once('value').then((snapshot) => {
+                const userData = snapshot.val();
+                
+                if (!userData) {
+                    showError('Utilisateur non trouvé');
+                    return;
+                }
+
+                // Get the user data (there should be only one match)
+                const userId = Object.keys(userData)[0];
+                const userProfile = userData[userId];
+                
+                displayProfile(userProfile, userId);
+                console.log('✅ Profile loaded for:', username);
+                
+            }).catch((error) => {
+                console.error('❌ Error loading profile:', error);
+                showError('Erreur lors du chargement du profil');
+            });
+        }
+
+        // Display profile
+        function displayProfile(user, userId) {
+            const profileContent = document.getElementById('profileContent');
+            
+            const joinDate = user.joinDate ? new Date(user.joinDate).toLocaleDateString('fr-FR') : 'Inconnue';
+            const lastSeen = user.lastSeen ? new Date(user.lastSeen).toLocaleDateString('fr-FR') : 'Jamais';
+            const messageCount = user.messageCount || 0;
+            const description = user.description || 'Cet utilisateur n\'a pas encore ajouté de description.';
+            const avatar = user.avatar || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNzUiIHI9Ijc1IiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4/PC90ZXh0Pgo8L3N2Zz4=';
+            const role = user.role || 'member';
+            const roleDisplay = role === 'admin' ? 'ADMIN' : role === 'moderator' ? 'MODÉRATEUR' : 'MEMBRE';
+            const roleColor = role === 'admin' ? '#dc143c' : role === 'moderator' ? '#ff6600' : '#888';
+
+            profileContent.innerHTML = `
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="avatar-container">
+                            <img src="${avatar}" alt="Avatar" class="avatar">
+                        </div>
+                        <div class="profile-info">
+                            <div class="username">${user.username || 'Utilisateur'}</div>
+                            <div class="role-badge" style="background: ${roleColor}">${roleDisplay}</div>
+                            <div class="user-id">ID: ${userId}</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-section">
+                        <div class="stats-title">◭ Statistiques</div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">${messageCount}</div>
+                                <div class="stat-label">Messages</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${joinDate}</div>
+                                <div class="stat-label">Inscription</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${lastSeen}</div>
+                                <div class="stat-label">Dernière visite</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="description-section">
+                        <div class="section-title">◈ Description</div>
+                        <div class="description-text">${description}</div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="sendMessageToUser('${user.username}')">
+                            ◉ Envoyer un message
+                        </button>
+                        <button class="action-btn" onclick="viewUserPosts('${user.username}')">
+                            ◭ Voir les messages
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show error
+        function showError(message) {
+            const profileContent = document.getElementById('profileContent');
+            profileContent.innerHTML = `
+                <div class="error">
+                    <h3>✗ Erreur</h3>
+                    <p>${message}</p>
+                    <a href="index.html" class="nav-link">← Retour au forum</a>
+                </div>
+            `;
+        }
+
+        // Send message to user
+        function sendMessageToUser(username) {
+            if (!currentUser) {
+                alert('Vous devez être connecté pour envoyer un message!');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Redirect to messages with pre-filled recipient
+            window.location.href = `messages.html?user=${encodeURIComponent(username)}`;
+        }
+
+        // View user posts
+        function viewUserPosts(username) {
+            // This could redirect to a page showing all posts by this user
+            alert(`Fonctionnalité à venir: Voir tous les messages de ${username}`);
+        }
+
+        // Check auth state
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user.displayName || user.email.split('@')[0];
+                console.log('✅ Current user authenticated:', currentUser);
+            } else {
+                currentUser = null;
+                console.log('ℹ️ User not authenticated (public profile view)');
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            targetUsername = getUsernameFromUrl();
+            if (targetUsername) {
+                loadPublicProfile(targetUsername);
+            } else {
+                showError('Aucun utilisateur spécifié dans l\'URL');
+            }
+        });
+    </script>
+</body>
+</html>
