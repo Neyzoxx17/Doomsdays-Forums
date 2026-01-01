@@ -112,19 +112,36 @@
         }
 
         .btn-logout {
-            background: #ff0000;
-            color: white;
-            border: none;
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
             padding: 8px 16px;
-            border-radius: 15px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            transition: all 0.3s;
         }
 
         .btn-logout:hover {
-            background: #cc0000;
-            transform: translateY(-2px);
+            background: #ff0000;
+            color: white;
+        }
+
+        .btn-profile {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+
+        .btn-profile:hover {
+            background: #ff0000;
+            color: white;
         }
 
         .btn {
@@ -509,33 +526,17 @@
                 padding: 15px 20px;
             }
 
-            .logo-container {
-                position: relative;
-                transform: none;
-                left: auto;
-                text-align: center;
-                margin-bottom: 15px;
-            }
-
             .logo {
-                font-size: 1.8rem;
-                letter-spacing: 1px;
+                font-size: 2rem;
             }
 
             .auth-buttons {
                 position: static;
                 justify-content: center;
-                width: 100%;
-                gap: 10px;
+                margin-top: 20px;
             }
 
-            .btn {
-                font-size: 0.8rem;
-                padding: 10px 15px;
-                flex: 1;
-                text-align: center;
-            }
-
+            .user-profile {
             .hero-title {
                 font-size: 2rem;
                 letter-spacing: 2px;
@@ -764,6 +765,7 @@
                 <span class="user-role" id="userRole">Membre</span>
             </div>
             <button class="btn btn-logout" onclick="handleLogout()">Déconnexion</button>
+            <button class="btn btn-profile" onclick="window.location.href='profile.html'">👤 Mon Profil</button>
         </div>
         <div class="auth-buttons" id="authButtons">
             <button class="btn" onclick="openModal('loginModal')">Se Connecter</button>
