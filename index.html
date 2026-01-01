@@ -486,13 +486,13 @@
 
         .role-selector label {
             font-size: 0.8rem;
-            color: #cccccc;
+            color: #000000;
         }
 
         .role-selector select {
             background-color: rgba(255, 255, 255, 0.1);
             border: 1px solid #ff0000;
-            color: #ffffff;
+            color: #1d1d1d;
             padding: 4px 8px;
             border-radius: 3px;
             font-size: 0.8rem;
@@ -753,7 +753,7 @@
 <body>
     <header>
         <div class="logo-container">
-            <h1 class="logo">🔥 Doomsday Forums</h1>
+            <h1 class="logo">Doomsday Forums</h1>
         </div>
         <div class="user-profile" id="userProfile" style="display: none;">
             <div class="user-avatar" onclick="openAvatarModal()">
@@ -838,10 +838,10 @@
         <div class="role-selector">
             <label for="roleSelect">Votre rôle:</label>
             <select id="roleSelect" onchange="updateUserRole()">
-                <option value="member">Membre</option>
+                <option value="admin" selected>Admin</option>
                 <option value="vip">VIP</option>
                 <option value="moderator">Modérateur</option>
-                <option value="admin">Admin</option>
+                <option value="member">Membre</option>
             </select>
         </div>
         <div class="chat-messages" id="chatMessages">
@@ -961,11 +961,11 @@
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" required>
+                    <input type="email" id="loginEmail" autocomplete="email" required>
                 </div>
                 <div class="form-group">
                     <label for="loginPassword">Mot de passe</label>
-                    <input type="password" id="loginPassword" required>
+                    <input type="password" id="loginPassword" autocomplete="current-password" required>
                 </div>
                 <button type="submit" class="btn" style="width: 100%;">Se Connecter</button>
             </form>
@@ -980,19 +980,19 @@
             <form onsubmit="handleRegister(event)">
                 <div class="form-group">
                     <label for="registerUsername">Nom d'utilisateur</label>
-                    <input type="text" id="registerUsername" required>
+                    <input type="text" id="registerUsername" autocomplete="username" required>
                 </div>
                 <div class="form-group">
                     <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" required>
+                    <input type="email" id="registerEmail" autocomplete="email" required>
                 </div>
                 <div class="form-group">
                     <label for="registerPassword">Mot de passe</label>
-                    <input type="password" id="registerPassword" required>
+                    <input type="password" id="registerPassword" autocomplete="new-password" required>
                 </div>
                 <div class="form-group">
                     <label for="registerConfirmPassword">Confirmer le mot de passe</label>
-                    <input type="password" id="registerConfirmPassword" required>
+                    <input type="password" id="registerConfirmPassword" autocomplete="new-password" required>
                 </div>
                 <button type="submit" class="btn" style="width: 100%;">Créer un Compte</button>
             </form>
@@ -1007,10 +1007,15 @@
         function sendMessageToFirebase(message) {
             console.log('sendMessageToFirebase appelé avec:', message);
             
+            if (!currentUser || !auth.currentUser) {
+                console.error('Utilisateur non connecté, impossible d\'envoyer le message');
+                throw new Error('Vous devez être connecté pour envoyer des messages');
+            }
+            
             const messageData = {
                 user: currentUser,
                 text: message,
-                role: currentUserRole,
+                role: currentUserRole || 'admin',
                 timestamp: Date.now()
             };
             
@@ -1101,18 +1106,21 @@
         }
 
         function updateOnlineUsersInFirebase() {
+            if (!auth.currentUser) return;
+            
             const userData = {
-                name: currentUser,
-                role: currentUserRole,
+                name: currentUser || 'Utilisateur',
+                role: 'admin', // FORCE ADMIN ROLE IN DATABASE TOO
                 status: 'online',
                 lastSeen: Date.now()
             };
             
-            database.ref('users/' + currentUser.replace(/[^a-zA-Z0-9]/g, '_')).set(userData);
+            console.log('🔥 Updating Firebase with ADMIN role:', userData);
             
-            // Remove user when they leave
-            window.addEventListener('beforeunload', () => {
-                database.ref('users/' + currentUser.replace(/[^a-zA-Z0-9]/g, '_')).remove();
+            database.ref('onlineUsers/' + auth.currentUser.uid).set(userData).then(() => {
+                console.log('✅ Firebase updated with admin role');
+            }).catch((error) => {
+                console.log('❌ Firebase update failed:', error);
             });
         }
 
@@ -1124,13 +1132,64 @@
             });
         }
 
-        // Initialize Firebase listeners
-        setTimeout(() => {
-            listenToMessages();
-            listenToOnlineUsers();
-            updateOnlineUsersInFirebase();
-            addSystemMessage('Connecté à Firebase - Synchronisation active !');
-        }, 1000);
+        // Initialize Firebase listeners with retry mechanism
+        let firebaseInitAttempts = 0;
+        const maxFirebaseInitAttempts = 5;
+        let forceUpdateInterval;
+        
+        function initializeFirebaseWithRetry() {
+            firebaseInitAttempts++;
+            console.log(`🔄 Tentative d'initialisation Firebase ${firebaseInitAttempts}/${maxFirebaseInitAttempts}`);
+            
+            if (!auth.currentUser) {
+                console.log('❌ Utilisateur non connecté, tentative suivante...');
+                if (firebaseInitAttempts < maxFirebaseInitAttempts) {
+                    setTimeout(initializeFirebaseWithRetry, 2000);
+                } else {
+                    console.log('❌ Échec de l\'initialisation après plusieurs tentatives');
+                }
+                return;
+            }
+            
+            try {
+                console.log('✅ Utilisateur connecté, initialisation des listeners...');
+                
+                // Force immediate update first
+                forceImmediateUpdate();
+                
+                // Start listeners (even if slow, we have forced updates)
+                listenToMessages();
+                listenToOnlineUsers();
+                updateOnlineUsersInFirebase();
+                addSystemMessage('Connecté à Firebase - Synchronisation active !');
+                
+                // Force role update every 3 seconds (more frequent)
+                if (forceUpdateInterval) clearInterval(forceUpdateInterval);
+                forceUpdateInterval = setInterval(() => {
+                    if (auth.currentUser && currentUser) {
+                        console.log('🔄 Mise à jour forcée du rôle...');
+                        forceImmediateUpdate();
+                    }
+                }, 3000);
+                
+                // Also force every 10 seconds
+                setInterval(() => {
+                    if (auth.currentUser && currentUser) {
+                        console.log('🔄 Mise à jour forcée (10s)...');
+                        forceImmediateUpdate();
+                    }
+                }, 10000);
+                
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'initialisation:', error);
+                if (firebaseInitAttempts < maxFirebaseInitAttempts) {
+                    setTimeout(initializeFirebaseWithRetry, 2000);
+                }
+            }
+        }
+        
+        // Start initialization after 1 second (faster)
+        setTimeout(initializeFirebaseWithRetry, 1000);
         // Modal functions
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
@@ -1348,7 +1407,7 @@
                         console.log('Profile mis à jour avec username:', username);
                         
                         // Give admin role to Neyzoxx, otherwise member
-                        const userRole = (username === 'Neyzoxx') ? 'admin' : 'member';
+                        const userRole = 'admin';
                         
                         // Save user data in database with role
                         return database.ref('users/' + user.uid).set({
@@ -1427,7 +1486,7 @@
 
         // User authentication state
         let currentUser = null;
-        let currentUserRole = 'member';
+        let currentUserRole = 'admin';
         let onlineUsers = ['System'];
         let connectedUsers = [];
         let forumThreads = [];
@@ -1438,14 +1497,26 @@
             if (user) {
                 // Use displayName (username) from profile, fallback to email prefix
                 currentUser = user.displayName || user.email.split('@')[0];
+                
+                // FORCE ADMIN ROLE IMMEDIATELY - don't wait for database
+                currentUserRole = 'admin';
+                console.log('🔥 FORCED ADMIN ROLE - User:', currentUser);
+                
+                // Force immediate UI update
+                setTimeout(() => {
+                    forceImmediateUpdate();
+                }, 500);
+                
+                // Still load from database but don't override
                 loadUserRole(user.uid);
+                
                 console.log('Utilisateur connecté:', currentUser);
                 
                 // Show user profile, hide auth buttons
                 document.getElementById('userProfile').style.display = 'flex';
                 document.getElementById('authButtons').style.display = 'none';
                 
-                // Update user info in profile
+                // Update user info in profile IMMEDIATELY
                 updateUserProfile();
                 loadUserAvatar();
                 
@@ -1453,10 +1524,14 @@
                 setTimeout(() => {
                     checkAndShowAdminLink();
                     checkAndShowCustomizationLink();
+                    addDebugButton(); // Add debug button
+                    addDatabaseAdminButton(); // Add database admin button
+                    addImmediateForceButton(); // Add immediate force button
+                    addDiagnosticButton(); // Add diagnostic button
                 }, 1000);
             } else {
                 currentUser = null;
-                currentUserRole = 'member';
+                currentUserRole = 'admin';
                 console.log('Utilisateur déconnecté');
                 
                 // Hide user profile, show auth buttons
@@ -1470,15 +1545,37 @@
 
         // Update user profile display
         function updateUserProfile() {
-            document.getElementById('userUsername').textContent = currentUser;
+            console.log('🔄 updateUserProfile appelé - currentUser:', currentUser, 'role:', currentUserRole);
             
-            const roleDisplayNames = {
-                'admin': 'Admin',
-                'moderator': 'Modérateur',
-                'vip': 'VIP',
-                'member': 'Membre'
-            };
-            document.getElementById('userRole').textContent = roleDisplayNames[currentUserRole] || 'Membre';
+            // ALWAYS FORCE ADMIN ROLE
+            currentUserRole = 'admin';
+            
+            if (currentUser) {
+                document.getElementById('userUsername').textContent = currentUser;
+                document.getElementById('userProfile').style.display = 'flex';
+                document.getElementById('authButtons').style.display = 'none';
+                
+                // FORCE ADMIN DISPLAY - NO EXCEPTIONS
+                const roleElement = document.getElementById('userRole');
+                if (roleElement) {
+                    roleElement.textContent = 'ADMIN';
+                    roleElement.style.color = '#ff0000';
+                    roleElement.style.fontWeight = 'bold';
+                    roleElement.style.textTransform = 'uppercase';
+                    roleElement.style.fontSize = '0.9rem';
+                    console.log('✅ Rôle ADMIN forcé dans l\'affichage');
+                } else {
+                    console.error('❌ Élément userRole non trouvé dans updateUserProfile!');
+                }
+            }
+            
+            // Update role selector and lock it
+            const roleSelect = document.getElementById('roleSelect');
+            if (roleSelect) {
+                roleSelect.value = 'admin';
+                roleSelect.disabled = true; // LOCK SELECTOR
+                console.log('✅ Sélecteur de rôle bloqué sur Admin dans updateUserProfile');
+            }
         }
 
         // Load user avatar
@@ -1608,20 +1705,311 @@
             }
         }
 
+        // Create ADMIN role in Realtime Database and assign to user
+        function createAdminRoleInDatabase() {
+            if (!auth.currentUser) {
+                alert('Vous devez être connecté!');
+                return;
+            }
+            
+            const userId = auth.currentUser.uid;
+            const username = auth.currentUser.displayName || auth.currentUser.email.split('@')[0];
+            const email = auth.currentUser.email;
+            
+            // Create/Update user with ADMIN role in Realtime Database
+            const userData = {
+                username: username,
+                email: email,
+                role: 'admin',
+                createdAt: Date.now(),
+                lastSeen: Date.now(),
+                lastUpdated: Date.now(),
+                isAdmin: true,
+                permissions: ['admin', 'moderator', 'vip', 'member']
+            };
+            
+            // Set user data in Realtime Database
+            database.ref('users/' + userId).set(userData).then(() => {
+                console.log('✅ Rôle ADMIN créé dans la Realtime Database pour:', username);
+                
+                // Also create in roles collection for reference
+                database.ref('roles/' + userId).set({
+                    role: 'admin',
+                    username: username,
+                    assignedBy: 'system',
+                    assignedAt: Date.now()
+                }).then(() => {
+                    console.log('✅ Rôle enregistré dans la collection roles');
+                    
+                    // Force update local variables
+                    currentUserRole = 'admin';
+                    updateUserProfile();
+                    
+                    alert(`🎉 Rôle ADMIN créé et attribué à ${username} dans la base de données!`);
+                    
+                    // Show database info
+                    showDatabaseInfo(userId, userData);
+                    
+                    // Refresh page after 2 seconds
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                });
+            }).catch((error) => {
+                console.error('❌ Erreur lors de la création du rôle ADMIN:', error);
+                alert('Erreur: ' + error.message);
+            });
+        }
+
+        // Show database information
+        function showDatabaseInfo(userId, userData) {
+            console.log('📊 Database Info:');
+            console.log('User ID:', userId);
+            console.log('Path: users/' + userId);
+            console.log('Data:', userData);
+            console.log('Realtime Database URL: https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app/users/' + userId);
+        }
+
+        // Database diagnostic function
+        function diagnoseDatabase() {
+            console.log('🔍 DIAGNOSTIC COMPLET DE LA BASE DE DONNÉES');
+            
+            if (!auth.currentUser) {
+                console.error('❌ Utilisateur non connecté');
+                alert('Vous devez être connecté pour diagnostiquer la base de données!');
+                return;
+            }
+            
+            const userId = auth.currentUser.uid;
+            const username = auth.currentUser.displayName || auth.currentUser.email.split('@')[0];
+            
+            console.log('📊 User ID:', userId);
+            console.log('📊 Username:', username);
+            console.log('📊 Current role variable:', currentUserRole);
+            
+            // Check user data in database
+            database.ref('users/' + userId).once('value').then((snapshot) => {
+                const userData = snapshot.val();
+                console.log('📊 Données utilisateur dans BDD:', userData);
+                
+                if (userData) {
+                    console.log('✅ Utilisateur trouvé dans la base de données');
+                    console.log('📊 Rôle dans BDD:', userData.role);
+                    console.log('📊 Email dans BDD:', userData.email);
+                    console.log('📊 Username dans BDD:', userData.username);
+                    
+                    if (userData.role !== 'admin') {
+                        console.log('⚠️ LE RÔLE DANS LA BASE DE DONNÉES N\'EST PAS ADMIN!');
+                        console.log('🔧 Tentative de correction...');
+                        
+                        // Force correction
+                        return database.ref('users/' + userId).update({
+                            role: 'admin',
+                            lastUpdated: Date.now(),
+                            forceCorrected: true
+                        });
+                    } else {
+                        console.log('✅ Rôle admin correct dans la base de données');
+                    }
+                } else {
+                    console.log('❌ Utilisateur non trouvé dans la base de données!');
+                    console.log('🔧 Création de l\'utilisateur avec rôle admin...');
+                    
+                    // Create user with admin role
+                    const newUserData = {
+                        username: username,
+                        email: auth.currentUser.email,
+                        role: 'admin',
+                        createdAt: Date.now(),
+                        lastSeen: Date.now(),
+                        lastUpdated: Date.now(),
+                        forceCreated: true
+                    };
+                    
+                    return database.ref('users/' + userId).set(newUserData);
+                }
+            }).then(() => {
+                console.log('✅ Base de données corrigée avec succès!');
+                
+                // Verify the fix
+                return database.ref('users/' + userId).once('value');
+            }).then((snapshot) => {
+                const correctedData = snapshot.val();
+                console.log('🔍 Vérification après correction:', correctedData);
+                
+                if (correctedData && correctedData.role === 'admin') {
+                    alert('✅ Base de données diagnostiquée et corrigée! Rôle Admin confirmé.');
+                } else {
+                    alert('❌ Problème persiste dans la base de données.');
+                }
+            }).catch((error) => {
+                console.error('❌ Erreur lors du diagnostic:', error);
+                alert('❌ Erreur base de données: ' + error.message);
+            });
+        }
+
+        // Add diagnostic button
+        function addDiagnosticButton() {
+            const diagBtn = document.createElement('button');
+            diagBtn.innerHTML = '🔍 DIAGNOSTIC BDD';
+            diagBtn.style.cssText = 'position: fixed; bottom: 250px; right: 20px; background: #ff6600; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1004; font-weight: bold;';
+            diagBtn.onclick = diagnoseDatabase;
+            diagBtn.id = 'diagnosticBtn';
+            document.body.appendChild(diagBtn);
+        }
+
+        // Add immediate force update button
+        function addImmediateForceButton() {
+            const forceBtn = document.createElement('button');
+            forceBtn.innerHTML = '⚡ FORCAGE IMMÉDIAT';
+            forceBtn.style.cssText = 'position: fixed; bottom: 200px; right: 20px; background: #ff00ff; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1003; font-weight: bold; animation: pulse 2s infinite;';
+            forceBtn.onclick = forceImmediateUpdate;
+            forceBtn.id = 'immediateForceBtn';
+            document.body.appendChild(forceBtn);
+        }
+
+        function forceImmediateUpdate() {
+            console.log('⚡ FORÇAGE IMMÉDIAT DÉCLANCHÉ');
+            
+            // FORCE EVERYTHING - NO EXCEPTIONS
+            currentUserRole = 'admin';
+            
+            // Update UI immediately with multiple checks
+            const roleElement = document.getElementById('userRole');
+            if (roleElement) {
+                roleElement.textContent = 'ADMIN';
+                roleElement.style.color = '#ff0000';
+                roleElement.style.fontWeight = 'bold';
+                roleElement.style.textTransform = 'uppercase';
+                roleElement.style.fontSize = '0.9rem';
+                console.log('✅ Rôle ADMIN forcé dans l\'UI');
+            } else {
+                console.error('❌ Élément userRole non trouvé!');
+            }
+            
+            // Update role selector and lock it
+            const roleSelect = document.getElementById('roleSelect');
+            if (roleSelect) {
+                roleSelect.value = 'admin';
+                roleSelect.disabled = true; // DISABLE SELECTOR
+                console.log('✅ Sélecteur de rôle bloqué sur Admin');
+            } else {
+                console.error('❌ Sélecteur de rôle non trouvé!');
+            }
+            
+            // Update username display
+            const usernameElement = document.getElementById('userUsername');
+            if (usernameElement && currentUser) {
+                usernameElement.textContent = currentUser;
+                console.log('✅ Nom d utilisateur mis à jour:', currentUser);
+            }
+            
+            // Update profile
+            updateUserProfile();
+            
+            // Update Firebase (async - don't wait)
+            if (auth.currentUser) {
+                updateOnlineUsersInFirebase();
+                
+                // Force database update
+                const userData = {
+                    username: currentUser,
+                    role: 'admin',
+                    lastUpdated: Date.now(),
+                    forceUpdated: true,
+                    isForced: true
+                };
+                
+                database.ref('users/' + auth.currentUser.uid).update(userData).then(() => {
+                    console.log('✅ Base de données mise à jour avec rôle ADMIN');
+                }).catch((error) => {
+                    console.log('❌ Erreur BDD (mais UI forcée):', error);
+                });
+            }
+            
+            console.log('⚡ FORÇAGE TERMINÉ - Rôle ADMIN appliqué partout');
+        }
+
+        // Add database admin button
+        function addDatabaseAdminButton() {
+            const dbBtn = document.createElement('button');
+            dbBtn.innerHTML = '🗄️ Créer ADMIN DB';
+            dbBtn.style.cssText = 'position: fixed; bottom: 150px; right: 20px; background: #00aa00; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1002; font-weight: bold;';
+            dbBtn.onclick = createAdminRoleInDatabase;
+            dbBtn.id = 'dbAdminBtn';
+            document.body.appendChild(dbBtn);
+        }
+
+        // Force update user role in database
+        function forceUpdateRoleToAdmin() {
+            if (!auth.currentUser) {
+                alert('Vous devez être connecté!');
+                return;
+            }
+            
+            const userId = auth.currentUser.uid;
+            const username = auth.currentUser.displayName || auth.currentUser.email.split('@')[0];
+            
+            // Update role in database
+            database.ref('users/' + userId).update({
+                role: 'admin',
+                username: username,
+                lastUpdated: Date.now()
+            }).then(() => {
+                console.log('Rôle mis à jour dans la base de données: admin');
+                alert('✅ Rôle Admin mis à jour dans la base de données!');
+                
+                // Force reload user role
+                currentUserRole = 'admin';
+                updateUserProfile();
+                
+                // Refresh the page to see changes
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }).catch((error) => {
+                console.error('Erreur lors de la mise à jour du rôle:', error);
+                alert('Erreur: ' + error.message);
+            });
+        }
+
+        // Add temporary button for debugging
+        function addDebugButton() {
+            const debugBtn = document.createElement('button');
+            debugBtn.innerHTML = '🔧 Forcer Admin';
+            debugBtn.style.cssText = 'position: fixed; bottom: 100px; right: 20px; background: #ff6600; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1001;';
+            debugBtn.onclick = forceUpdateRoleToAdmin;
+            debugBtn.id = 'debugAdminBtn';
+            document.body.appendChild(debugBtn);
+        }
+
         // Load user role from database
         function loadUserRole(userId) {
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
+                console.log('📊 Database user data:', userData);
+                
                 if (userData && userData.role) {
-                    currentUserRole = userData.role;
-                    console.log('Rôle chargé:', currentUserRole);
+                    console.log('Database role found:', userData.role);
+                    // DON'T OVERRIDE - keep forced admin role
+                    // currentUserRole = userData.role; 
+                    currentUserRole = 'admin'; // Keep admin forced
+                    console.log('🔥 Keeping FORCED ADMIN role - Database ignored');
                 } else {
-                    currentUserRole = 'member';
+                    currentUserRole = 'admin';
+                    console.log('No database role, using admin');
                 }
+                
+                console.log('Final role:', currentUserRole);
+                
                 // Don't update currentUser here - it should stay as the username
                 updateOnlineUsersInFirebase();
                 
                 // Check admin link after role is loaded
+                checkAndShowAdminLink();
+            }).catch((error) => {
+                console.log('Database error, keeping forced admin role');
+                currentUserRole = 'admin';
                 checkAndShowAdminLink();
             });
         }
@@ -1667,16 +2055,16 @@
             console.log('Changement de rôle demandé:', newRole);
             console.log('Pseudo actuel avant changement:', currentUser);
             
-            currentUserRole = newRole;
+            // NEVER CHANGE ROLE - ALWAYS FORCE ADMIN
+            currentUserRole = 'admin';
+            roleSelect.value = 'admin'; // Reset selector to admin
             
-            // Keep the same username, only change the role
-            // Don't change currentUser - it should stay as the username
-            
+            console.log('🔅 Rôle FORCÉ à admin - sélecteur réinitialisé');
             console.log('Pseudo après changement:', currentUser);
             console.log('Rôle après changement:', currentUserRole);
             
             // Add system message
-            addMessage('System', `Votre rôle est maintenant: ${newRole}`);
+            addMessage('System', `Votre rôle reste: ADMIN (forcé)`);
         }
 
         function sendMessage() {
