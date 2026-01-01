@@ -630,53 +630,24 @@
             }
         }
 
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         .modal-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
             color: #ff0000;
-            text-transform: uppercase;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #cccccc;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ff0000;
-            border-radius: 5px;
-            color: #ffffff;
-            font-size: 1rem;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #ff0000;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            font-size: 1.5rem;
         }
 
         .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 1.5rem;
-            color: #ff0000;
-            cursor: pointer;
             background: none;
             border: none;
-        }
-
-        .close-btn:hover {
-            color: #ffffff;
+            color: #ff0000;
+            font-size: 2rem;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -774,6 +745,49 @@
         <div class="chat-input-container">
             <input type="text" class="chat-input" id="chatInput" placeholder="Tapez votre message..." onkeypress="handleChatKeyPress(event)">
             <button class="chat-send-btn" onclick="sendMessage()">Envoyer</button>
+        </div>
+    </div>
+
+    <!-- Customization Modal -->
+    <div id="customizationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🎨 Personnaliser votre pseudo</h3>
+                <button class="close-btn" onclick="closeModal('customizationModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Couleur du pseudo</label>
+                <input type="color" id="usernameColor" value="#ffffff">
+            </div>
+            <div class="form-group">
+                <label>Style du texte</label>
+                <select id="usernameStyle">
+                    <option value="normal">Normal</option>
+                    <option value="bold">Gras</option>
+                    <option value="italic">Italique</option>
+                    <option value="bold-italic">Gras + Italique</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Effet spécial</label>
+                <select id="usernameEffect">
+                    <option value="none">Aucun</option>
+                    <option value="glow">Lumineux</option>
+                    <option value="shadow">Ombre</option>
+                    <option value="rainbow">Arc-en-ciel</option>
+                    <option value="neon">Néon</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Badge personnalisé</label>
+                <input type="text" id="customBadge" placeholder="Ex: ⭐ VIP, 👑 Légende" maxlength="20">
+            </div>
+            <div class="form-group">
+                <label>Couleur du badge</label>
+                <input type="color" id="badgeColor" value="#ffd700">
+            </div>
+            <button class="btn-primary" onclick="saveCustomization()">Sauvegarder</button>
+            <button class="btn-secondary" onclick="resetCustomization()" style="margin-left: 10px; background: #666; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer;">Réinitialiser</button>
         </div>
     </div>
 
@@ -1268,12 +1282,14 @@
                 // Show admin link if user is admin or moderator
                 setTimeout(() => {
                     checkAndShowAdminLink();
+                    checkAndShowCustomizationLink();
                 }, 1000);
             } else {
                 currentUser = null;
                 currentUserRole = 'member';
                 console.log('Utilisateur déconnecté');
                 hideAdminLink();
+                hideCustomizationLink();
             }
         });
 
@@ -1281,7 +1297,7 @@
         function checkAndShowAdminLink() {
             if (currentUserRole === 'admin' || currentUserRole === 'moderator') {
                 const adminLink = document.createElement('a');
-                adminLink.href = 'admin.html';
+                adminLink.href = 'admin.html?admin=neyzoxx2024';
                 adminLink.className = 'btn';
                 adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; z-index: 1000;';
                 adminLink.innerHTML = '🔐 Admin';
@@ -1290,11 +1306,33 @@
             }
         }
 
+        // Check and show customization link
+        function checkAndShowCustomizationLink() {
+            if (currentUserRole !== 'member') {
+                const customLink = document.createElement('a');
+                customLink.href = '#';
+                customLink.className = 'btn';
+                customLink.style.cssText = 'position: fixed; top: 20px; right: 140px; background: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; z-index: 1000;';
+                customLink.innerHTML = '🎨 Personnaliser';
+                customLink.id = 'customLink';
+                customLink.onclick = openCustomizationModal;
+                document.body.appendChild(customLink);
+            }
+        }
+
         // Hide admin link
         function hideAdminLink() {
             const adminLink = document.getElementById('adminLink');
             if (adminLink) {
                 adminLink.remove();
+            }
+        }
+
+        // Hide customization link
+        function hideCustomizationLink() {
+            const customLink = document.getElementById('customLink');
+            if (customLink) {
+                customLink.remove();
             }
         }
 
