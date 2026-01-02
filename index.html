@@ -770,6 +770,15 @@
             -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E") center/contain no-repeat;
         }
         
+        .icon-css-admin {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #dc143c, #8b0000);
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z'/%3E%3C/svg%3E") center/contain no-repeat;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z'/%3E%3C/svg%3E") center/contain no-repeat;
+        }
+        
         .icon-css-shield {
             display: inline-block;
             width: 24px;
@@ -787,6 +796,24 @@
             mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2c0 5-4 9-4 9h8s-4-4-4-9c0 0-4 0-4 0zm-1 11v2h2v-2h-2zm0 3v2h2v-2h-2z'/%3E%3C/svg%3E") center/contain no-repeat;
             -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2c0 5-4 9-4 9h8s-4-4-4-9c0 0-4 0-4 0zm-1 11v2h2v-2h-2zm0 3v2h2v-2h-2z'/%3E%3C/svg%3E") center/contain no-repeat;
         }
+        /* Bouton admin intégré au profil */
+        .admin-btn-fixed {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-btn-fixed:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+        }
+        
+        .admin-btn-fixed span {
+            display: inline-block;
+        }
+        
         .notification-btn {
             position: relative;
             top: 0;
@@ -2860,7 +2887,7 @@
                     const messages = snapshot.val();
                     
                     if (!messagesContainer) {
-                        console.error('Container des messages non trouvé');
+                        console.warn('⚠️ Container des messages non trouvé - Chat optionnel');
                         return;
                     }
                     
@@ -4912,10 +4939,19 @@
             if (currentUserRole === 'admin' && !document.getElementById('adminLink')) {
                 const adminLink = document.createElement('a');
                 adminLink.href = 'admin.html';
-                adminLink.className = 'btn';
-                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; z-index: 1000; font-size: 0.8rem; font-weight: bold; box-shadow: 0 2px 10px rgba(255,0,0,0.3); transition: all 0.3s;';
-                adminLink.innerHTML = '🔧 Admin';
+                adminLink.className = 'btn admin-btn-fixed';
+                adminLink.innerHTML = '<span class="icon-css-admin"></span> Admin';
                 adminLink.id = 'adminLink';
+                
+                // Positionnement à côté du profil
+                const userInfo = document.getElementById('userInfo');
+                if (userInfo) {
+                    adminLink.style.cssText = 'margin-left: 10px; background: linear-gradient(135deg, #ff0000, #cc0000); color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 2px 10px rgba(255,0,0,0.3); transition: all 0.3s;';
+                    userInfo.appendChild(adminLink);
+                } else {
+                    adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #ff0000, #cc0000); color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; z-index: 1000; font-size: 0.8rem; font-weight: bold; box-shadow: 0 2px 10px rgba(255,0,0,0.3); transition: all 0.3s;';
+                    document.body.appendChild(adminLink);
+                }
                 
                 // Effet hover
                 adminLink.addEventListener('mouseenter', () => {
