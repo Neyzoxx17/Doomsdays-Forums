@@ -415,6 +415,76 @@
             object-fit: cover;
         }
 
+        /* #STYLES FORUM - CRÉATION DE SUJETS# */
+        .create-thread-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .create-thread-container .form-group {
+            margin-bottom: 15px;
+        }
+
+        .create-thread-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .create-thread-container input,
+        .create-thread-container select,
+        .create-thread-container textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444;
+            background: #222;
+            color: white;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+
+        .create-thread-container textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .create-thread-container .btn-primary {
+            background: linear-gradient(45deg, #dc143c, #ff0000);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .create-thread-container .btn-primary:hover {
+            background: linear-gradient(45deg, #ff0000, #ff3333);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
+        }
+
+        /* #STYLES FORUM - TAGS# */
+        .thread-tags {
+            margin-top: 5px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(220, 20, 60, 0.2);
+            color: #dc143c;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            border: 1px solid rgba(220, 20, 60, 0.3);
+        }
+
         .user-info {
             display: flex;
             flex-direction: column;
@@ -740,11 +810,7 @@
             gap: 8px;
         }
 
-        .online-users::before {
-            content: '🟢';
-            font-size: 0.8rem;
-            animation: pulse 2s infinite;
-        }
+    
 
         .online-count {
             color: #dc143c;
@@ -1464,6 +1530,8 @@
             <button class="btn btn-account" onclick="window.location.href='admin.html'">⚙ Admin</button>
         </div>
         
+        <!-- #SECTION PROFIL UTILISATEUR# -->
+        <!-- Profil utilisateur avec notification intégrée -->
         <div class="user-profile" id="userProfile" style="display: none;">
             <div class="user-avatar" onclick="window.location.href='profile.html'" style="cursor: pointer;">
                 <img id="userAvatar" src="https://picsum.photos/seed/default/40/40.jpg" alt="Avatar">
@@ -1472,7 +1540,14 @@
                 <span class="user-username" id="userUsername" onclick="window.location.href='profile.html'" style="cursor: pointer;">Utilisateur</span>
                 <span class="user-role" id="userRole">Membre</span>
             </div>
+            <!-- Bouton notification intégré au profil -->
+            <button class="notification-btn" id="notificationBtn" onclick="toggleNotifications()" style="position: relative; top: 0; right: 0; margin-left: 10px;">
+                <span class="bell-icon"></span>
+                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+            </button>
         </div>
+        
+        <!-- #SECTION AUTHENTIFICATION# -->
         <div class="auth-buttons" id="authButtons">
             <button class="btn" onclick="openModal('loginModal')">Se Connecter</button>
             <button class="btn" onclick="openModal('registerModal')">Créer un Compte</button>
@@ -1548,17 +1623,12 @@
         console.log('✅ All critical functions loaded successfully');
     </script>
 
-    <!-- Notification System -->
-    <button class="notification-btn" id="notificationBtn" onclick="toggleNotifications()">
-        <span class="bell-icon"></span>
-        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-    </button>
-
+    <!-- #SECTION NOTIFICATIONS# -->
     <div class="toast-container" id="toastContainer"></div>
 
     <div class="notification-panel" id="notificationPanel">
         <div class="notification-header">
-            <h3 class="notification-title">🔔 Notifications</h3>
+            <h3 class="notification-title">Notifications</h3>
             <button class="clear-notifications" onclick="clearNotifications()">Effacer</button>
         </div>
         <div id="notificationsList">
@@ -1568,12 +1638,15 @@
         </div>
     </div>
 
+    <!-- #SECTION CONTENU PRINCIPAL# -->
     <main>
+        <!-- #SECTION HERO# -->
         <section class="hero-section">
             <h2 class="hero-title">Bienvenue sur Doomsday Forums</h2>
             <p class="hero-subtitle">Discutez, partagez et explorez des sujets fascinants</p>
         </section>
 
+        <!-- #SECTION FORUMS - CATÉGORIES PRINCIPALES# -->
         <section class="discussion-section">
             <h3 class="section-title">◭ Sections de Cybersécurité</h3>
             <div class="categories-grid">
@@ -1659,6 +1732,41 @@
             </div>
         </section>
 
+        <!-- #SECTION CRÉATION DE SUJET# -->
+        <section class="discussion-section">
+            <h3 class="section-title">◭ Créer un nouveau sujet</h3>
+            <div class="create-thread-container">
+                <div class="form-group">
+                    <label for="threadTitle">Titre du sujet</label>
+                    <input type="text" id="threadTitle" placeholder="Entrez un titre clair et descriptif..." maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="threadCategory">Catégorie</label>
+                    <select id="threadCategory">
+                        <option value="">Choisissez une catégorie...</option>
+                        <option value="general">Général</option>
+                        <option value="database">Database</option>
+                        <option value="tools">Tools</option>
+                        <option value="network">Network</option>
+                        <option value="web">Web Security</option>
+                        <option value="malware">Malware</option>
+                        <option value="cryptography">Cryptography</option>
+                        <option value="forensics">Forensics</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="threadContent">Contenu</label>
+                    <textarea id="threadContent" placeholder="Décrivez votre sujet en détail..." rows="6"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="threadTags">Tags (séparés par des virgules)</label>
+                    <input type="text" id="threadTags" placeholder="ex: sécurité, tutorial, question">
+                </div>
+                <button class="btn-primary" onclick="createThread()">Créer le sujet</button>
+            </div>
+        </section>
+
+        <!-- #SECTION DERNIÈRES DISCUSSIONS# -->
         <section class="discussion-section">
             <h3 class="section-title">◭ Dernières Discussions</h3>
             <ul class="thread-list" id="threadList">
@@ -1731,7 +1839,7 @@
     <div id="avatarModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">🖼️ Choisir votre avatar</h3>
+                <h3 class="modal-title">Choisir votre avatar</h3>
                 <button class="close-btn" onclick="closeModal('avatarModal')">&times;</button>
             </div>
             <div class="avatar-grid">
@@ -3330,6 +3438,121 @@
                 });
         }
 
+        // #FONCTIONNALITÉS FORUM - CRÉATION DE SUJETS#
+        
+        // Créer un nouveau sujet
+        function createThread() {
+            if (!auth.currentUser) {
+                alert('Vous devez être connecté pour créer un sujet!');
+                return;
+            }
+            
+            const title = document.getElementById('threadTitle').value.trim();
+            const category = document.getElementById('threadCategory').value;
+            const content = document.getElementById('threadContent').value.trim();
+            const tags = document.getElementById('threadTags').value.trim();
+            
+            // Validation
+            if (!title) {
+                alert('Veuillez entrer un titre pour votre sujet!');
+                return;
+            }
+            
+            if (!category) {
+                alert('Veuillez choisir une catégorie!');
+                return;
+            }
+            
+            if (!content) {
+                alert('Veuillez entrer le contenu de votre sujet!');
+                return;
+            }
+            
+            if (title.length < 5) {
+                alert('Le titre doit contenir au moins 5 caractères!');
+                return;
+            }
+            
+            if (content.length < 20) {
+                alert('Le contenu doit contenir au moins 20 caractères!');
+                return;
+            }
+            
+            // Créer le sujet dans Firebase
+            const threadData = {
+                title: title,
+                category: category,
+                content: content,
+                tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+                author: currentUser || 'Utilisateur',
+                authorId: auth.currentUser.uid,
+                createdAt: Date.now(),
+                replies: 0,
+                views: 0,
+                lastActivity: Date.now(),
+                pinned: false,
+                locked: false
+            };
+            
+            database.ref('threads').push(threadData)
+                .then(() => {
+                    console.log('✅ Sujet créé avec succès');
+                    alert('Sujet créé avec succès!');
+                    
+                    // Vider le formulaire
+                    document.getElementById('threadTitle').value = '';
+                    document.getElementById('threadCategory').value = '';
+                    document.getElementById('threadContent').value = '';
+                    document.getElementById('threadTags').value = '';
+                    
+                    // Rafraîchir la liste des sujets
+                    loadLatestThreads();
+                    
+                    // Notifier l'utilisateur
+                    showNotification('Nouveau sujet créé: ' + title, 'success');
+                })
+                .catch((error) => {
+                    console.error('❌ Erreur lors de la création du sujet:', error);
+                    alert('Erreur lors de la création du sujet: ' + error.message);
+                });
+        }
+        
+        // Charger les derniers sujets
+        function loadLatestThreads() {
+            database.ref('threads').orderByChild('lastActivity').limitToLast(10).once('value')
+                .then((snapshot) => {
+                    const threads = snapshot.val();
+                    const threadList = document.getElementById('threadList');
+                    
+                    if (!threadList) return;
+                    
+                    threadList.innerHTML = '';
+                    
+                    if (threads) {
+                        Object.values(threads).reverse().forEach(thread => {
+                            const threadItem = createThreadItem(thread);
+                            threadList.appendChild(threadItem);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('❌ Erreur lors du chargement des sujets:', error);
+                });
+        }
+        
+        // Calculer le temps écoulé
+        function getTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+            if (hours < 24) return `${hours} heure${hours > 1 ? 's' : ''}`;
+            return `${days} jour${days > 1 ? 's' : ''}`;
+        }
+
         function handleChatKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
@@ -3365,18 +3588,8 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // Admin link functions
-        function checkAndShowAdminLink() {
-            if (currentUserRole === 'admin') {
-                const adminLink = document.createElement('a');
-                adminLink.href = 'admin.html';
-                adminLink.className = 'btn';
-                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 4px 10px; text-decoration: none; border-radius: 3px; z-index: 1000; font-size: 0.7rem;';
-                adminLink.innerHTML = '🔧 Admin';
-                adminLink.id = 'adminLink';
-                document.body.appendChild(adminLink);
-            }
-        }
+
+        
 
         function hideAdminLink() {
             const adminLink = document.getElementById('adminLink');
