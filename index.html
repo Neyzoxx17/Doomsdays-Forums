@@ -297,14 +297,18 @@
 
         .account-buttons {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             position: absolute;
             top: 20px;
             right: 40px;
             align-items: center;
+            flex-wrap: nowrap;
         }
 
-        .btn-account {
+        .notification-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             background: rgba(220, 20, 60, 0.3);
             color: #dc143c;
             border: 1px solid #dc143c;
@@ -314,8 +318,8 @@
             font-size: 0.7rem;
             font-weight: bold;
             transition: all 0.3s;
-            text-decoration: none;
-            display: inline-flex;
+            z-index: 1001;
+            display: flex;
             align-items: center;
             gap: 4px;
         }
@@ -755,12 +759,122 @@
 
         .message-author {
             font-weight: bold;
-            color: #dc143c;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 0.95rem;
+        }
+
+        .message-author .username {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .message-author .username:hover {
+            text-decoration: underline;
+            transform: scale(1.05);
+        }
+
+        .message-author .username.admin {
+            color: #ff0000;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+            animation: lightning 2s infinite;
+        }
+
+        .message-author .username.moderator {
+            color: #ff6600;
+            text-shadow: 0 0 8px rgba(255, 102, 0, 0.8);
+            animation: lightning 2.5s infinite;
+        }
+
+        @keyframes lightning {
+            0%, 100% { 
+                text-shadow: 0 0 10px currentColor;
+                filter: brightness(1);
+            }
+            25% { 
+                text-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+                filter: brightness(1.5);
+            }
+            50% { 
+                text-shadow: 0 0 5px currentColor;
+                filter: brightness(0.8);
+            }
+            75% { 
+                text-shadow: 0 0 15px currentColor, 0 0 25px currentColor;
+                filter: brightness(1.3);
+            }
+        }
+
+        .message-text .mention {
+            color: #00ff00;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0, 255, 0, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .message-text .mention:hover {
+            background: rgba(0, 255, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .reply-indicator {
+            background: rgba(255, 255, 0, 0.1);
+            border-left: 3px solid #ffff00;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #cccccc;
+        }
+
+        .reply-to-user {
+            color: #ffff00;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .color-picker {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #333;
+            border: 1px solid #666;
+            border-radius: 8px;
+            padding: 8px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-picker.show {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+        }
+
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+            border-color: #fff;
+        }
+
+        .color-option.selected {
+            border-color: #ffff00;
+            box-shadow: 0 0 8px currentColor;
         }
 
         .message-avatar {
@@ -919,14 +1033,14 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 60px;
-            height: 60px;
+            width: 45px;
+            height: 45px;
             background-color: #ff0000;
             color: white;
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             z-index: 1000;
             transition: all 0.3s ease;
         }
@@ -1418,6 +1532,23 @@
                 <button class="chat-icon-btn" onclick="insertEmoji('🔥')" title="Feu">🔥</button>
                 <button class="chat-icon-btn" onclick="insertEmoji('💯')" title="100">💯</button>
                 <button class="chat-icon-btn" onclick="insertEmoji('🚀')" title="Fusée">🚀</button>
+                <div style="position: relative; margin-left: auto;">
+                    <button class="chat-icon-btn" onclick="toggleColorPicker()" title="Couleur du pseudo">🎨</button>
+                    <div class="color-picker" id="colorPicker">
+                        <div class="color-option" style="background: #ffffff;" onclick="changeUsernameColor('#ffffff')"></div>
+                        <div class="color-option" style="background: #ff0000;" onclick="changeUsernameColor('#ff0000')"></div>
+                        <div class="color-option" style="background: #00ff00;" onclick="changeUsernameColor('#00ff00')"></div>
+                        <div class="color-option" style="background: #0000ff;" onclick="changeUsernameColor('#0000ff')"></div>
+                        <div class="color-option" style="background: #ffff00;" onclick="changeUsernameColor('#ffff00')"></div>
+                        <div class="color-option" style="background: #ff00ff;" onclick="changeUsernameColor('#ff00ff')"></div>
+                        <div class="color-option" style="background: #00ffff;" onclick="changeUsernameColor('#00ffff')"></div>
+                        <div class="color-option" style="background: #ff6600;" onclick="changeUsernameColor('#ff6600')"></div>
+                        <div class="color-option" style="background: #9900ff;" onclick="changeUsernameColor('#9900ff')"></div>
+                        <div class="color-option" style="background: #0099ff;" onclick="changeUsernameColor('#0099ff')"></div>
+                        <div class="color-option" style="background: #00ff99;" onclick="changeUsernameColor('#00ff99')"></div>
+                        <div class="color-option" style="background: #ff0099;" onclick="changeUsernameColor('#ff0099')"></div>
+                    </div>
+                </div>
             </div>
             <div class="chat-input-wrapper">
                 <input type="text" class="chat-input" id="chatInput" placeholder="Tapez votre message..." onkeypress="handleChatKeyPress(event)">
@@ -2081,10 +2212,12 @@
 
         // User authentication state
         let currentUser = null;
-        let currentUserRole = 'admin';
-        let onlineUsers = ['System'];
-        let connectedUsers = [];
-        let forumThreads = [];
+        let currentUserRole = 'member';
+        let currentUserUsernameColor = '#ffffff';
+        let replyingTo = null;
+        let notifications = [];
+        let notificationCount = 0;
+        let notificationsListener = null;
         let chatMessages = [];
 
         // Listen for auth state changes
@@ -2618,6 +2751,115 @@
             input.focus();
         }
 
+        function toggleColorPicker() {
+            const picker = document.getElementById('colorPicker');
+            picker.classList.toggle('show');
+        }
+
+        function changeUsernameColor(color) {
+            if (auth.currentUser) {
+                // Save color to Firebase
+                database.ref('users/' + auth.currentUser.uid).update({
+                    usernameColor: color
+                }).then(() => {
+                    console.log('Couleur du pseudo mise à jour:', color);
+                    toggleColorPicker();
+                    // Update current user color
+                    currentUserUsernameColor = color;
+                }).catch((error) => {
+                    console.error('Erreur lors de la mise à jour de la couleur:', error);
+                });
+            }
+        }
+
+        function viewProfile(username) {
+            alert(`Profil de ${username} - (Fonctionnalité à implémenter)`);
+        }
+
+        function replyToMessage(username, messageId) {
+            const input = document.getElementById('chatInput');
+            input.value = `@${username} `;
+            input.focus();
+            replyingTo = messageId;
+        }
+
+        function processMentions(text) {
+            // Find all @mentions in the text
+            const mentionRegex = /@(\w+)/g;
+            return text.replace(mentionRegex, '<span class="mention" onclick="viewProfile(\'$1\')">@$1</span>');
+        }
+
+        function addMessageFromFirebase(author, text, time, avatarUrl) {
+            console.log('addMessageFromFirebase appelé avec:', {author, text, time, avatarUrl});
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            if (!messagesContainer) {
+                console.error('Container des messages non trouvé dans addMessageFromFirebase');
+                return;
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.dataset.messageId = Date.now() + Math.random(); // Unique ID for replies
+            
+            // Get user role and color
+            let userRole = 'member';
+            let usernameColor = '#ffffff';
+            
+            // Fetch user data from Firebase
+            if (author) {
+                database.ref('users').orderByChild('username').equalTo(author).once('value').then((snapshot) => {
+                    const users = snapshot.val();
+                    if (users) {
+                        const userId = Object.keys(users)[0];
+                        const userData = users[userId];
+                        userRole = userData.role || 'member';
+                        usernameColor = userData.usernameColor || '#ffffff';
+                        
+                        // Update message with role and color
+                        updateMessageWithUserData(messageDiv, author, text, time, avatarUrl, userRole, usernameColor);
+                    }
+                }).catch(() => {
+                    // Fallback if Firebase fails
+                    updateMessageWithUserData(messageDiv, author, text, time, avatarUrl, userRole, usernameColor);
+                });
+            }
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function updateMessageWithUserData(messageDiv, author, text, time, avatarUrl, userRole, usernameColor) {
+            // Create avatar HTML
+            let avatarHTML = '';
+            if (avatarUrl) {
+                avatarHTML = `<div class="message-avatar"><img src="${avatarUrl}" alt="${author}"></div>`;
+            } else {
+                const initials = author ? author.substring(0, 2).toUpperCase() : '??';
+                avatarHTML = `<div class="message-avatar">${initials}</div>`;
+            }
+            
+            // Process mentions in text
+            const processedText = processMentions(text);
+            
+            // Determine username class based on role
+            let usernameClass = 'username';
+            if (userRole === 'admin') {
+                usernameClass += ' admin';
+            } else if (userRole === 'moderator') {
+                usernameClass += ' moderator';
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-author">
+                    ${avatarHTML}
+                    <span class="${usernameClass}" style="color: ${usernameColor};" onclick="viewProfile('${sanitizeInput(author)}')">${sanitizeInput(author)}</span>
+                </div>
+                <div class="message-text">${processedText}</div>
+                <div class="message-time">${time}</div>
+            `;
+        }
+
         function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
@@ -2688,18 +2930,8 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // Admin link functions
-        function checkAndShowAdminLink() {
-            if (currentUserRole === 'admin') {
-                const adminLink = document.createElement('a');
-                adminLink.href = 'admin.html';
-                adminLink.className = 'btn';
-                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 4px 10px; text-decoration: none; border-radius: 3px; z-index: 1000; font-size: 0.7rem;';
-                adminLink.innerHTML = '🔧 Admin';
-                adminLink.id = 'adminLink';
-                document.body.appendChild(adminLink);
-            }
-        }
+    
+        
 
         function hideAdminLink() {
             const adminLink = document.getElementById('adminLink');
@@ -2864,6 +3096,14 @@
             
             if (!notificationBtn.contains(event.target) && !notificationPanel.contains(event.target)) {
                 notificationPanel.style.display = 'none';
+            }
+            
+            // Close color picker when clicking outside
+            const colorPicker = document.getElementById('colorPicker');
+            const colorPickerBtn = event.target.closest('[onclick="toggleColorPicker()"]');
+            
+            if (!colorPicker.contains(event.target) && !colorPickerBtn) {
+                colorPicker.classList.remove('show');
             }
         });
 
