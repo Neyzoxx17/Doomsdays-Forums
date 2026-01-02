@@ -1784,21 +1784,27 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
     <script src="security.js"></script>
+    
+    <!-- Critical functions - MUST load immediately -->
     <script>
-        // Modal functions - MUST be defined first
+        // Modal functions - DEFINED IMMEDIATELY
         function openModal(modalId) {
+            console.log('Opening modal:', modalId);
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.style.display = 'block';
+                console.log('Modal found and opened');
             } else {
                 console.error('Modal not found:', modalId);
             }
         }
 
         function closeModal(modalId) {
+            console.log('Closing modal:', modalId);
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.style.display = 'none';
+                console.log('Modal found and closed');
             } else {
                 console.error('Modal not found:', modalId);
             }
@@ -1811,7 +1817,7 @@
             }
         }
 
-        // Category and thread functions
+        // Other critical functions
         function openCategory(categoryName) {
             console.log('Opening category:', categoryName);
             window.location.href = `category-posts.html?category=${categoryName}`;
@@ -1843,6 +1849,9 @@
             badge.textContent = '0';
         }
 
+        console.log('✅ Critical functions loaded successfully');
+    </script>
+    <script>
         // Real-time Firebase functions
         function sendMessageToFirebase(message) {
             console.log('sendMessageToFirebase appelé avec:', message);
