@@ -2694,7 +2694,7 @@
                 const adminLink = document.createElement('a');
                 adminLink.href = 'admin.html';
                 adminLink.className = 'btn';
-                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; z-index: 1000;';
+                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 4px 10px; text-decoration: none; border-radius: 3px; z-index: 1000; font-size: 0.7rem;';
                 adminLink.innerHTML = '🔧 Admin';
                 adminLink.id = 'adminLink';
                 document.body.appendChild(adminLink);
@@ -2723,10 +2723,16 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Chat initialisé');
             
-            // Start listening for messages if user is logged in
-            if (auth.currentUser) {
-                listenToMessages();
-                listenToOnlineUsers();
+            // Add error handling for Firebase initialization
+            try {
+                // Start listening for messages if user is logged in
+                if (auth.currentUser) {
+                    listenToMessages();
+                    listenToOnlineUsers();
+                }
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'initialisation:', error);
+                // Continue without chat functionality if Firebase fails
             }
         });
 
