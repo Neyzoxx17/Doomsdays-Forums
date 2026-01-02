@@ -2607,7 +2607,134 @@
         // Open customization modal
         function openCustomizationModal() {
             console.log('Opening customization modal...');
-            alert('Fonction de personnalisation en cours de développement!');
+            const modal = document.getElementById('customizationModal');
+            if (modal) {
+                modal.style.display = 'block';
+            } else {
+                alert('Modal de personnalisation non trouvé!');
+            }
+        }
+        
+        // Save customization
+        function saveCustomization() {
+            if (!auth.currentUser) {
+                alert('Vous devez être connecté pour personnaliser votre profil!');
+                return;
+            }
+            
+            const usernameColor = document.getElementById('usernameColor').value;
+            const usernameStyle = document.getElementById('usernameStyle').value;
+            const usernameEffect = document.getElementById('usernameEffect').value;
+            const customBadge = document.getElementById('customBadge').value;
+            const badgeColor = document.getElementById('badgeColor').value;
+            
+            const customization = {
+                usernameColor: usernameColor,
+                usernameStyle: usernameStyle,
+                usernameEffect: usernameEffect,
+                customBadge: customBadge,
+                badgeColor: badgeColor,
+                updatedAt: new Date().toISOString()
+            };
+            
+            // Save to Firebase
+            database.ref('users/' + auth.currentUser.uid + '/customization').set(customization)
+                .then(() => {
+                    console.log('✅ Personnalisation sauvegardée');
+                    alert('Personnalisation sauvegardée avec succès!');
+                    closeModal('customizationModal');
+                    
+                    // Apply customization immediately
+                    applyCustomization(customization);
+                })
+                .catch((error) => {
+                    console.error('❌ Erreur lors de la sauvegarde:', error);
+                    alert('Erreur lors de la sauvegarde de la personnalisation');
+                });
+        }
+        
+        // Reset customization
+        function resetCustomization() {
+            if (!auth.currentUser) {
+                alert('Vous devez être connecté pour réinitialiser votre profil!');
+                return;
+            }
+            
+            if (confirm('Êtes-vous sûr de vouloir réinitialiser votre personnalisation?')) {
+                // Reset to defaults
+                document.getElementById('usernameColor').value = '#ffffff';
+                document.getElementById('usernameStyle').value = 'normal';
+                document.getElementById('usernameEffect').value = 'none';
+                document.getElementById('customBadge').value = '';
+                document.getElementById('badgeColor').value = '#ffd700';
+                
+                // Remove from Firebase
+                database.ref('users/' + auth.currentUser.uid + '/customization').remove()
+                    .then(() => {
+                        console.log('✅ Personnalisation réinitialisée');
+                        alert('Personnalisation réinitialisée avec succès!');
+                        
+                        // Apply defaults
+                        applyCustomization({
+                            usernameColor: '#ffffff',
+                            usernameStyle: 'normal',
+                            usernameEffect: 'none',
+                            customBadge: '',
+                            badgeColor: '#ffd700'
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('❌ Erreur lors de la réinitialisation:', error);
+                        alert('Erreur lors de la réinitialisation');
+                    });
+            }
+        }
+        
+        // Apply customization to UI
+        function applyCustomization(customization) {
+            const userUsername = document.getElementById('userUsername');
+            if (userUsername) {
+                userUsername.style.color = customization.usernameColor || '#ffffff';
+                
+                // Apply styles
+                let fontWeight = 'normal';
+                let fontStyle = 'normal';
+                
+                if (customization.usernameStyle === 'bold') fontWeight = 'bold';
+                else if (customization.usernameStyle === 'italic') fontStyle = 'italic';
+                else if (customization.usernameStyle === 'bold-italic') {
+                    fontWeight = 'bold';
+                    fontStyle = 'italic';
+                }
+                
+                userUsername.style.fontWeight = fontWeight;
+                userUsername.style.fontStyle = fontStyle;
+                
+                // Apply effects
+                switch (customization.usernameEffect) {
+                    case 'glow':
+                        userUsername.style.textShadow = '0 0 10px ' + customization.usernameColor;
+                        break;
+                    case 'shadow':
+                        userUsername.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
+                        break;
+                    case 'rainbow':
+                        userUsername.style.background = 'linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet)';
+                        userUsername.style.webkitBackgroundClip = 'text';
+                        userUsername.style.webkitTextFillColor = 'transparent';
+                        break;
+                    case 'neon':
+                        userUsername.style.textShadow = '0 0 5px ' + customization.usernameColor + ', 0 0 10px ' + customization.usernameColor + ', 0 0 15px ' + customization.usernameColor;
+                        break;
+                    default:
+                        userUsername.style.textShadow = 'none';
+                        userUsername.style.background = 'none';
+                        userUsername.style.webkitTextFillColor = 'unset';
+                }
+            }
+            
+            // Update global variable for chat
+            currentUserUsernameColor = customization.usernameColor || '#ffffff';
         }
         
         // Initialize real-time data
