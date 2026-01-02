@@ -3646,9 +3646,22 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-
+        // #FONCTIONNALITÉS ADMIN - GESTION#
         
-
+        // Afficher le lien admin si l'utilisateur est admin
+        function checkAndShowAdminLink() {
+            if (currentUserRole === 'admin') {
+                const adminLink = document.createElement('a');
+                adminLink.href = 'admin.html';
+                adminLink.className = 'btn';
+                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 4px 10px; text-decoration: none; border-radius: 3px; z-index: 1000; font-size: 0.7rem;';
+                adminLink.innerHTML = '🔧 Admin';
+                adminLink.id = 'adminLink';
+                document.body.appendChild(adminLink);
+                console.log('✅ Lien admin créé et affiché');
+            }
+        }
+        
         function hideAdminLink() {
             const adminLink = document.getElementById('adminLink');
             if (adminLink) {
@@ -3663,217 +3676,7 @@
             }
         }
 
-        function addSystemMessage(text) {
-            addMessage('System', text);
-        }
-
-        // Initialize chat when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Chat initialisé');
-            
-            // Add comprehensive error handling for Firebase initialization
-            try {
-                // Check if Firebase is properly initialized
-                if (typeof firebase === 'undefined' || !firebase.apps || firebase.apps.length === 0) {
-                    console.warn('⚠️ Firebase non initialisé, chargement des fonctionnalités de base');
-                    return;
-                }
-                
-                // Start listening for messages if user is logged in and Firebase is ready
-                if (auth && auth.currentUser) {
-                    try {
-                        listenToMessages();
-                        listenToOnlineUsers();
-                    } catch (error) {
-                        console.warn('⚠️ Erreur lors du démarrage de l\'écoute Firebase:', error.message);
-                        // Continue without real-time features
-                    }
-                }
-            } catch (error) {
-                console.error('❌ Erreur lors de l\'initialisation:', error.message || error);
-                // Continue without chat functionality if Firebase fails
-                console.log('🔄 Mode dégradé : certaines fonctionnalités peuvent être limitées');
-            }
-        });
-
-        // Notification System Functions (from category-posts.html)
-        function initializeNotifications() {
-            if (!currentUser || !auth.currentUser) return;
-            
-            // Listen for new notifications
-            const userNotificationsRef = database.ref(`notifications/${auth.currentUser.uid}`);
-            
-            if (notificationsListener) {
-                notificationsListener.off();
-            }
-            
-            notificationsListener = userNotificationsRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                notifications = [];
-                
-                if (data) {
-                    Object.keys(data).forEach(notificationId => {
-                        const notification = data[notificationId];
-                        if (!notification.read) {
-                            notifications.push({
-                                id: notificationId,
-                                ...notification
-                            });
-                        }
-                    });
-                }
-                
-                updateNotificationBadge();
-                displayNotifications();
-            });
-        }
-
-        function createNotification(type, message, targetUserId, postId = null) {
-            const notification = {
-                type: type, // 'like', 'reply', 'message'
-                message: message,
-                from: currentUser,
-                to: targetUserId,
-                postId: postId,
-                createdAt: Date.now(),
-                read: false
-            };
-            
-            database.ref(`notifications/${targetUserId}`).push(notification);
-        }
-
-        function updateNotificationBadge() {
-            const badge = document.getElementById('notificationBadge');
-            const count = notifications.length;
-            
-            if (count > 0) {
-                badge.textContent = count > 99 ? '99+' : count;
-                badge.style.display = 'flex';
-            } else {
-                badge.style.display = 'none';
-            }
-            
-            notificationCount = count;
-        }
-
-        function displayNotifications() {
-            const container = document.getElementById('notificationsList');
-            
-            if (notifications.length === 0) {
-                container.innerHTML = '<div class="notification-empty">Aucune notification</div>';
-                return;
-            }
-            
-            container.innerHTML = notifications.map(notification => {
-                const time = new Date(notification.createdAt).toLocaleDateString('fr-FR', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    day: 'numeric',
-                    month: 'short'
-                });
-                
-                return `
-                    <div class="notification-item unread" onclick="handleNotificationClick('${notification.id}', '${notification.type}', '${notification.postId || ''}')">
-                        <div class="notification-content">${sanitizeInput(notification.message)}</div>
-                        <div class="notification-time">${time}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function handleNotificationClick(notificationId, type, postId) {
-            // Mark as read
-            database.ref(`notifications/${auth.currentUser.uid}/${notificationId}/read`).set(true);
-            
-            // Navigate based on type
-            switch (type) {
-                case 'like':
-                case 'reply':
-                    if (postId) {
-                        window.location.href = `post-detail.html?id=${postId}`;
-                    }
-                    break;
-                case 'message':
-                    window.location.href = 'messages.html';
-                    break;
-            }
-        }
-
-        function toggleNotifications() {
-            const panel = document.getElementById('notificationPanel');
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function clearNotifications() {
-            if (!currentUser || !auth.currentUser) return;
-            
-            const updates = {};
-            notifications.forEach(notification => {
-                updates[notification.id] = null;
-            });
-            
-            database.ref(`notifications/${auth.currentUser.uid}`).update(updates).then(() => {
-                console.log('✅ Notifications cleared');
-            });
-        }
-
-        // Close notifications when clicking outside
-        document.addEventListener('click', (event) => {
-            const notificationBtn = document.getElementById('notificationBtn');
-            const notificationPanel = document.getElementById('notificationPanel');
-            
-            if (notificationBtn && notificationPanel && 
-                !notificationBtn.contains(event.target) && !notificationPanel.contains(event.target)) {
-                notificationPanel.style.display = 'none';
-            }
-            
-            // Close color picker when clicking outside
-            const colorPicker = document.getElementById('colorPicker');
-            const colorPickerBtn = event.target.closest('[onclick="toggleColorPicker()"]');
-            
-            if (colorPicker && !colorPicker.contains(event.target) && !colorPickerBtn) {
-                colorPicker.classList.remove('show');
-            }
-        });
-
-        function simulateOtherUsers() {
-            const responses = [
-                'Intéressant!',
-                'Je suis d\'accord',
-                'Pas sûr de comprendre',
-                'Quelqu\'un peut expliquer?',
-                'Cool!',
-                'Bonjour à tous!',
-                'De où venez-vous?',
-                'Ce site est génial!',
-                'Première fois ici',
-                'Quelqu\'un est là?'
-            ];
-            
-            const users = [
-                { name: 'Admin42', role: 'admin' },
-                { name: 'ModoAlex', role: 'moderator' },
-                { name: 'VIPStar', role: 'vip' },
-                { name: 'User123', role: 'member' },
-                { name: 'Mystère', role: 'member' },
-                { name: 'Curieux', role: 'member' }
-            ];
-            
-            setTimeout(() => {
-                if (Math.random() > 0.3) {
-                    const randomUser = users[Math.floor(Math.random() * users.length)];
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    addMessage(randomUser.name, randomResponse, randomUser.role);
-                }
-            }, Math.random() * 3000 + 1000);
-        }
-
-        function updateOnlineCount() {
-            const count = 3 + Math.floor(Math.random() * 5);
-            document.getElementById('onlineCount').textContent = count;
-        }
-
-        // Update online count periodically
+        // Add database admin button
         setInterval(updateOnlineCount, 15000);
 
         // Add some initial messages with roles
