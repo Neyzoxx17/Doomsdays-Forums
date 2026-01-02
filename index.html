@@ -1469,10 +1469,10 @@
                 <img id="userAvatar" src="https://picsum.photos/seed/default/40/40.jpg" alt="Avatar">
             </div>
             <div class="user-info">
-                <span class="user-username" id="userUsername" onclick="window.location.href='profile.html'" style="cursor: pointer;">Utilisateur</span>
+                <span class="user-username" id="userUsername" onclick="openUsernameModal()" style="cursor: pointer;">Utilisateur</span>
                 <span class="user-role" id="userRole">Membre</span>
             </div>
-            <button class="btn btn-account" onclick="window.location.href='profile.html'" style="margin-left: 10px; background: linear-gradient(45deg, #0066cc, #00aaff); box-shadow: 0 0 15px rgba(0, 102, 255, 0.5); animation: blueLightning 2s infinite;">⚡ Personnaliser</button>
+            <button class="btn btn-account" onclick="openCustomizationModal()" style="margin-left: 10px; background: linear-gradient(45deg, #0066cc, #00aaff); box-shadow: 0 0 15px rgba(0, 102, 255, 0.5); animation: blueLightning 2s infinite;">⚡ Personnaliser</button>
         </div>
         <div class="auth-buttons" id="authButtons">
             <button class="btn" onclick="openModal('loginModal')">Se Connecter</button>
@@ -1787,6 +1787,10 @@
             <div class="modal-header">
                 <h3 class="modal-title">◈ Personnaliser votre pseudo</h3>
                 <button class="close-btn" onclick="closeModal('customizationModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Nouveau pseudo</label>
+                <input type="text" id="newUsername" placeholder="Entrez votre nouveau pseudo" maxlength="20" style="width: 100%; padding: 10px; border: 1px solid #444; background: #222; color: white; border-radius: 5px;">
             </div>
             <div class="form-group">
                 <label>Couleur du pseudo</label>
@@ -2639,6 +2643,25 @@
             }
         }
         
+        // Open username modal
+        function openUsernameModal() {
+            console.log('Opening username modal...');
+            const modal = document.getElementById('customizationModal');
+            if (modal) {
+                modal.style.display = 'block';
+                // Focus sur le champ pseudo
+                setTimeout(() => {
+                    const usernameInput = document.getElementById('newUsername');
+                    if (usernameInput) {
+                        usernameInput.focus();
+                        usernameInput.select();
+                    }
+                }, 100);
+            } else {
+                alert('Modal de personnalisation non trouvé!');
+            }
+        }
+        
         // Save customization
         function saveCustomization() {
             if (!auth.currentUser) {
@@ -2646,11 +2669,23 @@
                 return;
             }
             
+            const newUsername = document.getElementById('newUsername').value.trim();
             const usernameColor = document.getElementById('usernameColor').value;
             const usernameStyle = document.getElementById('usernameStyle').value;
             const usernameEffect = document.getElementById('usernameEffect').value;
             const customBadge = document.getElementById('customBadge').value;
             const badgeColor = document.getElementById('badgeColor').value;
+            
+            // Validation du pseudo
+            if (newUsername && newUsername.length < 3) {
+                alert('Le pseudo doit contenir au moins 3 caractères!');
+                return;
+            }
+            
+            if (newUsername && newUsername.length > 20) {
+                alert('Le pseudo ne doit pas dépasser 20 caractères!');
+                return;
+            }
             
             const customization = {
                 usernameColor: usernameColor,
@@ -2661,11 +2696,28 @@
                 updatedAt: new Date().toISOString()
             };
             
-            // Save to Firebase
+            // Sauvegarder la personnalisation
             database.ref('users/' + auth.currentUser.uid + '/customization').set(customization)
                 .then(() => {
                     console.log('✅ Personnalisation sauvegardée');
-                    alert('Personnalisation sauvegardée avec succès!');
+                    
+                    // Si nouveau pseudo, le mettre à jour
+                    if (newUsername && newUsername !== auth.currentUser.displayName) {
+                        return auth.currentUser.updateProfile({
+                            displayName: newUsername
+                        }).then(() => {
+                            console.log('✅ Pseudo mis à jour');
+                            // Mettre à jour dans la base de données
+                            return database.ref('users/' + auth.currentUser.uid + '/username').set(newUsername);
+                        }).then(() => {
+                            // Mettre à jour l'interface
+                            document.getElementById('userUsername').textContent = newUsername;
+                            alert('Pseudo et personnalisation sauvegardés avec succès!');
+                        });
+                    } else {
+                        alert('Personnalisation sauvegardée avec succès!');
+                    }
+                    
                     closeModal('customizationModal');
                     
                     // Apply customization immediately
