@@ -1817,23 +1817,7 @@
     <!-- Chat Section -->
     <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">💬</button>
     
-    <div class="chat-section chat-hidden" id="chatSection">
-        <div class="chat-header">
-            <span>Chat Global</span>
-            <span onclick="toggleChat()" style="cursor: pointer;">×</span>
-        </div>
-        <div class="online-users">
-            <span class="online-count" id="onlineCount">3</span> utilisateurs en ligne
-        </div>
-        <div class="chat-messages" id="chatMessages">
-        </div>
-        <div class="chat-input-container">
-            <div class="chat-input-wrapper">
-                <input type="text" class="chat-input" id="chatInput" placeholder="Tapez votre message..." onkeypress="handleChatKeyPress(event)">
-                <button class="chat-send-btn" onclick="sendMessage()">Envoyer</button>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Avatar Modal -->
     <div id="avatarModal" class="modal">
@@ -2076,11 +2060,12 @@
 
         function addMessageFromFirebase(author, text, time, avatarUrl = null) {
             console.log('addMessageFromFirebase appelé avec:', {author, text, time, avatarUrl});
-            const messagesContainer = document.getElementById('chatMessages');
             
+            // Vérifier si le chat est activé avant de continuer
+            const messagesContainer = document.getElementById('chatMessages');
             if (!messagesContainer) {
-                console.error('Container des messages non trouvé dans addMessageFromFirebase');
-                return;
+                console.log('ℹ️ Chat non disponible - message ignoré:', {author, text});
+                return; // Ne pas afficher d'erreur, juste ignorer
             }
             
             const messageDiv = document.createElement('div');
@@ -3313,11 +3298,12 @@
 
         function addMessageFromFirebase(author, text, time, avatarUrl) {
             console.log('addMessageFromFirebase appelé avec:', {author, text, time, avatarUrl});
-            const messagesContainer = document.getElementById('chatMessages');
             
+            // Vérifier si le chat est activé avant de continuer
+            const messagesContainer = document.getElementById('chatMessages');
             if (!messagesContainer) {
-                console.error('Container des messages non trouvé dans addMessageFromFirebase');
-                return;
+                console.log('ℹ️ Chat non disponible - message ignoré:', {author, text});
+                return; // Ne pas afficher d'erreur, juste ignorer
             }
             
             const messageDiv = document.createElement('div');
@@ -3419,7 +3405,13 @@
         }
 
         function sendMessage() {
+            // Vérifier si le chat est activé avant de continuer
             const input = document.getElementById('chatInput');
+            if (!input) {
+                console.log('ℹ️ Chat non disponible - envoi message annulé');
+                return;
+            }
+            
             const message = input.value.trim();
             
             if (message === '') {
@@ -3618,13 +3610,25 @@
         }
 
         function handleChatKeyPress(event) {
+            // Vérifier si le chat est activé avant de continuer
+            const input = document.getElementById('chatInput');
+            if (!input) {
+                console.log('ℹ️ Chat non disponible - touche ignorée');
+                return;
+            }
+            
             if (event.key === 'Enter') {
                 sendMessage();
             }
         }
 
         function addMessage(author, text) {
+            // Vérifier si le chat est activé avant de continuer
             const messagesContainer = document.getElementById('chatMessages');
+            if (!messagesContainer) {
+                console.log('ℹ️ Chat non disponible - message ignoré:', {author, text});
+                return; // Ne pas afficher d'erreur, juste ignorer
+            }
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
             
@@ -3812,7 +3816,12 @@
         // Functions moved to global scope to avoid ReferenceError
         
         function addSystemMessage(message) {
+            // Vérifier si le chat est activé avant de continuer
             const messagesContainer = document.getElementById('chatMessages');
+            if (!messagesContainer) {
+                console.log('ℹ️ Chat non disponible - message système ignoré:', message);
+                return; // Ne pas afficher d'erreur, juste ignorer
+            }
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
             messageDiv.style.borderLeft = '3px solid #ffcc00';
