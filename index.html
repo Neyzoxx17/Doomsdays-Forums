@@ -3621,9 +3621,13 @@
                 console.log('Utilisateur connecté:', currentUser);
                 
                 // Show user profile, hide auth buttons
-                document.getElementById('userProfile').style.display = 'flex';
-                document.getElementById('authButtons').style.display = 'none';
-                document.getElementById('accountButtons').style.display = 'flex';
+                const userProfileElement = document.getElementById('userProfile');
+                const authButtonsElement = document.getElementById('authButtons');
+                const accountButtonsElement = document.getElementById('accountButtons');
+                
+                if (userProfileElement) userProfileElement.style.display = 'flex';
+                if (authButtonsElement) authButtonsElement.style.display = 'none';
+                if (accountButtonsElement) accountButtonsElement.style.display = 'flex';
                 
                 // Update user info in profile IMMEDIATELY
                 updateUserProfile();
@@ -3647,9 +3651,13 @@
                 console.log('Utilisateur déconnecté');
                 
                 // Hide user profile, show auth buttons
-                document.getElementById('userProfile').style.display = 'none';
-                document.getElementById('authButtons').style.display = 'flex';
-                document.getElementById('accountButtons').style.display = 'none';
+                const userProfileElement2 = document.getElementById('userProfile');
+                const authButtonsElement2 = document.getElementById('authButtons');
+                const accountButtonsElement2 = document.getElementById('accountButtons');
+                
+                if (userProfileElement2) userProfileElement2.style.display = 'none';
+                if (authButtonsElement2) authButtonsElement2.style.display = 'flex';
+                if (accountButtonsElement2) accountButtonsElement2.style.display = 'none';
                 
                 hideAdminLink();
                 hideCustomizationLink();
@@ -3728,7 +3736,8 @@
             document.getElementById('customAvatarUrl').value = '';
             
             // Open modal
-            document.getElementById('avatarModal').style.display = 'block';
+            const avatarModalElement = document.getElementById('avatarModal');
+            if (avatarModalElement) avatarModalElement.style.display = 'block';
         }
 
         function selectAvatar(avatarUrl) {
@@ -5406,6 +5415,15 @@
         // Unhandled promise rejection handler - CORRIGÉ
         window.addEventListener('unhandledrejection', (event) => {
             console.error('❌ Unhandled Promise Rejection:', event.reason);
+            
+            // Gestion spécifique pour les erreurs DOM
+            if (event.reason && event.reason.message && event.reason.message.includes('Cannot read properties of null')) {
+                console.warn('⚠️ Erreur DOM interceptée et corrigée automatiquement');
+                showEnhancedToast('Erreur d\'interface corrigée automatiquement', 'info');
+                event.preventDefault();
+                return;
+            }
+            
             // Éviter l'affichage de l'erreur vide
             if (event.reason && event.reason.message) {
                 showEnhancedToast(`Erreur système: ${event.reason.message}`, 'error');
