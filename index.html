@@ -3393,7 +3393,8 @@
             const notificationBtn = document.getElementById('notificationBtn');
             const notificationPanel = document.getElementById('notificationPanel');
             
-            if (!notificationBtn.contains(event.target) && !notificationPanel.contains(event.target)) {
+            if (notificationBtn && notificationPanel && 
+                !notificationBtn.contains(event.target) && !notificationPanel.contains(event.target)) {
                 notificationPanel.style.display = 'none';
             }
             
@@ -3401,7 +3402,7 @@
             const colorPicker = document.getElementById('colorPicker');
             const colorPickerBtn = event.target.closest('[onclick="toggleColorPicker()"]');
             
-            if (!colorPicker.contains(event.target) && !colorPickerBtn) {
+            if (colorPicker && !colorPicker.contains(event.target) && !colorPickerBtn) {
                 colorPicker.classList.remove('show');
             }
         });
