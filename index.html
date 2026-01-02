@@ -865,14 +865,15 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
+            width: 60px;
+            height: 60px;
             background-color: #ff0000;
-            color: #ffffff;
+            color: white;
             border: none;
-            padding: 15px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 1.2rem;
-            z-index: 999;
+            font-size: 1.5rem;
+            z-index: 1000;
             transition: all 0.3s ease;
         }
 
@@ -881,49 +882,8 @@
             transform: scale(1.1);
         }
 
-        .chat-hidden {
-            display: none;
-        }
-
-        .online-users {
-            padding: 10px 15px;
-            background-color: rgba(255, 0, 0, 0.1);
-            border-bottom: 1px solid #ff0000;
-            font-size: 0.8rem;
-            color: #cccccc;
-        }
-
-        .online-count {
-            color: #ff0000;
-            font-weight: bold;
-        }
-
-        .role-selector {
-            padding: 10px 15px;
-            background-color: rgba(255, 0, 0, 0.05);
-            border-bottom: 1px solid #ff0000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .role-selector label {
-            font-size: 0.8rem;
-            color: #000000;
-        }
-
-        .role-selector select {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ff0000;
-            color: #1d1d1d;
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-
-        .role-selector select:focus {
-            outline: none;
-            border-color: #ff0000;
+        .chat-toggle::before {
+            content: '💬';
         }
 
         /* Responsive Design */
@@ -2447,16 +2407,23 @@
                 roleElement.style.fontSize = '0.9rem';
                 console.log('✅ Rôle ADMIN forcé dans l\'UI');
             } else {
-                console.error('❌ Élément userRole non trouvé!');
+                console.log('ℹ️ Élément userRole non trouvé (normal si pas dans le profil)');
             }
             
-            // Update role selector and lock it
-            const roleSelect = document.getElementById('roleSelect');
-            if (roleSelect) {
-                roleSelect.value = 'admin';
-                roleSelect.disabled = true; // DISABLE SELECTOR
-                console.log('✅ Sélecteur de rôle bloqué sur Admin');
-            } else {
+            // Update user profile display
+            if (currentUser) {
+                updateUserProfile();
+                console.log('✅ Profil utilisateur mis à jour');
+            }
+            
+            // Show admin link if admin
+            if (currentUserRole === 'admin') {
+                checkAndShowAdminLink();
+                console.log('✅ Lien admin affiché');
+            }
+            
+            console.log('⚡ Forçage immédiat terminé');
+        }
                 console.error('❌ Sélecteur de rôle non trouvé!');
             }
             
@@ -2612,22 +2579,9 @@
         }
 
         function updateUserRole() {
-            const roleSelect = document.getElementById('roleSelect');
-            const newRole = roleSelect.value;
-            
-            console.log('Changement de rôle demandé:', newRole);
-            console.log('Pseudo actuel avant changement:', currentUser);
-            
-            // NEVER CHANGE ROLE - ALWAYS FORCE ADMIN
+            // Function simplified since role selector was removed
             currentUserRole = 'admin';
-            roleSelect.value = 'admin'; // Reset selector to admin
-            
-            console.log('🔅 Rôle FORCÉ à admin - sélecteur réinitialisé');
-            console.log('Pseudo après changement:', currentUser);
-            console.log('Rôle après changement:', currentUserRole);
-            
-            // Add system message
-            addMessage('System', `Votre rôle reste: ADMIN (forcé)`);
+            console.log('Rôle maintenu: ADMIN');
         }
 
         function sendMessage() {
@@ -2698,6 +2652,37 @@
             
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Admin link functions
+        function checkAndShowAdminLink() {
+            if (currentUserRole === 'admin') {
+                const adminLink = document.createElement('a');
+                adminLink.href = 'admin.html';
+                adminLink.className = 'btn';
+                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; z-index: 1000;';
+                adminLink.innerHTML = '🔧 Admin';
+                adminLink.id = 'adminLink';
+                document.body.appendChild(adminLink);
+            }
+        }
+
+        function hideAdminLink() {
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) {
+                adminLink.remove();
+            }
+        }
+
+        function hideCustomizationLink() {
+            const customLink = document.getElementById('customLink');
+            if (customLink) {
+                customLink.remove();
+            }
+        }
+
+        function addSystemMessage(text) {
+            addMessage('System', text);
         }
 
         // Initialize chat when page loads
