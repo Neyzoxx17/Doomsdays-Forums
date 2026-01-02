@@ -386,10 +386,10 @@
             background: rgba(255, 0, 0, 0.2);
             color: #ff0000;
             border: 1px solid #ff0000;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 4px 10px;
+            border-radius: 15px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             transition: all 0.3s;
         }
 
@@ -402,19 +402,19 @@
             background-color: #dc143c;
             color: #ffffff;
             border: 2px solid #dc143c;
-            padding: 6px 14px;
-            font-size: 0.8rem;
+            padding: 4px 10px;
+            font-size: 0.7rem;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.3s ease;
-            border-radius: 5px;
+            border-radius: 3px;
             text-decoration: none;
             display: inline-block;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
-            min-height: 36px;
-            min-width: 36px;
+            min-height: 28px;
+            min-width: 28px;
         }
 
         .btn:hover {
@@ -800,11 +800,57 @@
         }
 
         .chat-input-container {
-            padding: 15px 20px;
+            padding: 10px 15px;
             background: rgba(0, 0, 0, 0.5);
             border-top: 1px solid rgba(220, 20, 60, 0.3);
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .chat-icon-bar {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .chat-icon-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chat-icon-btn {
+            background: rgba(220, 20, 60, 0.2);
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            border-radius: 6px;
+            padding: 4px 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-icon-btn:hover {
+            background: rgba(220, 20, 60, 0.4);
+            transform: scale(1.1);
+        }
+
+        .chat-icon-btn:active {
+            transform: scale(0.95);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 8px;
             align-items: center;
         }
 
@@ -813,9 +859,9 @@
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(220, 20, 60, 0.5);
             color: white;
-            padding: 12px 15px;
-            border-radius: 25px;
-            font-size: 0.9rem;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
             transition: all 0.3s ease;
         }
 
@@ -834,16 +880,24 @@
             background: linear-gradient(135deg, #dc143c, #b91c3c);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 8px 16px;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
-            min-width: 80px;
+            min-width: 60px;
+            font-size: 0.8rem;
         }
 
         .chat-send-btn:hover {
             background: linear-gradient(135deg, #ff1744, #d50000);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
+        }
+
+        .chat-send-btn:active {
+            transform: scale(0.95);
+        }
 
         .avatar-option:hover {
             border-color: #ff0000;
@@ -1353,18 +1407,22 @@
             <span class="online-count" id="onlineCount">3</span> utilisateurs en ligne
         </div>
         <div class="chat-messages" id="chatMessages">
-            <div class="message">
-                <div class="message-author">
-                    <div class="message-avatar">💬</div>
-                    System
-                </div>
-                <div class="message-text">Bienvenue sur le chat global de Doomsday Forums!</div>
-                <div class="message-time">Maintenant</div>
-            </div>
         </div>
         <div class="chat-input-container">
-            <input type="text" class="chat-input" id="chatInput" placeholder="Tapez votre message..." onkeypress="handleChatKeyPress(event)">
-            <button class="chat-send-btn" onclick="sendMessage()">Envoyer</button>
+            <div class="chat-icon-bar">
+                <button class="chat-icon-btn" onclick="insertEmoji('😀')" title="Sourire">😀</button>
+                <button class="chat-icon-btn" onclick="insertEmoji('😂')" title="Rire">😂</button>
+                <button class="chat-icon-btn" onclick="insertEmoji('❤️')" title="Cœur">❤️</button>
+                <button class="chat-icon-btn" onclick="insertEmoji('👍')" title="Pouce">👍</button>
+                <button class="chat-icon-btn" onclick="insertEmoji('🎉')" title="Fête">🎉</button>
+                <button class="chat-icon-btn" onclick="insertEmoji('🔥')" title="Feu">🔥</button>
+                <button class="chat-icon-btn" onclick="insertEmoji('💯')" title="100">💯</button>
+                <button class="chat-icon-btn" onclick="insertEmoji('🚀')" title="Fusée">🚀</button>
+            </div>
+            <div class="chat-input-wrapper">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Tapez votre message..." onkeypress="handleChatKeyPress(event)">
+                <button class="chat-send-btn" onclick="sendMessage()">Envoyer</button>
+            </div>
         </div>
     </div>
 
@@ -1548,24 +1606,24 @@
 
         function listenToMessages() {
             console.log('Démarrage écoute des messages Firebase');
+            
+            // Clear existing messages first
+            const messagesContainer = document.getElementById('chatMessages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = '';
+            }
+            
             database.ref('messages').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
                 console.log('Messages reçus de Firebase:', snapshot.val());
                 const messages = snapshot.val();
-                const messagesContainer = document.getElementById('chatMessages');
                 
                 if (!messagesContainer) {
                     console.error('Container des messages non trouvé');
                     return;
                 }
                 
-                // Clear existing messages except system messages
-                const systemMessages = messagesContainer.querySelectorAll('.message-author[style*="color: #ffcc00"]');
+                // Clear and rebuild all messages to avoid duplicates
                 messagesContainer.innerHTML = '';
-                
-                // Re-add system messages
-                systemMessages.forEach(msg => {
-                    messagesContainer.appendChild(msg.parentElement);
-                });
                 
                 // Add all Firebase messages with avatars
                 if (messages) {
@@ -2547,6 +2605,17 @@
             // Function simplified since role selector was removed
             currentUserRole = 'admin';
             console.log('Rôle maintenu: ADMIN');
+        }
+
+        function insertEmoji(emoji) {
+            const input = document.getElementById('chatInput');
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const text = input.value;
+            
+            input.value = text.substring(0, start) + emoji + text.substring(end);
+            input.selectionStart = input.selectionEnd = start + emoji.length;
+            input.focus();
         }
 
         function sendMessage() {
