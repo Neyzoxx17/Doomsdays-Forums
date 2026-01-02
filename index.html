@@ -1785,6 +1785,64 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
     <script src="security.js"></script>
     <script>
+        // Modal functions - MUST be defined first
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
+            } else {
+                console.error('Modal not found:', modalId);
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            } else {
+                console.error('Modal not found:', modalId);
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Category and thread functions
+        function openCategory(categoryName) {
+            console.log('Opening category:', categoryName);
+            window.location.href = `category-posts.html?category=${categoryName}`;
+        }
+
+        function openThread(threadId) {
+            console.log('Opening thread:', threadId);
+            window.location.href = `post-detail.html?id=${threadId}`;
+        }
+
+        function viewProfile(username) {
+            console.log('Viewing profile:', username);
+            window.location.href = `public-profile.html?user=${username}`;
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            const currentDisplay = panel.style.display;
+            panel.style.display = currentDisplay === 'block' ? 'none' : 'block';
+        }
+
+        function clearNotifications() {
+            console.log('Clearing notifications...');
+            const notificationsList = document.getElementById('notificationsList');
+            notificationsList.innerHTML = '<div class="notification-empty">Aucune notification</div>';
+            
+            const badge = document.getElementById('notificationBadge');
+            badge.style.display = 'none';
+            badge.textContent = '0';
+        }
+
         // Real-time Firebase functions
         function sendMessageToFirebase(message) {
             console.log('sendMessageToFirebase appelé avec:', message);
@@ -2038,59 +2096,6 @@
         // Start initialization after 1 second (faster)
         setTimeout(initializeFirebaseWithRetry, 1000);
         
-        // Modal functions
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        }
-
-        // Category and thread functions
-        function openCategory(categoryName) {
-            console.log('Opening category:', categoryName);
-            // Redirect to category page
-            window.location.href = `category-posts.html?category=${categoryName}`;
-        }
-
-        function openThread(threadId) {
-            console.log('Opening thread:', threadId);
-            // Redirect to thread detail page
-            window.location.href = `post-detail.html?id=${threadId}`;
-        }
-
-        function viewProfile(username) {
-            console.log('Viewing profile:', username);
-            // Redirect to public profile page
-            window.location.href = `public-profile.html?user=${username}`;
-        }
-
-        function toggleNotifications() {
-            const panel = document.getElementById('notificationPanel');
-            const currentDisplay = panel.style.display;
-            panel.style.display = currentDisplay === 'block' ? 'none' : 'block';
-        }
-
-        function clearNotifications() {
-            console.log('Clearing notifications...');
-            // Clear notifications list
-            const notificationsList = document.getElementById('notificationsList');
-            notificationsList.innerHTML = '<div class="notification-empty">Aucune notification</div>';
-            
-            // Hide badge
-            const badge = document.getElementById('notificationBadge');
-            badge.style.display = 'none';
-            badge.textContent = '0';
-        }
-
         // Enhanced security functions
         function sanitizeInput(input) {
             if (typeof input !== 'string') return '';
