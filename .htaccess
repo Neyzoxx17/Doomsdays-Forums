@@ -1,0 +1,125 @@
+# Security Headers
+<IfModule mod_headers.c>
+    # Prevent Clickjacking
+    Header always set X-Frame-Options DENY
+    
+    # Prevent MIME type sniffing
+    Header always set X-Content-Type-Options nosniff
+    
+    # Enable XSS Protection
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Force HTTPS
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    
+    # Content Security Policy
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.firebase.com; font-src 'self'; frame-ancestors 'none';"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Permissions Policy
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=()"
+</IfModule>
+
+# Hide Server Signature
+ServerSignature Off
+ServerTokens Prod
+
+# File Access Restrictions
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "^(config|\.env|\.git|package\.json|code-analyzer\.js|pre-deploy-check\.js)\.?$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent Access to Sensitive Files
+<FilesMatch "\.(log|txt|md|json|js|yml|yaml)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Allow only specific files
+<FilesMatch "\.(html|css|png|jpg|jpeg|gif|ico|svg|webp)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Directory Listing Disabled
+Options -Indexes
+
+# Prevent Access to Configuration Files
+<Files "firebase.json">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "firestore.rules">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Rate Limiting
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Rate Limit for API endpoints
+    RewriteCond %{REQUEST_URI} ^/api/
+    RewriteCond %{REQUEST_METHOD} POST
+    RewriteCond %{HTTP:X-Forwarded-For} ^(.+)$
+    RewriteCond %{REMOTE_ADDR} ^(.+)$
+    RewriteRule .* - [E=CLIENT_IP:%1]
+    
+    # Block suspicious user agents
+    RewriteCond %{HTTP_USER_AGENT} ^(curl|wget|python|perl|java|go|ruby|php) [NC]
+    RewriteRule .* - [F,L]
+    
+    # Block common attack patterns
+    RewriteCond %{QUERY_STRING} (eval\(|base64_|union.*select|insert.*into|delete.*from|drop.*table) [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# DDoS Protection
+<IfModule mod_reqtimeout.c>
+    RequestReadTimeout header=20-40,MinRate=500 body=20,MinRate=500
+</IfModule>
+
+# Limit Request Size
+LimitRequestBody 10485760
+
+# Limit Request Fields
+LimitRequestFields 100
+
+# Limit Request Line
+LimitRequestLine 8190
+
+# Session Security
+<IfModule mod_session.c>
+    Session On
+    SessionCookieName session path=/
+    SessionCookieSecurity HTTPOnly
+    SessionCookieSecure On
+</IfModule>
+
+# PHP Security (if PHP is enabled)
+<IfModule mod_php7.c>
+    php_flag expose_php off
+    php_flag allow_url_fopen off
+    php_flag allow_url_include off
+    php_flag display_errors off
+    php_flag log_errors on
+    php_value error_log /var/log/apache2/php_errors.log
+    php_value max_execution_time 30
+    php_value memory_limit 128M
+    php_value post_max_size 8M
+    php_value upload_max_filesize 2M
+</IfModule>
+
+# Error Documents
+ErrorDocument 403 /403.html
+ErrorDocument 404 /404.html
+ErrorDocument 500 /500.html

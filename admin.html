@@ -400,8 +400,19 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+    <script src="security.js"></script>
     
     <script>
+        // Security check - Protect admin page
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!securityManager.protectAdminPage()) {
+                return;
+            }
+            
+            // Initialize admin panel
+            initializeAdminPanel();
+        });
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",

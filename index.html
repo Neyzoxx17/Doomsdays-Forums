@@ -309,11 +309,11 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(220, 20, 60, 0.3);
-            color: #dc143c;
-            border: 1px solid #dc143c;
-            padding: 4px 8px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.9), rgba(255, 0, 0, 0.8));
+            color: #ffffff;
+            border: 2px solid #dc143c;
+            padding: 6px 10px;
+            border-radius: 15px;
             cursor: pointer;
             font-size: 0.7rem;
             font-weight: bold;
@@ -321,7 +321,33 @@
             z-index: 1001;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .notification-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.95), rgba(220, 20, 60, 0.9));
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.6);
+            border-color: #ff0000;
+        }
+
+        .notification-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .notification-btn.pulse {
+            animation: notificationPulse 2s infinite;
+        }
+
+        @keyframes notificationPulse {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(220, 20, 60, 0.8);
+            }
         }
 
         .btn-account:hover {
@@ -780,31 +806,112 @@
         .message-author .username.admin {
             color: #ff0000;
             text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-            animation: lightning 2s infinite;
+            animation: lightning 1.5s infinite;
+            position: relative;
+        }
+
+        .message-author .username.admin::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 0, 0.3), transparent);
+            animation: lightningStrike 2s infinite;
+            z-index: -1;
         }
 
         .message-author .username.moderator {
             color: #ff6600;
             text-shadow: 0 0 8px rgba(255, 102, 0, 0.8);
-            animation: lightning 2.5s infinite;
+            animation: lightning 2s infinite;
+            position: relative;
+        }
+
+        .message-author .username.moderator::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, transparent, rgba(255, 200, 0, 0.2), transparent);
+            animation: lightningStrike 2.5s infinite;
+            z-index: -1;
         }
 
         @keyframes lightning {
             0%, 100% { 
-                text-shadow: 0 0 10px currentColor;
+                text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
                 filter: brightness(1);
             }
-            25% { 
-                text-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
-                filter: brightness(1.5);
+            10% { 
+                text-shadow: 0 0 30px currentColor, 0 0 50px currentColor, 0 0 70px currentColor;
+                filter: brightness(2);
+            }
+            20% { 
+                text-shadow: 0 0 5px currentColor;
+                filter: brightness(0.5);
+            }
+            30% { 
+                text-shadow: 0 0 40px currentColor, 0 0 60px currentColor, 0 0 80px currentColor;
+                filter: brightness(2.5);
+            }
+            40% { 
+                text-shadow: 0 0 15px currentColor;
+                filter: brightness(1.2);
             }
             50% { 
-                text-shadow: 0 0 5px currentColor;
+                text-shadow: 0 0 25px currentColor, 0 0 35px currentColor;
+                filter: brightness(1.8);
+            }
+            60% { 
+                text-shadow: 0 0 8px currentColor;
                 filter: brightness(0.8);
             }
-            75% { 
-                text-shadow: 0 0 15px currentColor, 0 0 25px currentColor;
-                filter: brightness(1.3);
+            70% { 
+                text-shadow: 0 0 45px currentColor, 0 0 65px currentColor;
+                filter: brightness(2.2);
+            }
+            80% { 
+                text-shadow: 0 0 12px currentColor;
+                filter: brightness(1.1);
+            }
+            90% { 
+                text-shadow: 0 0 35px currentColor, 0 0 55px currentColor;
+                filter: brightness(1.9);
+            }
+        }
+
+        @keyframes lightningStrike {
+            0%, 100% { 
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            5% { 
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+            10% { 
+                opacity: 1;
+                transform: scale(1.2);
+            }
+            15% { 
+                opacity: 0.3;
+                transform: scale(0.9);
+            }
+            20% { 
+                opacity: 0.9;
+                transform: scale(1.15);
+            }
+            25% { 
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% { 
+                opacity: 0;
+                transform: scale(0.8);
             }
         }
 
@@ -1033,16 +1140,17 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 45px;
-            height: 45px;
+            width: 35px;
+            height: 35px;
             background-color: #ff0000;
             color: white;
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1rem;
             z-index: 1000;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
         }
 
         .chat-toggle:hover {
@@ -1523,33 +1631,6 @@
         <div class="chat-messages" id="chatMessages">
         </div>
         <div class="chat-input-container">
-            <div class="chat-icon-bar">
-                <button class="chat-icon-btn" onclick="insertEmoji('😀')" title="Sourire">😀</button>
-                <button class="chat-icon-btn" onclick="insertEmoji('😂')" title="Rire">😂</button>
-                <button class="chat-icon-btn" onclick="insertEmoji('❤️')" title="Cœur">❤️</button>
-                <button class="chat-icon-btn" onclick="insertEmoji('👍')" title="Pouce">👍</button>
-                <button class="chat-icon-btn" onclick="insertEmoji('🎉')" title="Fête">🎉</button>
-                <button class="chat-icon-btn" onclick="insertEmoji('🔥')" title="Feu">🔥</button>
-                <button class="chat-icon-btn" onclick="insertEmoji('💯')" title="100">💯</button>
-                <button class="chat-icon-btn" onclick="insertEmoji('🚀')" title="Fusée">🚀</button>
-                <div style="position: relative; margin-left: auto;">
-                    <button class="chat-icon-btn" onclick="toggleColorPicker()" title="Couleur du pseudo">🎨</button>
-                    <div class="color-picker" id="colorPicker">
-                        <div class="color-option" style="background: #ffffff;" onclick="changeUsernameColor('#ffffff')"></div>
-                        <div class="color-option" style="background: #ff0000;" onclick="changeUsernameColor('#ff0000')"></div>
-                        <div class="color-option" style="background: #00ff00;" onclick="changeUsernameColor('#00ff00')"></div>
-                        <div class="color-option" style="background: #0000ff;" onclick="changeUsernameColor('#0000ff')"></div>
-                        <div class="color-option" style="background: #ffff00;" onclick="changeUsernameColor('#ffff00')"></div>
-                        <div class="color-option" style="background: #ff00ff;" onclick="changeUsernameColor('#ff00ff')"></div>
-                        <div class="color-option" style="background: #00ffff;" onclick="changeUsernameColor('#00ffff')"></div>
-                        <div class="color-option" style="background: #ff6600;" onclick="changeUsernameColor('#ff6600')"></div>
-                        <div class="color-option" style="background: #9900ff;" onclick="changeUsernameColor('#9900ff')"></div>
-                        <div class="color-option" style="background: #0099ff;" onclick="changeUsernameColor('#0099ff')"></div>
-                        <div class="color-option" style="background: #00ff99;" onclick="changeUsernameColor('#00ff99')"></div>
-                        <div class="color-option" style="background: #ff0099;" onclick="changeUsernameColor('#ff0099')"></div>
-                    </div>
-                </div>
-            </div>
             <div class="chat-input-wrapper">
                 <input type="text" class="chat-input" id="chatInput" placeholder="Tapez votre message..." onkeypress="handleChatKeyPress(event)">
                 <button class="chat-send-btn" onclick="sendMessage()">Envoyer</button>
@@ -1702,6 +1783,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+    <script src="security.js"></script>
     <script>
         // Real-time Firebase functions
         function sendMessageToFirebase(message) {
@@ -2844,9 +2926,10 @@
             // Get user role and color
             let userRole = 'member';
             let usernameColor = '#ffffff';
+            let userAvatar = avatarUrl;
             
             // Fetch user data from Firebase
-            if (author) {
+            if (author && database) {
                 database.ref('users').orderByChild('username').equalTo(author).once('value').then((snapshot) => {
                     const users = snapshot.val();
                     if (users) {
@@ -2855,13 +2938,26 @@
                         userRole = userData.role || 'member';
                         usernameColor = userData.usernameColor || '#ffffff';
                         
-                        // Update message with role and color
+                        // Also fetch avatar from avatars collection
+                        database.ref('avatars/' + userId).once('value').then((avatarSnapshot) => {
+                            userAvatar = avatarSnapshot.val() || avatarUrl;
+                            // Update message with role, color and avatar
+                            updateMessageWithUserData(messageDiv, author, text, time, userAvatar, userRole, usernameColor);
+                        }).catch(() => {
+                            // Fallback if avatar fetch fails
+                            updateMessageWithUserData(messageDiv, author, text, time, avatarUrl, userRole, usernameColor);
+                        });
+                    } else {
+                        // Fallback if user not found
                         updateMessageWithUserData(messageDiv, author, text, time, avatarUrl, userRole, usernameColor);
                     }
                 }).catch(() => {
                     // Fallback if Firebase fails
                     updateMessageWithUserData(messageDiv, author, text, time, avatarUrl, userRole, usernameColor);
                 });
+            } else {
+                // Immediate update if no author or database
+                updateMessageWithUserData(messageDiv, author, text, time, avatarUrl, userRole, usernameColor);
             }
             
             messagesContainer.appendChild(messageDiv);
@@ -2869,13 +2965,23 @@
         }
 
         function updateMessageWithUserData(messageDiv, author, text, time, avatarUrl, userRole, usernameColor) {
-            // Create avatar HTML
+            // Create avatar HTML with real profile photo
             let avatarHTML = '';
             if (avatarUrl) {
-                avatarHTML = `<div class="message-avatar"><img src="${avatarUrl}" alt="${author}"></div>`;
+                avatarHTML = `
+                    <div class="message-avatar" onclick="viewProfile('${sanitizeInput(author)}')" style="cursor: pointer;">
+                        <img src="${avatarUrl}" alt="${sanitizeInput(author)}" 
+                             onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='${sanitizeInput(author).substring(0, 2).toUpperCase()}';"
+                             loading="lazy">
+                    </div>
+                `;
             } else {
                 const initials = author ? author.substring(0, 2).toUpperCase() : '??';
-                avatarHTML = `<div class="message-avatar">${initials}</div>`;
+                avatarHTML = `
+                    <div class="message-avatar" onclick="viewProfile('${sanitizeInput(author)}')" style="cursor: pointer;">
+                        ${initials}
+                    </div>
+                `;
             }
             
             // Process mentions in text
@@ -2969,8 +3075,18 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-    
-        
+        // Admin link functions
+        function checkAndShowAdminLink() {
+            if (currentUserRole === 'admin') {
+                const adminLink = document.createElement('a');
+                adminLink.href = 'admin.html';
+                adminLink.className = 'btn';
+                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 4px 10px; text-decoration: none; border-radius: 3px; z-index: 1000; font-size: 0.7rem;';
+                adminLink.innerHTML = '🔧 Admin';
+                adminLink.id = 'adminLink';
+                document.body.appendChild(adminLink);
+            }
+        }
 
         function hideAdminLink() {
             const adminLink = document.getElementById('adminLink');
