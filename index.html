@@ -1886,7 +1886,7 @@
         console.log('✅ Firebase initialized successfully');
     </script>
     
-    <script src="security.js"></script>
+    <script src="security.js" onerror="console.warn('Security module not loaded, continuing without security features');"></script>
     <script>
         // Real-time Firebase functions
         function sendMessageToFirebase(message) {

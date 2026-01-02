@@ -473,8 +473,17 @@ class RateLimiter {
     }
 }
 
-// Initialize Security Manager
-const securityManager = new SecurityManager();
+// Initialize Security Manager only if DOM is ready
+let securityManager;
+if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            securityManager = new SecurityManager();
+        });
+    } else {
+        securityManager = new SecurityManager();
+    }
+}
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
