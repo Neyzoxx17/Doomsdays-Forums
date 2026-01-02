@@ -134,11 +134,67 @@
             cursor: pointer;
             font-size: 0.8rem;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .post-author:hover {
             color: #ff6666;
             text-decoration: underline;
+        }
+
+        .author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc143c, #b91c3c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+            border: 2px solid #333;
+        }
+
+        .important-badge {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-left: 5px;
+            animation: pulse 2s infinite;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .star-icon {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            position: relative;
+        }
+
+        .star-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            background: currentColor;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .post-content {
@@ -240,24 +296,6 @@
             text-transform: uppercase;
         }
 
-        .important-badge {
-            background: linear-gradient(135deg, #ff6b35, #f7931e);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-size: 0.6rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-left: 5px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
         .posts-section {
             margin-bottom: 30px;
         }
@@ -313,6 +351,164 @@
         .pagination-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        /* Notification System */
+        .notification-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #dc143c, #b91c3c);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 1000;
+            transition: all 0.3s;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff0000;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        .notification-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 1px solid #dc143c;
+            border-radius: 15px;
+            padding: 20px;
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 999;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+        }
+
+        .notification-title {
+            color: #dc143c;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .clear-notifications {
+            background: #333;
+            color: #ccc;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .clear-notifications:hover {
+            background: #444;
+            color: #dc143c;
+        }
+
+        .notification-item {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .notification-item:hover {
+            background: #333;
+            border-color: #dc143c;
+        }
+
+        .notification-item.unread {
+            border-color: #dc143c;
+            background: rgba(220, 20, 60, 0.1);
+        }
+
+        .notification-content {
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .notification-time {
+            color: #888;
+            font-size: 0.7rem;
+        }
+
+        .notification-empty {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+
+        .bell-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
+
+        .bell-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid currentColor;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            border-bottom: none;
+        }
+
+        .bell-icon::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: currentColor;
+            border-radius: 50%;
         }
 
         .like-btn, .dislike-btn {
@@ -604,6 +800,24 @@
         </div>
     </div>
 
+    <!-- Notification System -->
+    <button class="notification-btn" id="notificationBtn" onclick="toggleNotifications()">
+        <span class="bell-icon"></span>
+        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+    </button>
+
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3 class="notification-title">🔔 Notifications</h3>
+            <button class="clear-notifications" onclick="clearNotifications()">Effacer</button>
+        </div>
+        <div id="notificationsList">
+            <div class="notification-empty">
+                Aucune notification
+            </div>
+        </div>
+    </div>
+
     <!-- Create Post Modal -->
     <div id="createPostModal" class="modal">
         <div class="modal-content">
@@ -667,6 +881,11 @@
         const POSTS_PER_PAGE = 15;
         let lastLikeTime = 0;
         const LIKE_COOLDOWN = 2000; // 2 seconds between likes
+        
+        // Notification System
+        let notifications = [];
+        let notificationCount = 0;
+        let notificationsListener = null;
 
         // Security functions
         function sanitizeInput(input) {
@@ -932,14 +1151,18 @@
             
             const isLiked = post.likedBy && post.likedBy[auth.currentUser?.uid];
             const isDisliked = post.dislikedBy && post.dislikedBy[auth.currentUser?.uid];
-            const importantBadge = post.important ? '<span class="important-badge">◈ Important</span>' : '';
+            const importantBadge = post.important ? `<span class="important-badge"><span class="star-icon"></span> Important</span>` : '';
+            
+            // Get avatar initials
+            const authorInitials = post.author ? post.author.substring(0, 2).toUpperCase() : '??';
             
             return `
                 <div class="post-card" onclick="openPost('${post.id}')">
                     <div class="post-header">
                         <div class="post-title">${sanitizeInput(post.title)} ${importantBadge}</div>
                         <div class="post-author" onclick="viewProfile('${post.author}'); event.stopPropagation();">
-                            Par ${sanitizeInput(post.author)}
+                            <div class="author-avatar">${authorInitials}</div>
+                            ${sanitizeInput(post.author)}
                         </div>
                     </div>
                     <div class="post-content">${sanitizeInput(post.content.substring(0, 200))}${post.content.length > 200 ? '...' : ''}</div>
@@ -1072,6 +1295,11 @@
                 post.likedBy[userId] = true;
                 updates[`posts/${postId}/likedBy/${userId}`] = true;
                 updates[`posts/${postId}/likes`] = (post.likes || 0) + 1;
+                
+                // Create notification for post author (if not self-like)
+                if (post.author !== currentUser) {
+                    createNotification('like', `${currentUser} a aimé votre post "${post.title}"`, post.author, postId);
+                }
                 
                 // Remove dislike if exists
                 if (isDisliked) {
@@ -1263,9 +1491,14 @@
             if (user) {
                 currentUser = user.displayName || user.email.split('@')[0];
                 console.log('✅ User authenticated:', currentUser);
+                initializeNotifications();
             } else {
                 currentUser = null;
                 console.log('ℹ️ User not authenticated');
+                if (notificationsListener) {
+                    notificationsListener.off();
+                    notificationsListener = null;
+                }
             }
         });
 
@@ -1291,6 +1524,137 @@
 
         // Handle form submission
         document.getElementById('createPostForm').addEventListener('submit', createPost);
+
+        // Notification System Functions
+        function initializeNotifications() {
+            if (!currentUser) return;
+            
+            // Listen for new notifications
+            const userNotificationsRef = database.ref(`notifications/${auth.currentUser.uid}`);
+            
+            if (notificationsListener) {
+                notificationsListener.off();
+            }
+            
+            notificationsListener = userNotificationsRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                notifications = [];
+                
+                if (data) {
+                    Object.keys(data).forEach(notificationId => {
+                        const notification = data[notificationId];
+                        if (!notification.read) {
+                            notifications.push({
+                                id: notificationId,
+                                ...notification
+                            });
+                        }
+                    });
+                }
+                
+                updateNotificationBadge();
+                displayNotifications();
+            });
+        }
+
+        function createNotification(type, message, targetUserId, postId = null) {
+            const notification = {
+                type: type, // 'like', 'reply', 'message'
+                message: message,
+                from: currentUser,
+                to: targetUserId,
+                postId: postId,
+                createdAt: Date.now(),
+                read: false
+            };
+            
+            database.ref(`notifications/${targetUserId}`).push(notification);
+        }
+
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            const count = notifications.length;
+            
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+            
+            notificationCount = count;
+        }
+
+        function displayNotifications() {
+            const container = document.getElementById('notificationsList');
+            
+            if (notifications.length === 0) {
+                container.innerHTML = '<div class="notification-empty">Aucune notification</div>';
+                return;
+            }
+            
+            container.innerHTML = notifications.map(notification => {
+                const time = new Date(notification.createdAt).toLocaleDateString('fr-FR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    day: 'numeric',
+                    month: 'short'
+                });
+                
+                return `
+                    <div class="notification-item unread" onclick="handleNotificationClick('${notification.id}', '${notification.type}', '${notification.postId || ''}')">
+                        <div class="notification-content">${sanitizeInput(notification.message)}</div>
+                        <div class="notification-time">${time}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleNotificationClick(notificationId, type, postId) {
+            // Mark as read
+            database.ref(`notifications/${auth.currentUser.uid}/${notificationId}/read`).set(true);
+            
+            // Navigate based on type
+            switch (type) {
+                case 'like':
+                case 'reply':
+                    if (postId) {
+                        window.location.href = `post-detail.html?id=${postId}`;
+                    }
+                    break;
+                case 'message':
+                    window.location.href = 'messages.html';
+                    break;
+            }
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function clearNotifications() {
+            if (!currentUser) return;
+            
+            const updates = {};
+            notifications.forEach(notification => {
+                updates[notification.id] = null;
+            });
+            
+            database.ref(`notifications/${auth.currentUser.uid}`).update(updates).then(() => {
+                console.log('✅ Notifications cleared');
+            });
+        }
+
+        // Close notifications when clicking outside
+        document.addEventListener('click', (event) => {
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationPanel = document.getElementById('notificationPanel');
+            
+            if (!notificationBtn.contains(event.target) && !notificationPanel.contains(event.target)) {
+                notificationPanel.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
