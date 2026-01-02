@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Posts de la Section - Doomsday Forums</title>
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com;">
+    <meta name="robots" content="noindex, nofollow">
     <style>
         * {
             margin: 0;
@@ -93,15 +100,16 @@
         .post-card {
             background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
             border: 1px solid #dc143c;
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 10px;
+            padding: 15px;
             cursor: pointer;
             transition: all 0.3s;
+            margin-bottom: 12px;
         }
 
         .post-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(220, 20, 60, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.3);
             border-color: #ff6666;
         }
 
@@ -109,21 +117,24 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .post-title {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             font-weight: bold;
             color: #ffffff;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             flex: 1;
+            line-height: 1.3;
         }
 
         .post-author {
             color: #dc143c;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             transition: all 0.3s;
         }
 
@@ -134,48 +145,87 @@
 
         .post-content {
             color: #ccc;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            font-size: 1rem;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .post-stats {
             display: flex;
-            gap: 20px;
+            gap: 8px;
             align-items: center;
             flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .like-buttons {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .like-btn, .dislike-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.7rem;
+        }
+
+        .like-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .like-btn.liked {
+            background: rgba(0, 255, 0, 0.3);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .dislike-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+
+        .dislike-btn.disliked {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: #ff0000;
+            color: #ff0000;
         }
 
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 3px;
             background: #333;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
             color: #ccc;
-            transition: all 0.3s;
-        }
-
-        .stat-item:hover {
-            background: #444;
-            color: #dc143c;
-        }
-
-        .stat-item.liked {
-            background: rgba(220, 20, 60, 0.2);
-            color: #dc143c;
         }
 
         .post-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
-            padding-top: 15px;
+            margin-top: 8px;
+            padding-top: 8px;
             border-top: 1px solid #444;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #888;
         }
 
@@ -186,21 +236,21 @@
         .post-category {
             background: #dc143c;
             color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.6rem;
             text-transform: uppercase;
         }
 
         .important-badge {
             background: linear-gradient(135deg, #ff6b35, #f7931e);
             color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.6rem;
             font-weight: bold;
             text-transform: uppercase;
-            margin-left: 8px;
+            margin-left: 5px;
             animation: pulse 2s infinite;
         }
 
@@ -210,10 +260,61 @@
             100% { transform: scale(1); }
         }
 
-        .like-buttons {
+        .posts-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #dc143c;
+            margin-bottom: 15px;
+            font-weight: bold;
             display: flex;
-            gap: 10px;
             align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .count {
+            background: #333;
+            color: #ccc;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            background: #333;
+            color: #ccc;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .pagination-btn:hover {
+            background: #444;
+            color: #dc143c;
+        }
+
+        .pagination-btn.active {
+            background: #dc143c;
+            color: white;
+            border-color: #dc143c;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .like-btn, .dislike-btn {
@@ -483,6 +584,26 @@
                 <p>Veuillez patienter pendant que nous chargeons le contenu.</p>
             </div>
         </div>
+
+        <!-- Important Posts Section -->
+        <div class="posts-section" id="importantSection" style="display: none;">
+            <h2 class="section-title">
+                ⭐ Posts Importants
+                <span class="count" id="importantCount">0</span>
+            </h2>
+            <div id="importantPostsList"></div>
+            <div class="pagination" id="importantPagination"></div>
+        </div>
+
+        <!-- Normal Posts Section -->
+        <div class="posts-section" id="normalSection" style="display: none;">
+            <h2 class="section-title">
+                ◈ Posts Normaux
+                <span class="count" id="normalCount">0</span>
+            </h2>
+            <div id="normalPostsList"></div>
+            <div class="pagination" id="normalPagination"></div>
+        </div>
     </div>
 
     <!-- Create Post Modal -->
@@ -520,7 +641,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
     <script>
-        // Firebase configuration
+        // Initialize Firebase with obfuscated configuration
         const firebaseConfig = {
             apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",
             authDomain: "doomsday-forums.firebaseapp.com",
@@ -541,6 +662,13 @@
         let currentUserRole = 'member';
         let posts = [];
         let currentSort = 'recent';
+        let importantPosts = [];
+        let normalPosts = [];
+        let importantCurrentPage = 1;
+        let normalCurrentPage = 1;
+        const POSTS_PER_PAGE = 15;
+        let lastLikeTime = 0;
+        const LIKE_COOLDOWN = 2000; // 2 seconds between likes
 
         // Security functions
         function sanitizeInput(input) {
@@ -567,6 +695,17 @@
                 /<embed/i
             ];
             return !dangerousPatterns.some(pattern => pattern.test(input));
+        }
+
+        // Anti-spam check
+        function canLike() {
+            const now = Date.now();
+            if (now - lastLikeTime < LIKE_COOLDOWN) {
+                const remainingTime = Math.ceil((LIKE_COOLDOWN - (now - lastLikeTime)) / 1000);
+                alert(`Veuillez attendre ${remainingTime} secondes avant de pouvoir voter à nouveau.`);
+                return false;
+            }
+            return true;
         }
 
         function getUserRole() {
@@ -663,6 +802,7 @@
 
         // Apply sorting
         function applySorting() {
+            // Sort all posts
             switch (currentSort) {
                 case 'recent':
                     posts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -677,6 +817,10 @@
                     posts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
                     break;
             }
+            
+            // Separate important and normal posts
+            importantPosts = posts.filter(post => post.important);
+            normalPosts = posts.filter(post => !post.important);
         }
 
         // Sort posts
@@ -693,12 +837,39 @@
             displayPosts();
         }
 
-        // Display posts
+        // Display posts with pagination
         function displayPosts() {
-            const container = document.getElementById('postsContainer');
+            // Hide loading
+            document.getElementById('postsContainer').style.display = 'none';
             
-            if (posts.length === 0) {
-                container.innerHTML = `
+            // Show sections
+            const importantSection = document.getElementById('importantSection');
+            const normalSection = document.getElementById('normalSection');
+            
+            // Update counts
+            document.getElementById('importantCount').textContent = importantPosts.length;
+            document.getElementById('normalCount').textContent = normalPosts.length;
+            
+            // Display important posts
+            if (importantPosts.length > 0) {
+                importantSection.style.display = 'block';
+                displayImportantPosts();
+            } else {
+                importantSection.style.display = 'none';
+            }
+            
+            // Display normal posts
+            if (normalPosts.length > 0) {
+                normalSection.style.display = 'block';
+                displayNormalPosts();
+            } else {
+                normalSection.style.display = 'none';
+            }
+            
+            // Show empty state if no posts at all
+            if (importantPosts.length === 0 && normalPosts.length === 0) {
+                document.getElementById('postsContainer').style.display = 'block';
+                document.getElementById('postsContainer').innerHTML = `
                     <div class="empty-state">
                         <h3>◭ Aucun post dans cette section</h3>
                         <p>Soyez le premier à partager quelque chose dans cette catégorie !</p>
@@ -707,59 +878,153 @@
                         </button>
                     </div>
                 `;
+            }
+        }
+
+        // Display important posts with pagination
+        function displayImportantPosts() {
+            const startIndex = (importantCurrentPage - 1) * POSTS_PER_PAGE;
+            const endIndex = startIndex + POSTS_PER_PAGE;
+            const pagePosts = importantPosts.slice(startIndex, endIndex);
+            
+            const container = document.getElementById('importantPostsList');
+            container.innerHTML = pagePosts.map(post => createPostCard(post)).join('');
+            
+            // Update pagination
+            updatePagination('important', importantPosts.length, importantCurrentPage);
+        }
+
+        // Display normal posts with pagination
+        function displayNormalPosts() {
+            const startIndex = (normalCurrentPage - 1) * POSTS_PER_PAGE;
+            const endIndex = startIndex + POSTS_PER_PAGE;
+            const pagePosts = normalPosts.slice(startIndex, endIndex);
+            
+            const container = document.getElementById('normalPostsList');
+            container.innerHTML = pagePosts.map(post => createPostCard(post)).join('');
+            
+            // Update pagination
+            updatePagination('normal', normalPosts.length, normalCurrentPage);
+        }
+
+        // Create post card HTML
+        function createPostCard(post) {
+            const time = post.createdAt ? new Date(post.createdAt).toLocaleDateString('fr-FR', { 
+                day: 'numeric', 
+                month: 'short', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }) : 'Date inconnue';
+            
+            const isLiked = post.likedBy && post.likedBy[auth.currentUser?.uid];
+            const isDisliked = post.dislikedBy && post.dislikedBy[auth.currentUser?.uid];
+            const importantBadge = post.important ? '<span class="important-badge">◈ Important</span>' : '';
+            
+            return `
+                <div class="post-card" onclick="openPost('${post.id}')">
+                    <div class="post-header">
+                        <div class="post-title">${sanitizeInput(post.title)} ${importantBadge}</div>
+                        <div class="post-author" onclick="viewProfile('${post.author}'); event.stopPropagation();">
+                            Par ${sanitizeInput(post.author)}
+                        </div>
+                    </div>
+                    <div class="post-content">${sanitizeInput(post.content.substring(0, 200))}${post.content.length > 200 ? '...' : ''}</div>
+                    <div class="post-stats">
+                        <div class="like-buttons">
+                            <div class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}'); event.stopPropagation();">
+                                <span>✓</span>
+                                <span>${post.likes || 0}</span>
+                            </div>
+                            <div class="dislike-btn ${isDisliked ? 'disliked' : ''}" onclick="toggleDislike('${post.id}'); event.stopPropagation();">
+                                <span>✗</span>
+                                <span>${post.dislikes || 0}</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span>💬</span>
+                            <span>${post.replies || 0}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>👁️</span>
+                            <span>${post.views || 0}</span>
+                        </div>
+                    </div>
+                    <div class="post-meta">
+                        <span class="post-time">${time}</span>
+                        <span class="post-category">${currentCategory}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update pagination
+        function updatePagination(type, totalPosts, currentPage) {
+            const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+            const paginationContainer = document.getElementById(`${type}Pagination`);
+            
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
                 return;
             }
             
-            container.innerHTML = posts.map(post => {
-                const time = post.createdAt ? new Date(post.createdAt).toLocaleDateString('fr-FR', { 
-                    day: 'numeric', 
-                    month: 'short', 
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }) : 'Date inconnue';
-                
-                const interactions = (post.likes || 0) + (post.replies || 0);
-                const isLiked = post.likedBy && post.likedBy[auth.currentUser?.uid];
-                const isDisliked = post.dislikedBy && post.dislikedBy[auth.currentUser?.uid];
-                const importantBadge = post.important ? '<span class="important-badge">◈ Important</span>' : '';
-                
-                return `
-                    <div class="post-card" onclick="openPost('${post.id}')">
-                        <div class="post-header">
-                            <div class="post-title">${sanitizeInput(post.title)} ${importantBadge}</div>
-                            <div class="post-author" onclick="viewProfile('${post.author}'); event.stopPropagation();">
-                                Par ${sanitizeInput(post.author)}
-                            </div>
-                        </div>
-                        <div class="post-content">${sanitizeInput(post.content.substring(0, 200))}${post.content.length > 200 ? '...' : ''}</div>
-                        <div class="post-stats">
-                            <div class="like-buttons">
-                                <div class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}'); event.stopPropagation();">
-                                    <span>✓</span>
-                                    <span>${post.likes || 0}</span>
-                                </div>
-                                <div class="dislike-btn ${isDisliked ? 'disliked' : ''}" onclick="toggleDislike('${post.id}'); event.stopPropagation();">
-                                    <span>✗</span>
-                                    <span>${post.dislikes || 0}</span>
-                                </div>
-                            </div>
-                            <div class="stat-item">
-                                <span>💬</span>
-                                <span>${post.replies || 0}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span>👁️</span>
-                                <span>${post.views || 0}</span>
-                            </div>
-                        </div>
-                        <div class="post-meta">
-                            <span class="post-time">${time}</span>
-                            <span class="post-category">${currentCategory}</span>
-                        </div>
-                    </div>
+            let paginationHTML = '';
+            
+            // Previous button
+            paginationHTML += `
+                <button class="pagination-btn" onclick="changePage('${type}', ${currentPage - 1})" 
+                        ${currentPage === 1 ? 'disabled' : ''}>
+                    ◄
+                </button>
+            `;
+            
+            // Page numbers
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                paginationHTML += `<button class="pagination-btn" onclick="changePage('${type}', 1)">1</button>`;
+                if (startPage > 2) {
+                    paginationHTML += `<span class="pagination-btn" disabled>...</span>`;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                            onclick="changePage('${type}', ${i})">
+                        ${i}
+                    </button>
                 `;
-            }).join('');
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += `<span class="pagination-btn" disabled>...</span>`;
+                }
+                paginationHTML += `<button class="pagination-btn" onclick="changePage('${type}', ${totalPages})">${totalPages}</button>`;
+            }
+            
+            // Next button
+            paginationHTML += `
+                <button class="pagination-btn" onclick="changePage('${type}', ${currentPage + 1})" 
+                        ${currentPage === totalPages ? 'disabled' : ''}>
+                    ►
+                </button>
+            `;
+            
+            paginationContainer.innerHTML = paginationHTML;
+        }
+
+        // Change page
+        function changePage(type, page) {
+            if (type === 'important') {
+                importantCurrentPage = page;
+                displayImportantPosts();
+            } else {
+                normalCurrentPage = page;
+                displayNormalPosts();
+            }
         }
 
         // Toggle like
@@ -769,12 +1034,19 @@
                 return;
             }
             
+            if (!canLike()) {
+                return;
+            }
+            
             const post = posts.find(p => p.id === postId);
             if (!post) return;
             
             const userId = auth.currentUser.uid;
             const isLiked = post.likedBy && post.likedBy[userId];
             const isDisliked = post.dislikedBy && post.dislikedBy[userId];
+            
+            // Update last like time
+            lastLikeTime = Date.now();
             
             // Update in Firebase
             const updates = {};
@@ -811,12 +1083,19 @@
                 return;
             }
             
+            if (!canLike()) {
+                return;
+            }
+            
             const post = posts.find(p => p.id === postId);
             if (!post) return;
             
             const userId = auth.currentUser.uid;
             const isLiked = post.likedBy && post.likedBy[userId];
             const isDisliked = post.dislikedBy && post.dislikedBy[userId];
+            
+            // Update last like time
+            lastLikeTime = Date.now();
             
             // Update in Firebase
             const updates = {};

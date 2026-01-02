@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détail du Post - Doomsday Forums</title>
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com;">
+    <meta name="robots" content="noindex, nofollow">
     <style>
         * {
             margin: 0;
@@ -460,6 +467,8 @@
         let currentPost = null;
         let currentUser = null;
         let comments = [];
+        let lastLikeTime = 0;
+        const LIKE_COOLDOWN = 2000; // 2 seconds between likes
 
         // Security functions
         function sanitizeInput(input) {
@@ -486,6 +495,17 @@
                 /<embed/i
             ];
             return !dangerousPatterns.some(pattern => pattern.test(input));
+        }
+
+        // Anti-spam check
+        function canLike() {
+            const now = Date.now();
+            if (now - lastLikeTime < LIKE_COOLDOWN) {
+                const remainingTime = Math.ceil((LIKE_COOLDOWN - (now - lastLikeTime)) / 1000);
+                alert(`Veuillez attendre ${remainingTime} secondes avant de pouvoir voter à nouveau.`);
+                return false;
+            }
+            return true;
         }
 
         // Get post ID from URL
@@ -601,9 +621,16 @@
                 return;
             }
             
+            if (!canLike()) {
+                return;
+            }
+            
             const userId = auth.currentUser.uid;
             const isLiked = currentPost.likedBy && currentPost.likedBy[userId];
             const isDisliked = currentPost.dislikedBy && currentPost.dislikedBy[userId];
+            
+            // Update last like time
+            lastLikeTime = Date.now();
             
             const updates = {};
             
@@ -641,9 +668,16 @@
                 return;
             }
             
+            if (!canLike()) {
+                return;
+            }
+            
             const userId = auth.currentUser.uid;
-            isLiked = currentPost.likedBy && currentPost.likedBy[userId];
+            const isLiked = currentPost.likedBy && currentPost.likedBy[userId];
             const isDisliked = currentPost.dislikedBy && currentPost.dislikedBy[userId];
+            
+            // Update last like time
+            lastLikeTime = Date.now();
             
             const updates = {};
             
