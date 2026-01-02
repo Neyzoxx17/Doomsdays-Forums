@@ -3619,10 +3619,15 @@
             currentUserRole = 'admin';
             
             if (currentUser) {
-                document.getElementById('userUsername').textContent = currentUser;
-                document.getElementById('userProfile').style.display = 'flex';
-                document.getElementById('authButtons').style.display = 'none';
-                document.getElementById('accountButtons').style.display = 'flex';
+                const userUsernameElement = document.getElementById('userUsername');
+                const userProfileElement = document.getElementById('userProfile');
+                const authButtonsElement = document.getElementById('authButtons');
+                const accountButtonsElement = document.getElementById('accountButtons');
+                
+                if (userUsernameElement) userUsernameElement.textContent = currentUser;
+                if (userProfileElement) userProfileElement.style.display = 'flex';
+                if (authButtonsElement) authButtonsElement.style.display = 'none';
+                if (accountButtonsElement) accountButtonsElement.style.display = 'flex';
                 
                 // FORCE ADMIN DISPLAY - NO EXCEPTIONS
                 const roleElement = document.getElementById('userRole');
@@ -3846,8 +3851,11 @@
                             return database.ref('users/' + auth.currentUser.uid + '/username').set(newUsername);
                         }).then(() => {
                             // Mettre à jour l'interface
-                            document.getElementById('userUsername').textContent = newUsername;
-                            alert('Pseudo et personnalisation sauvegardés avec succès!');
+                            const userUsernameElement = document.getElementById('userUsername');
+                            if (userUsernameElement) {
+                                userUsernameElement.textContent = newUsername;
+                                alert('Pseudo et personnalisation sauvegardés avec succès!');
+                            }
                         });
                     } else {
                         alert('Personnalisation sauvegardée avec succès!');
@@ -3968,8 +3976,14 @@
         }
         
         function updateOnlineUsers() {
+            const onlineCountElement = document.getElementById('onlineCount');
+            if (!onlineCountElement) {
+                console.warn('⚠️ Élément onlineCount non trouvé');
+                return;
+            }
+            
             const totalUsers = connectedUsers.length + 1; // +1 for current user
-            document.getElementById('onlineCount').textContent = totalUsers;
+            onlineCountElement.textContent = totalUsers;
             
             // Simulate users joining/leaving
             if (Math.random() > 0.8) {
@@ -5265,6 +5279,39 @@
             });
         }
 
+        // Global error handler for DOM manipulation errors
+        window.addEventListener('error', (event) => {
+            if (event.message && event.message.includes('Cannot set properties of null')) {
+                console.error('❌ Erreur DOM interceptée:', event.message);
+                showEnhancedToast('Erreur d\'interface détectée - Actualisation en cours...', 'warning');
+                event.preventDefault();
+            }
+        });
+        
+        // Safe DOM manipulation helper
+        function safeSetTextContent(elementId, text) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = text;
+                return true;
+            } else {
+                console.warn(`⚠️ Élément ${elementId} non trouvé pour setTextContent`);
+                return false;
+            }
+        }
+        
+        // Safe style setting helper
+        function safeSetStyle(elementId, property, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.style[property] = value;
+                return true;
+            } else {
+                console.warn(`⚠️ Élément ${elementId} non trouvé pour setStyle`);
+                return false;
+            }
+        }
+        
         // Initialize Enhanced Features on Page Load
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 Initializing Enhanced Doomsday Forums...');
