@@ -35,8 +35,8 @@
         /* Notification System */
         .notification-btn {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            right: 10px;
             background: linear-gradient(135deg, #dc143c, #b91c3c);
             color: white;
             border: none;
@@ -1469,10 +1469,9 @@
                 <img id="userAvatar" src="https://picsum.photos/seed/default/40/40.jpg" alt="Avatar">
             </div>
             <div class="user-info">
-                <span class="user-username" id="userUsername" onclick="openUsernameModal()" style="cursor: pointer;">Utilisateur</span>
+                <span class="user-username" id="userUsername" onclick="window.location.href='profile.html'" style="cursor: pointer;">Utilisateur</span>
                 <span class="user-role" id="userRole">Membre</span>
             </div>
-            <button class="btn btn-account" onclick="openCustomizationModal()" style="margin-left: 10px; background: linear-gradient(45deg, #0066cc, #00aaff); box-shadow: 0 0 15px rgba(0, 102, 255, 0.5); animation: blueLightning 2s infinite;">⚡ Personnaliser</button>
         </div>
         <div class="auth-buttons" id="authButtons">
             <button class="btn" onclick="openModal('loginModal')">Se Connecter</button>
@@ -1781,52 +1780,8 @@
         </div>
     </div>
 
-    <!-- Customization Modal -->
-    <div id="customizationModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">◈ Personnaliser votre pseudo</h3>
-                <button class="close-btn" onclick="closeModal('customizationModal')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Nouveau pseudo</label>
-                <input type="text" id="newUsername" placeholder="Entrez votre nouveau pseudo" maxlength="20" style="width: 100%; padding: 10px; border: 1px solid #444; background: #222; color: white; border-radius: 5px;">
-            </div>
-            <div class="form-group">
-                <label>Couleur du pseudo</label>
-                <input type="color" id="usernameColor" value="#ffffff">
-            </div>
-            <div class="form-group">
-                <label>Style du texte</label>
-                <select id="usernameStyle">
-                    <option value="normal">Normal</option>
-                    <option value="bold">Gras</option>
-                    <option value="italic">Italique</option>
-                    <option value="bold-italic">Gras + Italique</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Effet spécial</label>
-                <select id="usernameEffect">
-                    <option value="none">Aucun</option>
-                    <option value="glow">Lumineux</option>
-                    <option value="shadow">Ombre</option>
-                    <option value="rainbow">Arc-en-ciel</option>
-                    <option value="neon">Néon</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Badge personnalisé</label>
-                <input type="text" id="customBadge" placeholder="Ex: ⭐ VIP, 👑 Légende" maxlength="20">
-            </div>
-            <div class="form-group">
-                <label>Couleur du badge</label>
-                <input type="color" id="badgeColor" value="#ffd700">
-            </div>
-            <button class="btn-primary" onclick="saveCustomization()">Sauvegarder</button>
-            <button class="btn-secondary" onclick="resetCustomization()" style="margin-left: 10px; background: #666; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer;">Réinitialiser</button>
-        </div>
-    </div>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
