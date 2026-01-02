@@ -40,23 +40,23 @@
             background: linear-gradient(135deg, #dc143c, #b91c3c);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 8px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             z-index: 1000;
             transition: all 0.3s;
-            width: 50px;
-            height: 50px;
+            width: 35px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
+            box-shadow: 0 2px 8px rgba(220, 20, 60, 0.3);
         }
 
         .notification-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 3px 12px rgba(220, 20, 60, 0.4);
         }
 
         .notification-btn.ring {
@@ -152,6 +152,29 @@
             to {
                 transform: translateX(100%);
                 opacity: 0;
+            }
+        }
+
+        @keyframes blueLightning {
+            0% {
+                box-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+                background: linear-gradient(45deg, #0066cc, #00aaff);
+            }
+            25% {
+                box-shadow: 0 0 20px rgba(0, 102, 255, 0.8), 0 0 30px rgba(0, 170, 255, 0.6);
+                background: linear-gradient(45deg, #0088ff, #00ccff);
+            }
+            50% {
+                box-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+                background: linear-gradient(45deg, #0066cc, #00aaff);
+            }
+            75% {
+                box-shadow: 0 0 25px rgba(0, 102, 255, 1), 0 0 40px rgba(0, 170, 255, 0.8);
+                background: linear-gradient(45deg, #0099ff, #00ddff);
+            }
+            100% {
+                box-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+                background: linear-gradient(45deg, #0066cc, #00aaff);
             }
         }
 
@@ -1449,6 +1472,7 @@
                 <span class="user-username" id="userUsername" onclick="window.location.href='profile.html'" style="cursor: pointer;">Utilisateur</span>
                 <span class="user-role" id="userRole">Membre</span>
             </div>
+            <button class="btn btn-account" onclick="window.location.href='profile.html'" style="margin-left: 10px; background: linear-gradient(45deg, #0066cc, #00aaff); box-shadow: 0 0 15px rgba(0, 102, 255, 0.5); animation: blueLightning 2s infinite;">⚡ Personnaliser</button>
         </div>
         <div class="auth-buttons" id="authButtons">
             <button class="btn" onclick="openModal('loginModal')">Se Connecter</button>
@@ -2423,7 +2447,7 @@
                 
                 // Show admin link if user is admin or moderator
                 checkAndShowAdminLink();
-                checkAndShowCustomizationLink();
+                // checkAndShowCustomizationLink(); // Désactivé - bouton déplacé dans le profil
                 
                 // Initialize Firebase with retry mechanism
                 initializeFirebaseWithRetry();
