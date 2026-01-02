@@ -2193,6 +2193,12 @@
             try {
                 console.log('✅ Utilisateur connecté, initialisation des listeners...');
                 
+                // VALIDATION AUTOMATIQUE DU CODE AVANT TOUT
+                if (!validateCodeBeforeExecution()) {
+                    console.error('❌ Validation du code échouée - Arrêt de l\'initialisation');
+                    return;
+                }
+                
                 // Reset attempts on successful connection
                 firebaseInitAttempts = 0;
                 
@@ -3676,8 +3682,118 @@
             }
         }
 
-        // Add database admin button
-        setInterval(updateOnlineCount, 15000);
+        // #SYSTÈME DE VÉRIFICATION AUTOMATIQUE DU CODE#
+        
+        // Vérifier toutes les fonctions critiques avant exécution
+        function validateCodeBeforeExecution() {
+            const criticalFunctions = [
+                'checkAndShowAdminLink',
+                'hideAdminLink', 
+                'forceImmediateUpdate',
+                'initializeFirebaseWithRetry',
+                'sanitizeInput',
+                'validateEmail',
+                'validatePassword'
+            ];
+            
+            const missingFunctions = [];
+            const duplicateElements = [];
+            
+            // Vérifier les fonctions manquantes
+            criticalFunctions.forEach(funcName => {
+                if (typeof window[funcName] !== 'function') {
+                    missingFunctions.push(funcName);
+                }
+            });
+            
+            // Vérifier les éléments dupliqués
+            const adminLinks = document.querySelectorAll('#adminLink');
+            if (adminLinks.length > 1) {
+                duplicateElements.push('adminLink');
+            }
+            
+            const debugBtns = document.querySelectorAll('#debugAdminBtn');
+            if (debugBtns.length > 1) {
+                duplicateElements.push('debugAdminBtn');
+            }
+            
+            const dbBtns = document.querySelectorAll('#dbAdminBtn');
+            if (dbBtns.length > 1) {
+                duplicateElements.push('dbAdminBtn');
+            }
+            
+            // Nettoyer les doublons
+            duplicateElements.forEach(elementId => {
+                const elements = document.querySelectorAll(`#${elementId}`);
+                for (let i = 1; i < elements.length; i++) {
+                    elements[i].remove();
+                    console.warn(`🧹 Élément dupliqué supprimé: ${elementId}`);
+                }
+            });
+            
+            // Afficher les résultats
+            if (missingFunctions.length > 0) {
+                console.error('❌ Fonctions manquantes:', missingFunctions);
+                return false;
+            }
+            
+            if (duplicateElements.length > 0) {
+                console.warn('⚠️ Éléments dupliqués nettoyés:', duplicateElements);
+            }
+            
+            console.log('✅ Validation du code réussie');
+            return true;
+        }
+        
+        // Système de vérification unique pour le bouton admin
+        function ensureSingleAdminButton() {
+            // Supprimer tous les boutons admin existants
+            const existingAdminButtons = [
+                ...document.querySelectorAll('#adminLink'),
+                ...document.querySelectorAll('#debugAdminBtn'),
+                ...document.querySelectorAll('#dbAdminBtn'),
+                ...document.querySelectorAll('.admin-debug-btn'),
+                ...document.querySelectorAll('[onclick*="Admin"]')
+            ];
+            
+            existingAdminButtons.forEach(btn => {
+                if (btn && btn.parentNode) {
+                    btn.remove();
+                    console.log('🗑️ Bouton admin existant supprimé');
+                }
+            });
+            
+            // Créer UN SEUL bouton admin si l'utilisateur est admin
+            if (currentUserRole === 'admin' && !document.getElementById('adminLink')) {
+                const adminLink = document.createElement('a');
+                adminLink.href = 'admin.html';
+                adminLink.className = 'btn';
+                adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; z-index: 1000; font-size: 0.8rem; font-weight: bold; box-shadow: 0 2px 10px rgba(255,0,0,0.3); transition: all 0.3s;';
+                adminLink.innerHTML = '🔧 Admin';
+                adminLink.id = 'adminLink';
+                
+                // Effet hover
+                adminLink.addEventListener('mouseenter', () => {
+                    adminLink.style.background = '#cc0000';
+                    adminLink.style.transform = 'scale(1.05)';
+                });
+                
+                adminLink.addEventListener('mouseleave', () => {
+                    adminLink.style.background = '#ff0000';
+                    adminLink.style.transform = 'scale(1)';
+                });
+                
+                document.body.appendChild(adminLink);
+                console.log('✅ Unique bouton admin créé');
+            }
+        }
+        
+        // Remplacer toutes les fonctions de création de boutons admin
+        function checkAndShowAdminLink() {
+            ensureSingleAdminButton();
+        }
+        
+        // Update online count periodically
 
         // Add some initial messages with roles
         setTimeout(() => {
