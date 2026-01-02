@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail du Post - Doomsday Forums</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: #dc143c;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #dc143c;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            background: rgba(220, 20, 60, 0.1);
+        }
+
+        .nav-link:hover {
+            background: #dc143c;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .post-container {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 1px solid #dc143c;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .post-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+            flex: 1;
+        }
+
+        .important-badge {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .post-author {
+            color: #dc143c;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .post-author:hover {
+            color: #ff6666;
+            text-decoration: underline;
+        }
+
+        .post-time {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .post-category {
+            background: #dc143c;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .post-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #333;
+            color: #ccc;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .tag:hover {
+            background: #444;
+            color: #dc143c;
+        }
+
+        .post-content {
+            color: #ffffff;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            white-space: pre-wrap;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding: 20px 0;
+            border-top: 1px solid #444;
+            border-bottom: 1px solid #444;
+            flex-wrap: wrap;
+        }
+
+        .like-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .like-btn, .dislike-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .like-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .like-btn.liked {
+            background: rgba(0, 255, 0, 0.3);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .dislike-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+
+        .dislike-btn.disliked {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #333;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        .comments-section {
+            margin-top: 40px;
+        }
+
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .comments-title {
+            font-size: 1.5rem;
+            color: #dc143c;
+            font-weight: bold;
+        }
+
+        .comment-form {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 1px solid #444;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: #dc143c;
+        }
+
+        .comment-submit {
+            background: linear-gradient(135deg, #dc143c, #b91c3c);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .comment-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .comment {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 1px solid #444;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .comment:hover {
+            border-color: #666;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .comment-author {
+            color: #dc143c;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .comment-author:hover {
+            color: #ff6666;
+            text-decoration: underline;
+        }
+
+        .comment-time {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .comment-content {
+            color: #ffffff;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #dc143c;
+            background: rgba(220, 20, 60, 0.1);
+            border: 1px solid #dc143c;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .post-title {
+                font-size: 1.5rem;
+            }
+
+            .post-header {
+                flex-direction: column;
+            }
+
+            .post-stats {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .like-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .post-title {
+                font-size: 1.3rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .post-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">◄ Forum</a>
+                <a href="category-posts.html" class="nav-link" id="backToCategory">◈ Catégorie</a>
+                <a href="messages.html" class="nav-link">◉ Messages</a>
+                <a href="profile.html" class="nav-link">◈ Profil</a>
+            </div>
+        </div>
+
+        <div id="postContainer">
+            <div class="loading">
+                <h3>◭ Chargement du post...</h3>
+                <p>Veuillez patienter pendant que nous chargeons le contenu.</p>
+            </div>
+        </div>
+
+        <div class="comments-section">
+            <div class="comments-header">
+                <h2 class="comments-title">◭ Commentaires</h2>
+                <span id="commentsCount">0 commentaires</span>
+            </div>
+
+            <div class="comment-form">
+                <textarea 
+                    id="commentText" 
+                    class="comment-textarea" 
+                    placeholder="Partagez votre opinion sur ce post..."
+                ></textarea>
+                <button class="comment-submit" onclick="addComment()">◈ Publier le commentaire</button>
+            </div>
+
+            <div class="comments-list" id="commentsList">
+                <div class="empty-state">
+                    <p>Soyez le premier à commenter !</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",
+            authDomain: "doomsday-forums.firebaseapp.com",
+            databaseURL: "https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "doomsday-forums",
+            storageBucket: "doomsday-forums.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef1234567890abcdef"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let currentPost = null;
+        let currentUser = null;
+        let comments = [];
+
+        // Security functions
+        function sanitizeInput(input) {
+            if (typeof input !== 'string') return '';
+            return input
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#x27;')
+                .replace(/\//g, '&#x2F;')
+                .trim();
+        }
+
+        function validateInput(input, maxLength = 10000) {
+            if (typeof input !== 'string') return false;
+            if (input.length === 0 || input.length > maxLength) return false;
+            // Check for potential XSS patterns
+            const dangerousPatterns = [
+                /<script/i,
+                /javascript:/i,
+                /on\w+\s*=/i,
+                /<iframe/i,
+                /<object/i,
+                /<embed/i
+            ];
+            return !dangerousPatterns.some(pattern => pattern.test(input));
+        }
+
+        // Get post ID from URL
+        function getPostIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return sanitizeInput(urlParams.get('id'));
+        }
+
+        // Load post data
+        function loadPost(postId) {
+            if (!postId) {
+                showError('Aucun post spécifié');
+                return;
+            }
+
+            console.log('🔄 Loading post:', postId);
+            
+            database.ref('posts/' + postId).once('value').then((snapshot) => {
+                const postData = snapshot.val();
+                
+                if (!postData) {
+                    showError('Post non trouvé');
+                    return;
+                }
+                
+                currentPost = { id: postId, ...postData };
+                displayPost();
+                loadComments();
+                incrementViews();
+                
+                console.log('✅ Post loaded:', currentPost.title);
+                
+            }).catch((error) => {
+                console.error('❌ Error loading post:', error);
+                showError('Erreur lors du chargement du post');
+            });
+        }
+
+        // Display post
+        function displayPost() {
+            const container = document.getElementById('postContainer');
+            
+            const time = currentPost.createdAt ? new Date(currentPost.createdAt).toLocaleDateString('fr-FR', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }) : 'Date inconnue';
+            
+            const isLiked = currentPost.likedBy && currentPost.likedBy[auth.currentUser?.uid];
+            const isDisliked = currentPost.dislikedBy && currentPost.dislikedBy[auth.currentUser?.uid];
+            
+            const tagsHtml = currentPost.tags && currentPost.tags.length > 0 
+                ? currentPost.tags.map(tag => `<span class="tag">#${sanitizeInput(tag)}</span>`).join('')
+                : '';
+            
+            const importantBadge = currentPost.important ? '<span class="important-badge">◈ Important</span>' : '';
+            
+            container.innerHTML = `
+                <div class="post-container">
+                    <div class="post-header">
+                        <div>
+                            <h1 class="post-title">${sanitizeInput(currentPost.title)} ${importantBadge}</h1>
+                            <div class="post-meta">
+                                <span class="post-author" onclick="viewProfile('${sanitizeInput(currentPost.author)}')">
+                                    Par ${sanitizeInput(currentPost.author)}
+                                </span>
+                                <span class="post-time">${time}</span>
+                                <span class="post-category">${sanitizeInput(currentPost.category)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${tagsHtml ? `<div class="post-tags">${tagsHtml}</div>` : ''}
+                    
+                    <div class="post-content">${sanitizeInput(currentPost.content)}</div>
+                    
+                    <div class="post-stats">
+                        <div class="like-buttons">
+                            <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike()">
+                                <span>✓</span>
+                                <span>${currentPost.likes || 0}</span>
+                            </button>
+                            <button class="dislike-btn ${isDisliked ? 'disliked' : ''}" onclick="toggleDislike()">
+                                <span>✗</span>
+                                <span>${currentPost.dislikes || 0}</span>
+                            </button>
+                        </div>
+                        <div class="stat-item">
+                            <span>💬</span>
+                            <span>${currentPost.replies || 0}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>👁️</span>
+                            <span>${currentPost.views || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Update back to category link
+            const backLink = document.getElementById('backToCategory');
+            if (backLink && currentPost.category) {
+                backLink.href = `category-posts.html?category=${encodeURIComponent(currentPost.category)}`;
+            }
+        }
+
+        // Toggle like
+        function toggleLike() {
+            if (!currentUser) {
+                alert('Vous devez être connecté pour aimer un post!');
+                return;
+            }
+            
+            const userId = auth.currentUser.uid;
+            const isLiked = currentPost.likedBy && currentPost.likedBy[userId];
+            const isDisliked = currentPost.dislikedBy && currentPost.dislikedBy[userId];
+            
+            const updates = {};
+            
+            if (isLiked) {
+                // Remove like
+                delete currentPost.likedBy[userId];
+                updates[`posts/${currentPost.id}/likedBy/${userId}`] = null;
+                updates[`posts/${currentPost.id}/likes`] = Math.max(0, (currentPost.likes || 1) - 1);
+            } else {
+                // Add like and remove dislike if exists
+                currentPost.likedBy = currentPost.likedBy || {};
+                currentPost.likedBy[userId] = true;
+                updates[`posts/${currentPost.id}/likedBy/${userId}`] = true;
+                updates[`posts/${currentPost.id}/likes`] = (currentPost.likes || 0) + 1;
+                
+                if (isDisliked) {
+                    delete currentPost.dislikedBy[userId];
+                    updates[`posts/${currentPost.id}/dislikedBy/${userId}`] = null;
+                    updates[`posts/${currentPost.id}/dislikes`] = Math.max(0, (currentPost.dislikes || 1) - 1);
+                }
+            }
+            
+            database.ref().update(updates).then(() => {
+                console.log('✅ Like toggled successfully');
+                loadPost(currentPost.id); // Reload post
+            }).catch((error) => {
+                console.error('❌ Error toggling like:', error);
+            });
+        }
+
+        // Toggle dislike
+        function toggleDislike() {
+            if (!currentUser) {
+                alert('Vous devez être connecté pour ne pas aimer un post!');
+                return;
+            }
+            
+            const userId = auth.currentUser.uid;
+            isLiked = currentPost.likedBy && currentPost.likedBy[userId];
+            const isDisliked = currentPost.dislikedBy && currentPost.dislikedBy[userId];
+            
+            const updates = {};
+            
+            if (isDisliked) {
+                // Remove dislike
+                delete currentPost.dislikedBy[userId];
+                updates[`posts/${currentPost.id}/dislikedBy/${userId}`] = null;
+                updates[`posts/${currentPost.id}/dislikes`] = Math.max(0, (currentPost.dislikes || 1) - 1);
+            } else {
+                // Add dislike and remove like if exists
+                currentPost.dislikedBy = currentPost.dislikedBy || {};
+                currentPost.dislikedBy[userId] = true;
+                updates[`posts/${currentPost.id}/dislikedBy/${userId}`] = true;
+                updates[`posts/${currentPost.id}/dislikes`] = (currentPost.dislikes || 0) + 1;
+                
+                if (isLiked) {
+                    delete currentPost.likedBy[userId];
+                    updates[`posts/${currentPost.id}/likedBy/${userId}`] = null;
+                    updates[`posts/${currentPost.id}/likes`] = Math.max(0, (currentPost.likes || 1) - 1);
+                }
+            }
+            
+            database.ref().update(updates).then(() => {
+                console.log('✅ Dislike toggled successfully');
+                loadPost(currentPost.id); // Reload post
+            }).catch((error) => {
+                console.error('❌ Error toggling dislike:', error);
+            });
+        }
+
+        // Increment views
+        function incrementViews() {
+            database.ref(`posts/${currentPost.id}/views`).transaction((currentViews) => {
+                return (currentViews || 0) + 1;
+            }).then(() => {
+                console.log('✅ View incremented');
+            });
+        }
+
+        // Load comments
+        function loadComments() {
+            if (!currentPost) return;
+            
+            database.ref(`comments/${currentPost.id}`).orderByChild('createdAt').once('value').then((snapshot) => {
+                const data = snapshot.val();
+                comments = [];
+                
+                if (data) {
+                    Object.keys(data).forEach(commentId => {
+                        comments.push({
+                            id: commentId,
+                            ...data[commentId]
+                        });
+                    });
+                }
+                
+                displayComments();
+                console.log('✅ Comments loaded:', comments.length);
+                
+            }).catch((error) => {
+                console.error('❌ Error loading comments:', error);
+            });
+        }
+
+        // Display comments
+        function displayComments() {
+            const container = document.getElementById('commentsList');
+            const countElement = document.getElementById('commentsCount');
+            
+            countElement.textContent = `${comments.length} commentaire${comments.length > 1 ? 's' : ''}`;
+            
+            if (comments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Soyez le premier à commenter !</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = comments.map(comment => {
+                const time = comment.createdAt ? new Date(comment.createdAt).toLocaleDateString('fr-FR', { 
+                    day: 'numeric', 
+                    month: 'short', 
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 'Date inconnue';
+                
+                return `
+                    <div class="comment">
+                        <div class="comment-header">
+                            <span class="comment-author" onclick="viewProfile('${sanitizeInput(comment.author)}')">
+                                ${sanitizeInput(comment.author)}
+                            </span>
+                            <span class="comment-time">${time}</span>
+                        </div>
+                        <div class="comment-content">${sanitizeInput(comment.content)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Add comment
+        function addComment() {
+            if (!currentUser) {
+                alert('Vous devez être connecté pour commenter!');
+                return;
+            }
+            
+            const textarea = document.getElementById('commentText');
+            const content = textarea.value.trim();
+            
+            if (!content) {
+                alert('Le commentaire ne peut pas être vide!');
+                return;
+            }
+            
+            if (!validateInput(content, 2000)) {
+                alert('Le commentaire contient des caractères non valides!');
+                return;
+            }
+            
+            const commentData = {
+                author: currentUser,
+                content: sanitizeInput(content),
+                createdAt: Date.now(),
+                postId: currentPost.id
+            };
+            
+            database.ref(`comments/${currentPost.id}`).push(commentData).then(() => {
+                // Update post reply count
+                database.ref(`posts/${currentPost.id}/replies`).transaction((currentReplies) => {
+                    return (currentReplies || 0) + 1;
+                });
+                
+                console.log('✅ Comment added successfully');
+                textarea.value = '';
+                loadComments();
+                
+            }).catch((error) => {
+                console.error('❌ Error adding comment:', error);
+                alert('Erreur lors de l\'ajout du commentaire');
+            });
+        }
+
+        // View profile
+        function viewProfile(username) {
+            if (!username) return;
+            window.open(`public-profile.html?username=${encodeURIComponent(username)}`, '_blank');
+        }
+
+        // Show error
+        function showError(message) {
+            const container = document.getElementById('postContainer');
+            container.innerHTML = `
+                <div class="error">
+                    <h3>✗ Erreur</h3>
+                    <p>${sanitizeInput(message)}</p>
+                    <a href="index.html" class="nav-link">← Retour au forum</a>
+                </div>
+            `;
+        }
+
+        // Check auth state
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user.displayName || user.email.split('@')[0];
+                console.log('✅ User authenticated:', currentUser);
+            } else {
+                currentUser = null;
+                console.log('ℹ️ User not authenticated');
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            const postId = getPostIdFromUrl();
+            if (postId) {
+                loadPost(postId);
+            } else {
+                showError('Aucun post spécifié');
+            }
+        });
+    </script>
+</body>
+</html>

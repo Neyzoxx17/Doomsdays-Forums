@@ -192,6 +192,68 @@
             text-transform: uppercase;
         }
 
+        .important-badge {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-left: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .like-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .like-btn, .dislike-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+        }
+
+        .like-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .like-btn.liked {
+            background: rgba(0, 255, 0, 0.3);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .dislike-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+
+        .dislike-btn.disliked {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -443,6 +505,12 @@
                     <label for="postTags">Tags (séparés par des virgules)</label>
                     <input type="text" id="postTags" placeholder="ex: sécurité, réseau, tutorial">
                 </div>
+                <div class="form-group" id="importantOption" style="display: none;">
+                    <label>
+                        <input type="checkbox" id="postImportant">
+                        Marquer ce post comme important (réservé aux modérateurs et admins)
+                    </label>
+                </div>
                 <button type="submit" class="btn-primary">◈ Publier le post</button>
             </form>
         </div>
@@ -470,8 +538,53 @@
 
         let currentCategory = null;
         let currentUser = null;
+        let currentUserRole = 'member';
         let posts = [];
         let currentSort = 'recent';
+
+        // Security functions
+        function sanitizeInput(input) {
+            if (typeof input !== 'string') return '';
+            return input
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#x27;')
+                .replace(/\//g, '&#x2F;')
+                .trim();
+        }
+
+        function validateInput(input, maxLength = 10000) {
+            if (typeof input !== 'string') return false;
+            if (input.length === 0 || input.length > maxLength) return false;
+            // Check for potential XSS patterns
+            const dangerousPatterns = [
+                /<script/i,
+                /javascript:/i,
+                /on\w+\s*=/i,
+                /<iframe/i,
+                /<object/i,
+                /<embed/i
+            ];
+            return !dangerousPatterns.some(pattern => pattern.test(input));
+        }
+
+        function getUserRole() {
+            return new Promise((resolve) => {
+                if (!auth.currentUser) {
+                    resolve('member');
+                    return;
+                }
+                
+                database.ref('users/' + auth.currentUser.uid + '/role').once('value').then((snapshot) => {
+                    const role = snapshot.val() || 'member';
+                    currentUserRole = role;
+                    resolve(role);
+                }).catch(() => {
+                    resolve('member');
+                });
+            });
+        }
 
         // Category information
         const categoryInfo = {
@@ -608,20 +721,28 @@
                 
                 const interactions = (post.likes || 0) + (post.replies || 0);
                 const isLiked = post.likedBy && post.likedBy[auth.currentUser?.uid];
+                const isDisliked = post.dislikedBy && post.dislikedBy[auth.currentUser?.uid];
+                const importantBadge = post.important ? '<span class="important-badge">◈ Important</span>' : '';
                 
                 return `
                     <div class="post-card" onclick="openPost('${post.id}')">
                         <div class="post-header">
-                            <div class="post-title">${post.title}</div>
+                            <div class="post-title">${sanitizeInput(post.title)} ${importantBadge}</div>
                             <div class="post-author" onclick="viewProfile('${post.author}'); event.stopPropagation();">
-                                Par ${post.author}
+                                Par ${sanitizeInput(post.author)}
                             </div>
                         </div>
-                        <div class="post-content">${post.content.substring(0, 200)}${post.content.length > 200 ? '...' : ''}</div>
+                        <div class="post-content">${sanitizeInput(post.content.substring(0, 200))}${post.content.length > 200 ? '...' : ''}</div>
                         <div class="post-stats">
-                            <div class="stat-item" onclick="toggleLike('${post.id}'); event.stopPropagation();">
-                                <span>${isLiked ? '❤️' : '🤍'}</span>
-                                <span>${post.likes || 0}</span>
+                            <div class="like-buttons">
+                                <div class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}'); event.stopPropagation();">
+                                    <span>✓</span>
+                                    <span>${post.likes || 0}</span>
+                                </div>
+                                <div class="dislike-btn ${isDisliked ? 'disliked' : ''}" onclick="toggleDislike('${post.id}'); event.stopPropagation();">
+                                    <span>✗</span>
+                                    <span>${post.dislikes || 0}</span>
+                                </div>
                             </div>
                             <div class="stat-item">
                                 <span>💬</span>
@@ -653,6 +774,7 @@
             
             const userId = auth.currentUser.uid;
             const isLiked = post.likedBy && post.likedBy[userId];
+            const isDisliked = post.dislikedBy && post.dislikedBy[userId];
             
             // Update in Firebase
             const updates = {};
@@ -665,6 +787,13 @@
                 post.likedBy[userId] = true;
                 updates[`posts/${postId}/likedBy/${userId}`] = true;
                 updates[`posts/${postId}/likes`] = (post.likes || 0) + 1;
+                
+                // Remove dislike if exists
+                if (isDisliked) {
+                    delete post.dislikedBy[userId];
+                    updates[`posts/${postId}/dislikedBy/${userId}`] = null;
+                    updates[`posts/${postId}/dislikes`] = Math.max(0, (post.dislikes || 1) - 1);
+                }
             }
             
             database.ref().update(updates).then(() => {
@@ -675,6 +804,48 @@
             });
         }
 
+        // Toggle dislike
+        function toggleDislike(postId) {
+            if (!currentUser) {
+                alert('Vous devez être connecté pour ne pas aimer un post!');
+                return;
+            }
+            
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            const userId = auth.currentUser.uid;
+            const isLiked = post.likedBy && post.likedBy[userId];
+            const isDisliked = post.dislikedBy && post.dislikedBy[userId];
+            
+            // Update in Firebase
+            const updates = {};
+            if (isDisliked) {
+                delete post.dislikedBy[userId];
+                updates[`posts/${postId}/dislikedBy/${userId}`] = null;
+                updates[`posts/${postId}/dislikes`] = (post.dislikes || 1) - 1;
+            } else {
+                post.dislikedBy = post.dislikedBy || {};
+                post.dislikedBy[userId] = true;
+                updates[`posts/${postId}/dislikedBy/${userId}`] = true;
+                updates[`posts/${postId}/dislikes`] = (post.dislikes || 0) + 1;
+                
+                // Remove like if exists
+                if (isLiked) {
+                    delete post.likedBy[userId];
+                    updates[`posts/${postId}/likedBy/${userId}`] = null;
+                    updates[`posts/${postId}/likes`] = Math.max(0, (post.likes || 1) - 1);
+                }
+            }
+            
+            database.ref().update(updates).then(() => {
+                console.log('✅ Dislike toggled successfully');
+                loadPosts(currentCategory); // Reload posts
+            }).catch((error) => {
+                console.error('❌ Error toggling dislike:', error);
+            });
+        }
+
         // Open post
         function openPost(postId) {
             // Increment views
@@ -682,15 +853,9 @@
                 return (currentViews || 0) + 1;
             }).then(() => {
                 console.log('✅ Post view incremented');
-                // Redirect to post detail page (to be implemented)
-                alert(`Fonctionnalité à venir: Affichage du post ${postId}`);
+                // Redirect to post detail page
+                window.location.href = `post-detail.html?id=${encodeURIComponent(postId)}`;
             });
-        }
-
-        // View profile
-        function viewProfile(username) {
-            if (!username) return;
-            window.open(`public-profile.html?username=${encodeURIComponent(username)}`, '_blank');
         }
 
         // Modal functions
@@ -699,6 +864,17 @@
                 alert('Vous devez être connecté pour créer un post!');
                 return;
             }
+            
+            // Check if user can mark as important
+            getUserRole().then(role => {
+                const importantOption = document.getElementById('importantOption');
+                if (role === 'admin' || role === 'moderator') {
+                    importantOption.style.display = 'block';
+                } else {
+                    importantOption.style.display = 'none';
+                }
+            });
+            
             document.getElementById('createPostModal').style.display = 'block';
         }
 
@@ -706,40 +882,59 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
+        // View profile
+        function viewProfile(username) {
+            if (!username) return;
+            window.open(`public-profile.html?username=${encodeURIComponent(username)}`, '_blank');
+        }
+
         // Create post
         function createPost(event) {
             event.preventDefault();
             
-            const title = document.getElementById('postTitle').value.trim();
-            const content = document.getElementById('postContent').value.trim();
-            const tags = document.getElementById('postTags').value.trim();
+            const title = sanitizeInput(document.getElementById('postTitle').value.trim());
+            const content = sanitizeInput(document.getElementById('postContent').value.trim());
+            const tags = sanitizeInput(document.getElementById('postTags').value.trim());
+            const importantCheckbox = document.getElementById('postImportant');
             
             if (!title || !content) {
                 alert('Le titre et le contenu sont obligatoires!');
                 return;
             }
             
-            const postData = {
-                title: title,
-                content: content,
-                author: currentUser,
-                category: currentCategory,
-                tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
-                createdAt: Date.now(),
-                views: 0,
-                likes: 0,
-                replies: 0,
-                likedBy: {}
-            };
+            if (!validateInput(title, 200) || !validateInput(content, 10000)) {
+                alert('Le titre ou le contenu contient des caractères non valides!');
+                return;
+            }
             
-            database.ref('posts').push(postData).then(() => {
-                console.log('✅ Post created successfully');
-                closeModal('createPostModal');
-                document.getElementById('createPostForm').reset();
-                loadPosts(currentCategory); // Reload posts
-            }).catch((error) => {
-                console.error('❌ Error creating post:', error);
-                alert('Erreur lors de la création du post');
+            getUserRole().then(role => {
+                const isImportant = importantCheckbox.checked && (role === 'admin' || role === 'moderator');
+                
+                const postData = {
+                    title: title,
+                    content: content,
+                    author: currentUser,
+                    category: currentCategory,
+                    tags: tags ? tags.split(',').map(tag => sanitizeInput(tag.trim())) : [],
+                    createdAt: Date.now(),
+                    views: 0,
+                    likes: 0,
+                    dislikes: 0,
+                    replies: 0,
+                    likedBy: {},
+                    dislikedBy: {},
+                    important: isImportant
+                };
+                
+                database.ref('posts').push(postData).then(() => {
+                    console.log('✅ Post created successfully');
+                    closeModal('createPostModal');
+                    document.getElementById('createPostForm').reset();
+                    loadPosts(currentCategory); // Reload posts
+                }).catch((error) => {
+                    console.error('❌ Error creating post:', error);
+                    alert('Erreur lors de la création du post');
+                });
             });
         }
 
