@@ -3213,17 +3213,27 @@
         let firebaseInitAttempts = 0;
         const maxFirebaseInitAttempts = 5;
         let forceUpdateInterval;
+        let firebaseInitializing = false; // Flag pour éviter les boucles
         
         function initializeFirebaseWithRetry() {
+            // Éviter les initialisations multiples
+            if (firebaseInitializing) {
+                console.log('⚠️ Firebase déjà en cours d\'initialisation...');
+                return;
+            }
+            
+            firebaseInitializing = true;
             firebaseInitAttempts++;
             console.log(`🔄 Tentative d'initialisation Firebase ${firebaseInitAttempts}/${maxFirebaseInitAttempts}`);
             
             if (!auth.currentUser) {
                 console.log('❌ Utilisateur non connecté, tentative suivante...');
                 if (firebaseInitAttempts < maxFirebaseInitAttempts) {
+                    firebaseInitializing = false; // Reset pour permettre la prochaine tentative
                     setTimeout(initializeFirebaseWithRetry, 2000);
                 } else {
                     console.log('❌ Échec de l\'initialisation après plusieurs tentatives - Arrêt des tentatives');
+                    firebaseInitializing = false; // Reset pour permettre futures tentatives
                 }
                 return;
             }
@@ -3234,11 +3244,13 @@
                 // VALIDATION AUTOMATIQUE DU CODE AVANT TOUT
                 if (!validateCodeBeforeExecution()) {
                     console.error('❌ Validation du code échouée - Arrêt de l\'initialisation');
+                    firebaseInitializing = false;
                     return;
                 }
                 
                 // Reset attempts on successful connection
                 firebaseInitAttempts = 0;
+                firebaseInitializing = false; // Reset flag
                 
                 // Force immediate update first
                 forceImmediateUpdate();
@@ -3270,6 +3282,7 @@
                 
             } catch (error) {
                 console.error('❌ Erreur lors de l\'initialisation:', error);
+                firebaseInitializing = false; // Reset flag
                 if (firebaseInitAttempts < maxFirebaseInitAttempts) {
                     setTimeout(initializeFirebaseWithRetry, 2000);
                 } else {
@@ -3280,8 +3293,14 @@
             }
         }
         
-        // Start initialization after 1 second (faster)
-        setTimeout(initializeFirebaseWithRetry, 1000);
+        // Start initialization after 1 second (faster) - UN SEUL APPEL
+        let initializationStarted = false;
+        function startFirebaseInitialization() {
+            if (!initializationStarted) {
+                initializationStarted = true;
+                setTimeout(initializeFirebaseWithRetry, 1000);
+            }
+        }
         
         // Enhanced security functions
         function sanitizeInput(input) {
@@ -3569,8 +3588,8 @@
                 checkAndShowAdminLink();
                 // checkAndShowCustomizationLink(); // Désactivé - bouton déplacé dans le profil
                 
-                // Initialize Firebase with retry mechanism
-                initializeFirebaseWithRetry();
+                // Initialize Firebase with retry mechanism - UN SEUL APPEL
+                startFirebaseInitialization();
                 
                 // Force immediate UI update after 500ms
                 setTimeout(() => {
