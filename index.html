@@ -2054,6 +2054,43 @@
             }
         }
 
+        // Category and thread functions
+        function openCategory(categoryName) {
+            console.log('Opening category:', categoryName);
+            // Redirect to category page
+            window.location.href = `category-posts.html?category=${categoryName}`;
+        }
+
+        function openThread(threadId) {
+            console.log('Opening thread:', threadId);
+            // Redirect to thread detail page
+            window.location.href = `post-detail.html?id=${threadId}`;
+        }
+
+        function viewProfile(username) {
+            console.log('Viewing profile:', username);
+            // Redirect to public profile page
+            window.location.href = `public-profile.html?user=${username}`;
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            const currentDisplay = panel.style.display;
+            panel.style.display = currentDisplay === 'block' ? 'none' : 'block';
+        }
+
+        function clearNotifications() {
+            console.log('Clearing notifications...');
+            // Clear notifications list
+            const notificationsList = document.getElementById('notificationsList');
+            notificationsList.innerHTML = '<div class="notification-empty">Aucune notification</div>';
+            
+            // Hide badge
+            const badge = document.getElementById('notificationBadge');
+            badge.style.display = 'none';
+            badge.textContent = '0';
+        }
+
         // Enhanced security functions
         function sanitizeInput(input) {
             if (typeof input !== 'string') return '';
