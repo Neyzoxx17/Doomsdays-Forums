@@ -615,149 +615,235 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 350px;
-            height: 400px;
-            background-color: rgba(0, 0, 0, 0.9);
-            border: 2px solid #ff0000;
-            border-radius: 10px;
+            width: 400px;
+            height: 600px;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #dc143c;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(220, 20, 60, 0.3);
             display: flex;
             flex-direction: column;
-            z-index: 1000;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .chat-section:hover {
+            box-shadow: 0 15px 40px rgba(220, 20, 60, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .chat-hidden {
+            height: 60px;
+            overflow: hidden;
         }
 
         .chat-header {
-            background-color: #ff0000;
-            color: #ffffff;
-            padding: 15px;
-            border-radius: 8px 8px 0 0;
+            background: linear-gradient(135deg, #dc143c, #b91c3c);
+            color: white;
+            padding: 15px 20px;
             font-weight: bold;
-            text-transform: uppercase;
+            font-size: 1.1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            border-radius: 13px 13px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .chat-header:hover::before {
+            left: 100%;
+        }
+
+        .chat-header span:first-child {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-header span:first-child::before {
+            content: '💬';
+            font-size: 1.2rem;
+        }
+
+        .online-users {
+            padding: 12px 20px;
+            background: rgba(220, 20, 60, 0.1);
+            border-bottom: 1px solid rgba(220, 20, 60, 0.3);
+            font-size: 0.9rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .online-users::before {
+            content: '🟢';
+            font-size: 0.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        .online-count {
+            color: #dc143c;
+            font-weight: bold;
+            font-size: 1rem;
         }
 
         .chat-messages {
             flex: 1;
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
-            background-color: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #dc143c;
+            border-radius: 3px;
         }
 
         .message {
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-left: 3px solid #ff0000;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 15px;
+            animation: messageSlideIn 0.3s ease-out;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .message:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(-2px);
+            border-color: rgba(220, 20, 60, 0.3);
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .message-author {
             font-weight: bold;
-            color: #ff0000;
-            font-size: 0.9rem;
+            color: #dc143c;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            font-size: 0.95rem;
         }
 
-        .role-badge {
+        .message-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc143c, #b91c3c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 3px;
-            background-color: rgba(255, 255, 255, 0.2);
-            text-transform: uppercase;
+            font-weight: bold;
+            color: white;
+            border: 2px solid #333;
+            object-fit: cover;
+            overflow: hidden;
         }
 
-        .role-admin {
-            background-color: #ff0000;
-            color: #ffffff;
-        }
-
-        .role-moderator {
-            background-color: #ff6600;
-            color: #ffffff;
-        }
-
-        .role-vip {
-            background-color: #ffcc00;
-            color: #000000;
-        }
-
-        .role-member {
-            background-color: #666666;
-            color: #ffffff;
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .message-text {
             color: #ffffff;
-            margin-top: 5px;
+            line-height: 1.4;
+            margin-bottom: 8px;
             word-wrap: break-word;
         }
 
         .message-time {
-            font-size: 0.7rem;
-            color: #cccccc;
-            margin-top: 3px;
+            color: #888;
+            font-size: 0.75rem;
+            text-align: right;
+            font-style: italic;
         }
 
         .chat-input-container {
-            padding: 15px;
-            border-top: 1px solid #ff0000;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(220, 20, 60, 0.3);
             display: flex;
             gap: 10px;
+            align-items: center;
         }
 
         .chat-input {
             flex: 1;
-            padding: 8px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ff0000;
-            border-radius: 5px;
-            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(220, 20, 60, 0.5);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 25px;
             font-size: 0.9rem;
+            transition: all 0.3s ease;
         }
 
         .chat-input:focus {
             outline: none;
-            border-color: #ff0000;
+            border-color: #dc143c;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px rgba(220, 20, 60, 0.3);
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .chat-send-btn {
-            background-color: #ff0000;
-            color: #ffffff;
+            background: linear-gradient(135deg, #dc143c, #b91c3c);
+            color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 12px 20px;
+            border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
+            min-width: 80px;
         }
 
-        .custom-badge {
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.7rem;
-            margin-left: 5px;
-            font-weight: bold;
-        }
-
-        .avatar-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .avatar-option {
-            aspect-ratio: 1;
-            border: 2px solid transparent;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+        .chat-send-btn:hover {
+            background: linear-gradient(135deg, #ff1744, #d50000);
 
         .avatar-option:hover {
             border-color: #ff0000;
@@ -1306,18 +1392,12 @@
         <div class="online-users">
             <span class="online-count" id="onlineCount">3</span> utilisateurs en ligne
         </div>
-        <div class="role-selector">
-            <label for="roleSelect">Votre rôle:</label>
-            <select id="roleSelect" onchange="updateUserRole()">
-                <option value="admin" selected>Admin</option>
-                <option value="vip">VIP</option>
-                <option value="moderator">Modérateur</option>
-                <option value="member">Membre</option>
-            </select>
-        </div>
         <div class="chat-messages" id="chatMessages">
             <div class="message">
-                <div class="message-author">System</div>
+                <div class="message-author">
+                    <div class="message-avatar">💬</div>
+                    System
+                </div>
                 <div class="message-text">Bienvenue sur le chat global de Doomsday Forums!</div>
                 <div class="message-time">Maintenant</div>
             </div>
@@ -1486,7 +1566,6 @@
             const messageData = {
                 user: currentUser,
                 text: message,
-                role: currentUserRole || 'admin',
                 timestamp: Date.now()
             };
             
@@ -1528,12 +1607,29 @@
                     messagesContainer.appendChild(msg.parentElement);
                 });
                 
-                // Add all Firebase messages
+                // Add all Firebase messages with avatars
                 if (messages) {
-                    Object.values(messages).forEach(msg => {
+                    Object.values(messages).forEach(async msg => {
                         const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
                         console.log('Ajout du message:', msg);
-                        addMessageFromFirebase(msg.user, msg.text, msg.role, time);
+                        
+                        // Get user avatar
+                        let avatarUrl = null;
+                        if (msg.user) {
+                            try {
+                                const snapshot = await database.ref('users').orderByChild('username').equalTo(msg.user).once('value');
+                                const users = snapshot.val();
+                                if (users) {
+                                    const userId = Object.keys(users)[0];
+                                    const userData = users[userId];
+                                    avatarUrl = userData.avatar || null;
+                                }
+                            } catch (error) {
+                                console.error('Error fetching user avatar:', error);
+                            }
+                        }
+                        
+                        addMessageFromFirebase(msg.user, msg.text, time, avatarUrl);
                     });
                 }
                 
@@ -1543,8 +1639,8 @@
             });
         }
 
-        function addMessageFromFirebase(author, text, role, time) {
-            console.log('addMessageFromFirebase appelé avec:', {author, text, role, time});
+        function addMessageFromFirebase(author, text, time, avatarUrl = null) {
+            console.log('addMessageFromFirebase appelé avec:', {author, text, time, avatarUrl});
             const messagesContainer = document.getElementById('chatMessages');
             
             if (!messagesContainer) {
@@ -1555,19 +1651,29 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
             
-            const roleDisplayNames = {
-                'admin': 'Admin',
-                'moderator': 'Modo',
-                'vip': 'VIP',
-                'member': 'Membre'
-            };
+            // Create avatar HTML
+            let avatarHTML = '';
+            if (avatarUrl) {
+                avatarHTML = `
+                    <div class="message-avatar">
+                        <img src="${avatarUrl}" alt="${sanitizeInput(author)}" onerror="this.parentElement.innerHTML='${author.substring(0, 2).toUpperCase()}';">
+                    </div>
+                `;
+            } else {
+                const initials = author ? author.substring(0, 2).toUpperCase() : '??';
+                avatarHTML = `
+                    <div class="message-avatar">
+                        ${initials}
+                    </div>
+                `;
+            }
             
             messageDiv.innerHTML = `
                 <div class="message-author">
-                    ${author}
-                    <span class="role-badge role-${role}">${roleDisplayNames[role]}</span>
+                    ${avatarHTML}
+                    ${sanitizeInput(author)}
                 </div>
-                <div class="message-text">${text}</div>
+                <div class="message-text">${sanitizeInput(text)}</div>
                 <div class="message-time">${time}</div>
             `;
             
@@ -2525,72 +2631,68 @@
         }
 
         function sendMessage() {
-            // Check if user is logged in
-            if (!currentUser || !auth.currentUser) {
-                alert('Vous devez être connecté pour envoyer des messages! Cliquez sur "Se Connecter" pour créer un compte.');
-                return;
-            }
-            
-            // Check rate limiting for non-admin users
-            if (currentUserRole !== 'admin' && currentUserRole !== 'moderator') {
-                try {
-                    rateLimitCheck('message');
-                } catch (error) {
-                    alert(error.message);
-                    return;
-                }
-            }
-            
             const input = document.getElementById('chatInput');
-            const message = sanitizeInput(input.value.trim());
+            const message = input.value.trim();
             
-            if (message === '') return;
-            
-            if (message.length > 500) {
-                alert('Message trop long (maximum 500 caractères)!');
+            if (message === '') {
+                console.log('Message vide, envoi annulé');
                 return;
             }
             
-            console.log('Tentative d\'envoi du message:', message);
-            console.log('Firebase database:', database);
-            console.log('Utilisateur actuel:', currentUser);
+            if (!auth.currentUser) {
+                console.log('Utilisateur non connecté, envoi annulé');
+                addMessageFromFirebase('System', 'Vous devez être connecté pour envoyer des messages!', 'Maintenant');
+                return;
+            }
             
-            try {
-                // Send to Firebase
-                sendMessageToFirebase(message);
-                console.log('Message envoyé à Firebase');
-                input.value = '';
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi:', error);
-                alert('Erreur lors de l\'envoi du message: ' + error.message);
-                
-                // Fallback: add message locally
-                addMessage(currentUser, message, currentUserRole);
-                input.value = '';
+            console.log('Envoi du message:', message);
+            
+            const messageData = {
+                user: currentUser || 'Utilisateur',
+                text: message,
+                timestamp: Date.now()
+            };
+            
+            input.value = '';
+            
+            database.ref('messages').push(messageData)
+                .then(() => {
+                    console.log('Message envoyé avec succès à Firebase');
+                })
+                .catch((error) => {
+                    console.error('Erreur Firebase:', error);
+                    throw error;
+                });
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
             }
         }
 
-        function addMessage(author, text, role = 'member') {
+        function addMessage(author, text) {
             const messagesContainer = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
             
             const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
             
-            // Role display names
-            const roleDisplayNames = {
-                'admin': 'Admin',
-                'moderator': 'Modo',
-                'vip': 'VIP',
-                'member': 'Membre'
-            };
+            // Create avatar HTML
+            let avatarHTML = '';
+            const initials = author ? author.substring(0, 2).toUpperCase() : '??';
+            avatarHTML = `
+                <div class="message-avatar">
+                    ${initials}
+                </div>
+            `;
             
             messageDiv.innerHTML = `
                 <div class="message-author">
-                    ${author}
-                    <span class="role-badge role-${role}">${roleDisplayNames[role]}</span>
+                    ${avatarHTML}
+                    ${sanitizeInput(author)}
                 </div>
-                <div class="message-text">${text}</div>
+                <div class="message-text">${sanitizeInput(text)}</div>
                 <div class="message-time">${time}</div>
             `;
             
@@ -2598,16 +2700,147 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        function handleChatKeyPress(event) {
-            if (event.key === 'Enter') {
-                // Check if user is logged in before sending
-                if (!currentUser || !auth.currentUser) {
-                    alert('Vous devez être connecté pour envoyer des messages! Cliquez sur "Se Connecter" pour créer un compte.');
-                    return;
+        // Initialize chat when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Chat initialisé');
+            
+            // Start listening for messages if user is logged in
+            if (auth.currentUser) {
+                listenToMessages();
+                listenToOnlineUsers();
+            }
+        });
+
+        // Notification System Functions (from category-posts.html)
+        function initializeNotifications() {
+            if (!currentUser || !auth.currentUser) return;
+            
+            // Listen for new notifications
+            const userNotificationsRef = database.ref(`notifications/${auth.currentUser.uid}`);
+            
+            if (notificationsListener) {
+                notificationsListener.off();
+            }
+            
+            notificationsListener = userNotificationsRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                notifications = [];
+                
+                if (data) {
+                    Object.keys(data).forEach(notificationId => {
+                        const notification = data[notificationId];
+                        if (!notification.read) {
+                            notifications.push({
+                                id: notificationId,
+                                ...notification
+                            });
+                        }
+                    });
                 }
-                sendMessage();
+                
+                updateNotificationBadge();
+                displayNotifications();
+            });
+        }
+
+        function createNotification(type, message, targetUserId, postId = null) {
+            const notification = {
+                type: type, // 'like', 'reply', 'message'
+                message: message,
+                from: currentUser,
+                to: targetUserId,
+                postId: postId,
+                createdAt: Date.now(),
+                read: false
+            };
+            
+            database.ref(`notifications/${targetUserId}`).push(notification);
+        }
+
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            const count = notifications.length;
+            
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+            
+            notificationCount = count;
+        }
+
+        function displayNotifications() {
+            const container = document.getElementById('notificationsList');
+            
+            if (notifications.length === 0) {
+                container.innerHTML = '<div class="notification-empty">Aucune notification</div>';
+                return;
+            }
+            
+            container.innerHTML = notifications.map(notification => {
+                const time = new Date(notification.createdAt).toLocaleDateString('fr-FR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    day: 'numeric',
+                    month: 'short'
+                });
+                
+                return `
+                    <div class="notification-item unread" onclick="handleNotificationClick('${notification.id}', '${notification.type}', '${notification.postId || ''}')">
+                        <div class="notification-content">${sanitizeInput(notification.message)}</div>
+                        <div class="notification-time">${time}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleNotificationClick(notificationId, type, postId) {
+            // Mark as read
+            database.ref(`notifications/${auth.currentUser.uid}/${notificationId}/read`).set(true);
+            
+            // Navigate based on type
+            switch (type) {
+                case 'like':
+                case 'reply':
+                    if (postId) {
+                        window.location.href = `post-detail.html?id=${postId}`;
+                    }
+                    break;
+                case 'message':
+                    window.location.href = 'messages.html';
+                    break;
             }
         }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function clearNotifications() {
+            if (!currentUser || !auth.currentUser) return;
+            
+            const updates = {};
+            notifications.forEach(notification => {
+                updates[notification.id] = null;
+            });
+            
+            database.ref(`notifications/${auth.currentUser.uid}`).update(updates).then(() => {
+                console.log('✅ Notifications cleared');
+            });
+        }
+
+        // Close notifications when clicking outside
+        document.addEventListener('click', (event) => {
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationPanel = document.getElementById('notificationPanel');
+            
+            if (!notificationBtn.contains(event.target) && !notificationPanel.contains(event.target)) {
+                notificationPanel.style.display = 'none';
+            }
+        });
 
         function simulateOtherUsers() {
             const responses = [
