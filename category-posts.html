@@ -156,6 +156,18 @@
             font-weight: bold;
             color: white;
             border: 2px solid #333;
+            object-fit: cover;
+            overflow: hidden;
+        }
+
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .author-avatar.fallback {
+            background: linear-gradient(135deg, #dc143c, #b91c3c);
         }
 
         .important-badge {
@@ -372,18 +384,31 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
         }
 
         .notification-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
+            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.4);
+        }
+
+        .notification-btn.ring {
+            animation: ring 2s ease-in-out infinite;
+        }
+
+        @keyframes ring {
+            0% { transform: scale(1); }
+            10%, 20% { transform: scale(1.1); }
+            30% { transform: scale(1); }
+            40% { transform: scale(1.1); }
+            50% { transform: scale(1); }
         }
 
         .notification-badge {
             position: absolute;
             top: -5px;
             right: -5px;
-            background: #ff0000;
+            background: linear-gradient(135deg, #ff4444, #cc0000);
             color: white;
             border-radius: 50%;
             width: 20px;
@@ -394,6 +419,7 @@
             font-size: 0.7rem;
             font-weight: bold;
             animation: pulse 2s infinite;
+            border: 2px solid #1a1a1a;
         }
 
         .notification-panel {
@@ -410,6 +436,104 @@
             z-index: 999;
             display: none;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1001;
+            pointer-events: none;
+        }
+
+        .toast-notification {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 1px solid #dc143c;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            min-width: 300px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+            animation: slideInRight 0.3s ease-out;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toast-notification:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 8px 20px rgba(220, 20, 60, 0.4);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .toast-content {
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .toast-time {
+            color: #888;
+            font-size: 0.7rem;
+        }
+
+        .bell-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            position: relative;
+        }
+
+        .bell-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            border: 3px solid currentColor;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            border-bottom: none;
+            transform: rotate(0deg);
+            transition: transform 0.3s;
+        }
+
+        .bell-icon::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 50%;
+        }
+
+        .notification-btn:hover .bell-icon::before {
+            transform: rotate(15deg);
         }
 
         .notification-header {
@@ -806,6 +930,8 @@
         <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
     </button>
 
+    <div class="toast-container" id="toastContainer"></div>
+
     <div class="notification-panel" id="notificationPanel">
         <div class="notification-header">
             <h3 class="notification-title">🔔 Notifications</h3>
@@ -886,6 +1012,7 @@
         let notifications = [];
         let notificationCount = 0;
         let notificationsListener = null;
+        let userProfiles = {}; // Cache for user profiles
 
         // Security functions
         function sanitizeInput(input) {
@@ -1058,7 +1185,7 @@
         }
 
         // Display posts with pagination
-        function displayPosts() {
+        async function displayPosts() {
             console.log('🎨 Displaying posts - Total:', posts.length);
             console.log('⭐ Important posts:', importantPosts.length);
             console.log('📄 Normal posts:', normalPosts.length);
@@ -1077,7 +1204,7 @@
             // Always show sections if they have posts
             if (importantPosts.length > 0) {
                 importantSection.style.display = 'block';
-                displayImportantPosts();
+                await displayImportantPosts();
                 console.log('✅ Important section displayed');
             } else {
                 importantSection.style.display = 'none';
@@ -1086,7 +1213,7 @@
             
             if (normalPosts.length > 0) {
                 normalSection.style.display = 'block';
-                displayNormalPosts();
+                await displayNormalPosts();
                 console.log('✅ Normal section displayed');
             } else {
                 normalSection.style.display = 'none';
@@ -1110,7 +1237,7 @@
         }
 
         // Display important posts with pagination
-        function displayImportantPosts() {
+        async function displayImportantPosts() {
             const startIndex = (importantCurrentPage - 1) * POSTS_PER_PAGE;
             const endIndex = startIndex + POSTS_PER_PAGE;
             const pagePosts = importantPosts.slice(startIndex, endIndex);
@@ -1118,14 +1245,17 @@
             console.log('📄 Displaying important posts - Page:', importantCurrentPage, 'Posts:', pagePosts.length);
             
             const container = document.getElementById('importantPostsList');
-            container.innerHTML = pagePosts.map(post => createPostCard(post)).join('');
+            
+            // Generate all post cards asynchronously
+            const postCards = await Promise.all(pagePosts.map(post => createPostCard(post)));
+            container.innerHTML = postCards.join('');
             
             // Update pagination
             updatePagination('important', importantPosts.length, importantCurrentPage);
         }
 
         // Display normal posts with pagination
-        function displayNormalPosts() {
+        async function displayNormalPosts() {
             const startIndex = (normalCurrentPage - 1) * POSTS_PER_PAGE;
             const endIndex = startIndex + POSTS_PER_PAGE;
             const pagePosts = normalPosts.slice(startIndex, endIndex);
@@ -1133,14 +1263,17 @@
             console.log('📄 Displaying normal posts - Page:', normalCurrentPage, 'Posts:', pagePosts.length);
             
             const container = document.getElementById('normalPostsList');
-            container.innerHTML = pagePosts.map(post => createPostCard(post)).join('');
+            
+            // Generate all post cards asynchronously
+            const postCards = await Promise.all(pagePosts.map(post => createPostCard(post)));
+            container.innerHTML = postCards.join('');
             
             // Update pagination
             updatePagination('normal', normalPosts.length, normalCurrentPage);
         }
 
         // Create post card HTML
-        function createPostCard(post) {
+        async function createPostCard(post) {
             const time = post.createdAt ? new Date(post.createdAt).toLocaleDateString('fr-FR', { 
                 day: 'numeric', 
                 month: 'short', 
@@ -1153,15 +1286,15 @@
             const isDisliked = post.dislikedBy && post.dislikedBy[auth.currentUser?.uid];
             const importantBadge = post.important ? `<span class="important-badge"><span class="star-icon"></span> Important</span>` : '';
             
-            // Get avatar initials
-            const authorInitials = post.author ? post.author.substring(0, 2).toUpperCase() : '??';
+            // Get avatar HTML
+            const avatarHTML = await createAvatarHTML(post.author);
             
             return `
                 <div class="post-card" onclick="openPost('${post.id}')">
                     <div class="post-header">
                         <div class="post-title">${sanitizeInput(post.title)} ${importantBadge}</div>
                         <div class="post-author" onclick="viewProfile('${post.author}'); event.stopPropagation();">
-                            <div class="author-avatar">${authorInitials}</div>
+                            ${avatarHTML}
                             ${sanitizeInput(post.author)}
                         </div>
                     </div>
@@ -1569,6 +1702,96 @@
             };
             
             database.ref(`notifications/${targetUserId}`).push(notification);
+            
+            // Show toast notification for real-time feedback
+            if (targetUserId === auth.currentUser?.uid) {
+                showToast(message, type);
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            
+            const time = new Date().toLocaleTimeString('fr-FR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            toast.innerHTML = `
+                <div class="toast-content">${sanitizeInput(message)}</div>
+                <div class="toast-time">${time}</div>
+            `;
+            
+            toast.onclick = () => {
+                toast.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            };
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.style.animation = 'slideOutRight 0.3s ease-out';
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 300);
+                }
+            }, 5000);
+            
+            // Add ring animation to notification button
+            const notificationBtn = document.getElementById('notificationBtn');
+            notificationBtn.classList.add('ring');
+            setTimeout(() => {
+                notificationBtn.classList.remove('ring');
+            }, 2000);
+        }
+
+        // Get user profile data
+        async function getUserProfile(username) {
+            if (userProfiles[username]) {
+                return userProfiles[username];
+            }
+            
+            try {
+                const snapshot = await database.ref('users').orderByChild('username').equalTo(username).once('value');
+                const users = snapshot.val();
+                
+                if (users) {
+                    const userId = Object.keys(users)[0];
+                    const userData = users[userId];
+                    userProfiles[username] = userData;
+                    return userData;
+                }
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+            
+            return null;
+        }
+
+        // Create avatar HTML
+        async function createAvatarHTML(username) {
+            const profile = await getUserProfile(username);
+            
+            if (profile && profile.avatar) {
+                return `
+                    <div class="author-avatar">
+                        <img src="${profile.avatar}" alt="${sanitizeInput(username)}" onerror="this.parentElement.classList.add('fallback'); this.parentElement.innerHTML='${username.substring(0, 2).toUpperCase()}';">
+                    </div>
+                `;
+            } else {
+                const initials = username ? username.substring(0, 2).toUpperCase() : '??';
+                return `
+                    <div class="author-avatar fallback">
+                        ${initials}
+                    </div>
+                `;
+            }
         }
 
         function updateNotificationBadge() {
