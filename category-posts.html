@@ -789,10 +789,13 @@
                     });
                 }
                 
+                console.log('📊 Raw posts loaded:', posts.length);
+                console.log('📝 Posts data:', posts);
+                
                 // Apply current sort
                 applySorting();
                 displayPosts();
-                console.log('✅ Posts loaded:', posts.length);
+                console.log('✅ Posts loaded and displayed:', posts.length);
                 
             }).catch((error) => {
                 console.error('❌ Error loading posts:', error);
@@ -839,6 +842,10 @@
 
         // Display posts with pagination
         function displayPosts() {
+            console.log('🎨 Displaying posts - Total:', posts.length);
+            console.log('⭐ Important posts:', importantPosts.length);
+            console.log('📄 Normal posts:', normalPosts.length);
+            
             // Hide loading
             document.getElementById('postsContainer').style.display = 'none';
             
@@ -850,20 +857,23 @@
             document.getElementById('importantCount').textContent = importantPosts.length;
             document.getElementById('normalCount').textContent = normalPosts.length;
             
-            // Display important posts
+            // Always show sections if they have posts
             if (importantPosts.length > 0) {
                 importantSection.style.display = 'block';
                 displayImportantPosts();
+                console.log('✅ Important section displayed');
             } else {
                 importantSection.style.display = 'none';
+                console.log('ℹ️ Important section hidden (no posts)');
             }
             
-            // Display normal posts
             if (normalPosts.length > 0) {
                 normalSection.style.display = 'block';
                 displayNormalPosts();
+                console.log('✅ Normal section displayed');
             } else {
                 normalSection.style.display = 'none';
+                console.log('ℹ️ Normal section hidden (no posts)');
             }
             
             // Show empty state if no posts at all
@@ -878,6 +888,7 @@
                         </button>
                     </div>
                 `;
+                console.log('ℹ️ Empty state displayed');
             }
         }
 
@@ -886,6 +897,8 @@
             const startIndex = (importantCurrentPage - 1) * POSTS_PER_PAGE;
             const endIndex = startIndex + POSTS_PER_PAGE;
             const pagePosts = importantPosts.slice(startIndex, endIndex);
+            
+            console.log('📄 Displaying important posts - Page:', importantCurrentPage, 'Posts:', pagePosts.length);
             
             const container = document.getElementById('importantPostsList');
             container.innerHTML = pagePosts.map(post => createPostCard(post)).join('');
@@ -899,6 +912,8 @@
             const startIndex = (normalCurrentPage - 1) * POSTS_PER_PAGE;
             const endIndex = startIndex + POSTS_PER_PAGE;
             const pagePosts = normalPosts.slice(startIndex, endIndex);
+            
+            console.log('📄 Displaying normal posts - Page:', normalCurrentPage, 'Posts:', pagePosts.length);
             
             const container = document.getElementById('normalPostsList');
             container.innerHTML = pagePosts.map(post => createPostCard(post)).join('');
@@ -1171,10 +1186,14 @@
         function createPost(event) {
             event.preventDefault();
             
+            console.log('🆕 Creating new post...');
+            
             const title = sanitizeInput(document.getElementById('postTitle').value.trim());
             const content = sanitizeInput(document.getElementById('postContent').value.trim());
             const tags = sanitizeInput(document.getElementById('postTags').value.trim());
             const importantCheckbox = document.getElementById('postImportant');
+            
+            console.log('📝 Post data:', { title, content, tags, currentUser, currentCategory });
             
             if (!title || !content) {
                 alert('Le titre et le contenu sont obligatoires!');
@@ -1183,6 +1202,16 @@
             
             if (!validateInput(title, 200) || !validateInput(content, 10000)) {
                 alert('Le titre ou le contenu contient des caractères non valides!');
+                return;
+            }
+            
+            if (!currentUser) {
+                alert('Vous devez être connecté pour créer un post!');
+                return;
+            }
+            
+            if (!currentCategory) {
+                alert('Catégorie non spécifiée!');
                 return;
             }
             
@@ -1205,6 +1234,8 @@
                     important: isImportant
                 };
                 
+                console.log('💾 Saving post to Firebase:', postData);
+                
                 database.ref('posts').push(postData).then(() => {
                     console.log('✅ Post created successfully');
                     closeModal('createPostModal');
@@ -1212,7 +1243,7 @@
                     loadPosts(currentCategory); // Reload posts
                 }).catch((error) => {
                     console.error('❌ Error creating post:', error);
-                    alert('Erreur lors de la création du post');
+                    alert('Erreur lors de la création du post: ' + error.message);
                 });
             });
         }
@@ -1242,13 +1273,20 @@
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Page loaded, initializing...');
+            
             currentCategory = getCategoryFromUrl();
+            console.log('📂 Category from URL:', currentCategory);
+            
             if (currentCategory && categoryInfo[currentCategory]) {
                 const info = categoryInfo[currentCategory];
                 document.getElementById('categoryTitle').textContent = info.title;
                 document.getElementById('categoryDescription').textContent = info.description;
+                console.log('📋 Category info set:', info);
+                
                 loadPosts(currentCategory);
             } else {
+                console.error('❌ Invalid category:', currentCategory);
                 showError('Catégorie non valide');
             }
         });
