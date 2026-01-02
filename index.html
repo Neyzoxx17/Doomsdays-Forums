@@ -2536,13 +2536,26 @@
         function saveAvatar() {
             if (!auth.currentUser) return;
             
-            const customUrl = document.getElementById('customAvatarUrl').value;
-            const avatarUrl = customUrl || selectedAvatar;
+            const customUrl = document.getElementById('customAvatarUrl').value.trim();
+            let avatarUrl = selectedAvatar;
+            
+            // Use custom URL if provided
+            if (customUrl) {
+                // Validate URL format
+                if (customUrl.startsWith('http://') || customUrl.startsWith('https://')) {
+                    avatarUrl = customUrl;
+                } else {
+                    alert('URL invalide! Veuillez entrer une URL complète (http:// ou https://)');
+                    return;
+                }
+            }
             
             if (!avatarUrl) {
                 alert('Veuillez sélectionner un avatar ou entrer une URL personnalisée!');
                 return;
             }
+            
+            console.log('Saving avatar URL:', avatarUrl);
             
             // Save to Firebase
             database.ref('avatars/' + auth.currentUser.uid).set(avatarUrl).then(() => {
@@ -3028,15 +3041,27 @@
         function updateMessageWithUserData(messageDiv, author, text, time, avatarUrl, userRole, usernameColor) {
             // Create avatar HTML with real profile photo
             let avatarHTML = '';
-            if (avatarUrl) {
-                avatarHTML = `
-                    <div class="message-avatar" onclick="viewProfile('${sanitizeInput(author)}')" style="cursor: pointer;">
-                        <img src="${avatarUrl}" alt="${sanitizeInput(author)}" 
-                             onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='${sanitizeInput(author).substring(0, 2).toUpperCase()}';"
-                             loading="lazy">
-                    </div>
-                `;
+            if (avatarUrl && avatarUrl !== null && avatarUrl !== undefined) {
+                // Validate avatar URL
+                if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
+                    avatarHTML = `
+                        <div class="message-avatar" onclick="viewProfile('${sanitizeInput(author)}')" style="cursor: pointer;">
+                            <img src="${avatarUrl}" alt="${sanitizeInput(author)}" 
+                                 onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='${sanitizeInput(author).substring(0, 2).toUpperCase()}';"
+                                 loading="lazy">
+                        </div>
+                    `;
+                } else {
+                    // Invalid URL, use initials
+                    const initials = author ? author.substring(0, 2).toUpperCase() : '??';
+                    avatarHTML = `
+                        <div class="message-avatar" onclick="viewProfile('${sanitizeInput(author)}')" style="cursor: pointer;">
+                            ${initials}
+                        </div>
+                    `;
+                }
             } else {
+                // No avatar URL, use initials
                 const initials = author ? author.substring(0, 2).toUpperCase() : '??';
                 avatarHTML = `
                     <div class="message-avatar" onclick="viewProfile('${sanitizeInput(author)}')" style="cursor: pointer;">
