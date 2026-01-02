@@ -133,24 +133,10 @@ class SecurityManager {
                 console.warn('🚨 Session hijacking detected!');
                 this.handleSecurityBreach();
             }
-        }, 5000);
+        }, 10000); // Check every 10 seconds instead of 5
 
-        // Auto-logout after inactivity
-        let inactivityTimer;
-        const resetTimer = () => {
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(() => {
-                console.log('🔒 Auto-logout due to inactivity');
-                this.logout();
-            }, 30 * 60 * 1000); // 30 minutes
-        };
-
-        // Reset timer on user activity
-        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
-            document.addEventListener(event, resetTimer, true);
-        });
-
-        resetTimer();
+        // Auto-logout disabled - remove inactivity timer
+        console.log('🔒 Auto-logout disabled - session remains active');
     }
 
     // Setup XSS protection
