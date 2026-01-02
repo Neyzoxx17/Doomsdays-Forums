@@ -2424,41 +2424,6 @@
             
             console.log('⚡ Forçage immédiat terminé');
         }
-                console.error('❌ Sélecteur de rôle non trouvé!');
-            }
-            
-            // Update username display
-            const usernameElement = document.getElementById('userUsername');
-            if (usernameElement && currentUser) {
-                usernameElement.textContent = currentUser;
-                console.log('✅ Nom d utilisateur mis à jour:', currentUser);
-            }
-            
-            // Update profile
-            updateUserProfile();
-            
-            // Update Firebase (async - don't wait)
-            if (auth.currentUser) {
-                updateOnlineUsersInFirebase();
-                
-                // Force database update
-                const userData = {
-                    username: currentUser,
-                    role: 'admin',
-                    lastUpdated: Date.now(),
-                    forceUpdated: true,
-                    isForced: true
-                };
-                
-                database.ref('users/' + auth.currentUser.uid).update(userData).then(() => {
-                    console.log('✅ Base de données mise à jour avec rôle ADMIN');
-                }).catch((error) => {
-                    console.log('❌ Erreur BDD (mais UI forcée):', error);
-                });
-            }
-            
-            console.log('⚡ FORÇAGE TERMINÉ - Rôle ADMIN appliqué partout');
-        }
 
         // Add database admin button
         function addDatabaseAdminButton() {
@@ -2532,7 +2497,7 @@
                 
                 console.log('Final role:', currentUserRole);
                 
-                // Don't update currentUser here - it should stay as the username
+                // Don't update currentUser here - it should stay as username
                 updateOnlineUsersInFirebase();
                 
                 // Check admin link after role is loaded
