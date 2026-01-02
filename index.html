@@ -2185,13 +2185,16 @@
                 if (firebaseInitAttempts < maxFirebaseInitAttempts) {
                     setTimeout(initializeFirebaseWithRetry, 2000);
                 } else {
-                    console.log('❌ Échec de l\'initialisation après plusieurs tentatives');
+                    console.log('❌ Échec de l\'initialisation après plusieurs tentatives - Arrêt des tentatives');
                 }
                 return;
             }
             
             try {
                 console.log('✅ Utilisateur connecté, initialisation des listeners...');
+                
+                // Reset attempts on successful connection
+                firebaseInitAttempts = 0;
                 
                 // Force immediate update first
                 forceImmediateUpdate();
@@ -2219,10 +2222,16 @@
                     }
                 }, 10000);
                 
+                console.log('✅ Initialisation Firebase terminée avec succès');
+                
             } catch (error) {
                 console.error('❌ Erreur lors de l\'initialisation:', error);
                 if (firebaseInitAttempts < maxFirebaseInitAttempts) {
                     setTimeout(initializeFirebaseWithRetry, 2000);
+                } else {
+                    console.error('❌ Erreur critique lors de l\'initialisation - Arrêt des tentatives');
+                    // Continuer sans Firebase pour éviter de bloquer l'interface
+                    addSystemMessage('Mode dégradé - Certaines fonctionnalités peuvent être limitées');
                 }
             }
         }
@@ -3551,6 +3560,55 @@
             if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''}`;
             if (hours < 24) return `${hours} heure${hours > 1 ? 's' : ''}`;
             return `${days} jour${days > 1 ? 's' : ''}`;
+        }
+        
+        // Créer un élément de sujet
+        function createThreadItem(thread) {
+            const li = document.createElement('li');
+            li.className = 'thread-item';
+            li.onclick = () => openThread(thread.id || thread.key);
+            
+            const timeAgo = getTimeAgo(thread.lastActivity);
+            const tagsHtml = thread.tags && thread.tags.length > 0 
+                ? `<div class="thread-tags">${thread.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`
+                : '';
+            
+            li.innerHTML = `
+                <div class="thread-title">${sanitizeInput(thread.title)}</div>
+                <div class="thread-meta">
+                    <span class="thread-author" onclick="viewProfile('${thread.author}'); event.stopPropagation();">Par ${sanitizeInput(thread.author)}</span>
+                    <div class="thread-stats">
+                        <span>${thread.replies || 0} réponses</span>
+                        <span>${thread.views || 0} vues</span>
+                        <span>il y a ${timeAgo}</span>
+                    </div>
+                </div>
+                ${tagsHtml}
+            `;
+            
+            return li;
+        }
+        
+        // Afficher une notification
+        function showNotification(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) return;
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerHTML = `
+                <div class="toast-content">${message}</div>
+                <div class="toast-time">${new Date().toLocaleTimeString('fr-FR')}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto-suppression après 5 secondes
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 5000);
         }
 
         function handleChatKeyPress(event) {

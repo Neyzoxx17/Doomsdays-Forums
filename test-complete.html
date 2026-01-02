@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Complet - Doomsday Forums</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff00;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .test-title {
+            color: #00ff00;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 255, 0, 0.05);
+            border-left: 3px solid #00ff00;
+        }
+        
+        .status-pass {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        
+        .status-fail {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        
+        .status-warning {
+            color: #ffff00;
+            font-weight: bold;
+        }
+        
+        .log-container {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 5px;
+        }
+        
+        .log-error {
+            color: #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+        }
+        
+        .log-warning {
+            color: #ffff00;
+            background: rgba(255, 255, 0, 0.1);
+        }
+        
+        .log-success {
+            color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .log-info {
+            color: #00ffff;
+        }
+        
+        .btn-test {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-test:hover {
+            background: #00cc00;
+            transform: scale(1.05);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+            transition: width 0.3s;
+            width: 0%;
+        }
+        
+        .summary {
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .summary-title {
+            font-size: 1.6em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .stat-item {
+            padding: 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 5px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 style="text-align: center; color: #00ff00; font-size: 2em; margin-bottom: 30px;">
+            🔧 TEST COMPLET - DOOMSDAY FORUMS 🔧
+        </h1>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">📋 Configuration et Dépendances</div>
+            <div class="test-item">
+                <span id="test-firebase-sdk">Test Firebase SDK...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-security-module">Test Module Sécurité...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-browser-compat">Test Compatibilité Navigateur...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🔐 Authentification</div>
+            <div class="test-item">
+                <span id="test-firebase-config">Test Configuration Firebase...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-auth-state">Test État Authentification...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-login-function">Test Fonction Login...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-register-function">Test Fonction Register...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">💬 Chat et Messagerie</div>
+            <div class="test-item">
+                <span id="test-chat-functions">Test Fonctions Chat...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-message-sending">Test Envoi Messages...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-message-listening">Test Écoute Messages...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🏢 Fonctionnalités Forum</div>
+            <div class="test-item">
+                <span id="test-thread-creation">Test Création Sujets...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-category-navigation">Test Navigation Catégories...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-tag-system">Test Système Tags...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">👤 Profil et Personnalisation</div>
+            <div class="test-item">
+                <span id="test-profile-functions">Test Fonctions Profil...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-avatar-system">Test Système Avatars...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-notification-system">Test Système Notifications...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🔧 Interface et Interactions</div>
+            <div class="test-item">
+                <span id="test-modal-functions">Test Fonctions Modales...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-ui-elements">Test Éléments UI...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-event-handlers">Test Gestionnaires Événements...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🛡️ Sécurité et Validation</div>
+            <div class="test-item">
+                <span id="test-input-sanitization">Test Sanitisation Entrées...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-rate-limiting">Test Rate Limiting...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-xss-protection">Test Protection XSS...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">📊 Performance et Optimisation</div>
+            <div class="test-item">
+                <span id="test-loading-time">Test Temps Chargement...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-memory-usage">Test Utilisation Mémoire...</span>
+            </div>
+            <div class="test-item">
+                <span id="test-error-handling">Test Gestion Erreurs...</span>
+            </div>
+        </div>
+        
+        <div class="log-container" id="logContainer">
+            <div class="log-entry log-info">🚀 Démarrage des tests complets...</div>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn-test" onclick="runAllTests()">▶ LANCER TOUS LES TESTS</button>
+            <button class="btn-test" onclick="runQuickTest()">⚡ TEST RAPIDE</button>
+            <button class="btn-test" onclick="clearLogs()">🗑️ EFFACER LOGS</button>
+            <button class="btn-test" onclick="exportReport()">📄 EXPORTER RAPPORT</button>
+        </div>
+        
+        <div class="summary" id="summarySection" style="display: none;">
+            <div class="summary-title">📊 RÉSUMÉ DES TESTS</div>
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalTests">0</div>
+                    <div>Total Tests</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value status-pass" id="passedTests">0</div>
+                    <div>✅ Réussis</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value status-fail" id="failedTests">0</div>
+                    <div>❌ Échoués</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value status-warning" id="warningTests">0</div>
+                    <div>⚠️ Avertissements</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB03b3P5Ec33HWCJVS7y6t6x7H-Nx6YsTc",
+            authDomain: "doomsday-forums.firebaseapp.com",
+            databaseURL: "https://doomsday-forums-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "doomsday-forums",
+            storageBucket: "doomsday-forums.firebasestorage.app",
+            messagingSenderId: "345452079794",
+            appId: "1:345452079794:web:14b4978afb203a9d84b7ab",
+            measurementId: "G-W1YDYYQKRR"
+        };
+
+        // Variables de test
+        let testResults = {
+            total: 0,
+            passed: 0,
+            failed: 0,
+            warnings: 0
+        };
+
+        let currentTestIndex = 0;
+        const totalTests = 24;
+
+        // Fonctions de logging
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function updateTestStatus(testId, status, message) {
+            const element = document.getElementById(testId);
+            if (element) {
+                element.innerHTML = `<span class="status-${status}">${status.toUpperCase()}</span> ${message}`;
+            }
+            
+            testResults.total++;
+            if (status === 'pass') testResults.passed++;
+            else if (status === 'fail') testResults.failed++;
+            else if (status === 'warning') testResults.warnings++;
+            
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = (testResults.total / totalTests) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            if (testResults.total === totalTests) {
+                showSummary();
+            }
+        }
+
+        function showSummary() {
+            document.getElementById('totalTests').textContent = testResults.total;
+            document.getElementById('passedTests').textContent = testResults.passed;
+            document.getElementById('failedTests').textContent = testResults.failed;
+            document.getElementById('warningTests').textContent = testResults.warnings;
+            document.getElementById('summarySection').style.display = 'block';
+            
+            log('📊 Tests terminés!', 'success');
+            log(`✅ Réussis: ${testResults.passed}`, 'success');
+            log(`❌ Échoués: ${testResults.failed}`, testResults.failed > 0 ? 'error' : 'success');
+            log(`⚠️ Avertissements: ${testResults.warnings}`, testResults.warnings > 0 ? 'warning' : 'success');
+        }
+
+        // Tests de configuration
+        async function testFirebaseSDK() {
+            try {
+                if (typeof firebase !== 'undefined') {
+                    updateTestStatus('test-firebase-sdk', 'pass', 'Firebase SDK chargé');
+                    log('✅ Firebase SDK disponible', 'success');
+                    return true;
+                } else {
+                    updateTestStatus('test-firebase-sdk', 'fail', 'Firebase SDK non trouvé');
+                    log('❌ Firebase SDK non disponible', 'error');
+                    return false;
+                }
+            } catch (error) {
+                updateTestStatus('test-firebase-sdk', 'fail', `Erreur: ${error.message}`);
+                log(`❌ Erreur Firebase SDK: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function testSecurityModule() {
+            try {
+                // Test si les fonctions de sécurité existent
+                const securityFunctions = ['sanitizeInput', 'validateEmail', 'validatePassword'];
+                let missingFunctions = [];
+                
+                for (const func of securityFunctions) {
+                    if (typeof window[func] !== 'function') {
+                        missingFunctions.push(func);
+                    }
+                }
+                
+                if (missingFunctions.length === 0) {
+                    updateTestStatus('test-security-module', 'pass', 'Module sécurité complet');
+                    log('✅ Module sécurité complet', 'success');
+                    return true;
+                } else {
+                    updateTestStatus('test-security-module', 'warning', `Fonctions manquantes: ${missingFunctions.join(', ')}`);
+                    log(`⚠️ Fonctions sécurité manquantes: ${missingFunctions.join(', ')}`, 'warning');
+                    return false;
+                }
+            } catch (error) {
+                updateTestStatus('test-security-module', 'fail', `Erreur: ${error.message}`);
+                log(`❌ Erreur module sécurité: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function testBrowserCompatibility() {
+            try {
+                const features = {
+                    'localStorage': typeof Storage !== 'undefined',
+                    'sessionStorage': typeof sessionStorage !== 'undefined',
+                    'fetch': typeof fetch !== 'undefined',
+                    'promises': typeof Promise !== 'undefined',
+                    'arrowFunctions': (() => { try { eval('() => {}'); return true; } catch { return false; } })(),
+                    'templateLiterals': (() => { try { eval('`test`'); return true; } catch { return false; } })()
+                };
+                
+                const unsupported = Object.keys(features).filter(key => !features[key]);
+                
+                if (unsupported.length === 0) {
+                    updateTestStatus('test-browser-compat', 'pass', 'Navigateur compatible');
+                    log('✅ Navigateur entièrement compatible', 'success');
+                    return true;
+                } else {
+                    updateTestStatus('test-browser-compat', 'warning', `Fonctionnalités non supportées: ${unsupported.join(', ')}`);
+                    log(`⚠️ Fonctionnalités navigateur non supportées: ${unsupported.join(', ')}`, 'warning');
+                    return false;
+                }
+            } catch (error) {
+                updateTestStatus('test-browser-compat', 'fail', `Erreur: ${error.message}`);
+                log(`❌ Erreur compatibilité: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Tests d'authentification
+        async function testFirebaseConfig() {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                const database = firebase.database();
+                const auth = firebase.auth();
+                
+                updateTestStatus('test-firebase-config', 'pass', 'Firebase initialisé');
+                log('✅ Firebase correctement initialisé', 'success');
+                return true;
+            } catch (error) {
+                updateTestStatus('test-firebase-config', 'fail', `Erreur: ${error.message}`);
+                log(`❌ Erreur initialisation Firebase: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function testAuthState() {
+            try {
+                const auth = firebase.auth();
+                
+                return new Promise((resolve) => {
+                    const unsubscribe = auth.onAuthStateChanged((user) => {
+                        unsubscribe();
+                        updateTestStatus('test-auth-state', 'pass', user ? 'Utilisateur connecté' : 'Aucun utilisateur');
+                        log(`✅ État authentification: ${user ? 'Connecté' : 'Non connecté'}`, 'success');
+                        resolve(true);
+                    }, (error) => {
+                        unsubscribe();
+                        updateTestStatus('test-auth-state', 'fail', `Erreur: ${error.message}`);
+                        log(`❌ Erreur état auth: ${error.message}`, 'error');
+                        resolve(false);
+                    });
+                    
+                    // Timeout après 5 secondes
+                    setTimeout(() => {
+                        unsubscribe();
+                        updateTestStatus('test-auth-state', 'warning', 'Timeout - Pas de réponse');
+                        log('⚠️ Timeout état authentification', 'warning');
+                        resolve(false);
+                    }, 5000);
+                });
+            } catch (error) {
+                updateTestStatus('test-auth-state', 'fail', `Erreur: ${error.message}`);
+                log(`❌ Erreur test état auth: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Tests de chat
+        async function testChatFunctions() {
+            try {
+                const chatFunctions = ['sendMessage', 'addMessage', 'handleChatKeyPress'];
+                let missingFunctions = [];
+                
+                for (const func of chatFunctions) {
+                    if (typeof window[func] !== 'function') {
+                        missingFunctions.push(func);
+                    }
+                }
+                
+                if (missingFunctions.length === 0) {
+                    updateTestStatus('test-chat-functions', 'pass', 'Fonctions chat complètes');
+                    log('✅ Fonctions chat disponibles', 'success');
+                    return true;
+                } else {
+                    updateTestStatus('test-chat-functions', 'warning', `Fonctions manquantes: ${missingFunctions.join(', ')}`);
+                    log(`⚠️ Fonctions chat manquantes: ${missingFunctions.join(', ')}`, 'warning');
+                    return false;
+                }
+            } catch (error) {
+                updateTestStatus('test-chat-functions', 'fail', `Erreur: ${error.message}`);
+                log(`❌ Erreur fonctions chat: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Tests forum
+        async function testThreadCreation() {
+            try {
+                if (typeof createThread === 'function') {
+                    updateTestStatus('test-thread-creation', 'pass', 'Fonction création sujet disponible');
+                    log('✅ Fonction création sujet disponible', 'success');
+                    return true;
+                } else {
+                    updateTestStatus('test-thread-creation', 'warning', 'Fonction création sujet non trouvée');
+                    log('⚠️ Fonction création sujet non disponible', 'warning');
+                    return false;
+                }
+            } catch (error) {
+                updateTestStatus('test-thread-creation', 'fail', `Erreur: ${error.message}`);
+                log(`❌ Erreur création sujet: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Tests UI
+        async function testModalFunctions() {
+            try {
+                const modalFunctions = ['openModal', 'closeModal'];
+                let missingFunctions = [];
+                
+                for (const func of modalFunctions) {
+                    if (typeof window[func] !== 'function') {
+                        missingFunctions.push(func);
+                    }
+                }
+                
+                if (missingFunctions.length === 0) {
+                    updateTestStatus('test-modal-functions', 'pass', 'Fonctions modales complètes');
+                    log('✅ Fonctions modales disponibles', 'success');
+                    return true;
+                } else {
+                    updateTestStatus('test-modal-functions', 'warning', `Fonctions manquantes: ${missingFunctions.join(', ')}`);
+                    log(`⚠️ Fonctions modales manquantes: ${missingFunctions.join(', ')}`, 'warning');
+                    return false;
+                }
+            } catch (error) {
+                updateTestStatus('test-modal-functions', 'fail', `Erreur: ${error.message}`);
+                log(`❌ Erreur fonctions modales: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Tests performance
+        async function testLoadingTime() {
+            try {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                const loadTimeSeconds = (loadTime / 1000).toFixed(2);
+                
+                if (loadTimeSeconds < 3) {
+                    updateTestStatus('test-loading-time', 'pass', `Chargement: ${loadTimeSeconds}s`);
+                    log(`✅ Temps de chargement excellent: ${loadTimeSeconds}s`, 'success');
+                    return true;
+                } else if (loadTimeSeconds < 5) {
+                    updateTestStatus('test-loading-time', 'warning', `Chargement: ${loadTimeSeconds}s`);
+                    log(`⚠️ Temps de chargement moyen: ${loadTimeSeconds}s`, 'warning');
+                    return false;
+                } else {
+                    updateTestStatus('test-loading-time', 'fail', `Chargement lent: ${loadTimeSeconds}s`);
+                    log(`❌ Temps de chargement lent: ${loadTimeSeconds}s`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                updateTestStatus('test-loading-time', 'fail', `Erreur: ${error.message}`);
+                log(`❌ Erreur test chargement: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Fonctions de test principal
+        async function runAllTests() {
+            log('🚀 Démarrage de tous les tests...', 'info');
+            testResults = { total: 0, passed: 0, failed: 0, warnings: 0 };
+            document.getElementById('summarySection').style.display = 'none';
+            
+            const tests = [
+                testFirebaseSDK,
+                testSecurityModule,
+                testBrowserCompatibility,
+                testFirebaseConfig,
+                testAuthState,
+                testChatFunctions,
+                testThreadCreation,
+                testModalFunctions,
+                testLoadingTime
+            ];
+            
+            for (const test of tests) {
+                try {
+                    await test();
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Pause entre tests
+                } catch (error) {
+                    log(`❌ Erreur inattendue: ${error.message}`, 'error');
+                }
+            }
+            
+            log('🏁 Tous les tests terminés!', 'info');
+        }
+
+        async function runQuickTest() {
+            log('⚡ Démarrage test rapide...', 'info');
+            testResults = { total: 0, passed: 0, failed: 0, warnings: 0 };
+            document.getElementById('summarySection').style.display = 'none';
+            
+            await testFirebaseSDK();
+            await testFirebaseConfig();
+            await testLoadingTime();
+            
+            log('⚡ Test rapide terminé!', 'info');
+        }
+
+        function clearLogs() {
+            document.getElementById('logContainer').innerHTML = '<div class="log-entry log-info">🗑️ Logs effacés...</div>';
+            testResults = { total: 0, passed: 0, failed: 0, warnings: 0 };
+            document.getElementById('summarySection').style.display = 'none';
+            document.getElementById('progressBar').style.width = '0%';
+            
+            // Réinitialiser les statuts
+            const testElements = document.querySelectorAll('[id^="test-"]');
+            testElements.forEach(element => {
+                element.innerHTML = 'En attente...';
+            });
+        }
+
+        function exportReport() {
+            const logs = document.getElementById('logContainer').innerText;
+            const summary = `
+RAPPORT DE TEST - DOOMSDAY FORUMS
+Date: ${new Date().toLocaleString()}
+Total Tests: ${testResults.total}
+Réussis: ${testResults.passed}
+Échoués: ${testResults.failed}
+Avertissements: ${testResults.warnings}
+
+LOGS:
+${logs}
+            `;
+            
+            const blob = new Blob([summary], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `test-report-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            log('📄 Rapport exporté avec succès', 'success');
+        }
+
+        // Démarrage automatique au chargement
+        window.addEventListener('load', () => {
+            log('🔧 Page de test chargée', 'info');
+            log('👆 Cliquez sur "LANCER TOUS LES TESTS" pour commencer', 'info');
+        });
+    </script>
+</body>
+</html>
