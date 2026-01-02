@@ -2487,18 +2487,18 @@
                             <div class="stat-label">Sujets</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number" data-target="45">0</div>
+                            <div class="stat-number" id="onlineUsersCount" data-target="45">0</div>
                             <div class="stat-label">En ligne</div>
                         </div>
                     </div>
                     
                     <div class="hero-actions">
                         <button class="btn-hero-primary" onclick="scrollToSection('forums')">
-                            <span>🚀 Explorer les Forums</span>
+                            <span><span class="icon-css-rocket"></span> Explorer les Forums</span>
                             <div class="btn-glow"></div>
                         </button>
                         <button class="btn-hero-secondary" onclick="openModal('registerModal')">
-                            <span>🔐 Rejoindre la Communauté</span>
+                            <span><span class="icon-css-shield"></span> Rejoindre la Communauté</span>
                             <div class="btn-glow"></div>
                         </button>
                     </div>
@@ -4912,65 +4912,6 @@
             if (duplicateElements.length > 0) {
                 console.warn('⚠️ Éléments dupliqués nettoyés:', duplicateElements);
             }
-            
-            console.log('✅ Validation du code réussie');
-            return true;
-        }
-        
-        // Système de vérification unique pour le bouton admin
-        function ensureSingleAdminButton() {
-            // Supprimer tous les boutons admin existants
-            const existingAdminButtons = [
-                ...document.querySelectorAll('#adminLink'),
-                ...document.querySelectorAll('#debugAdminBtn'),
-                ...document.querySelectorAll('#dbAdminBtn'),
-                ...document.querySelectorAll('.admin-debug-btn'),
-                ...document.querySelectorAll('[onclick*="Admin"]')
-            ];
-            
-            existingAdminButtons.forEach(btn => {
-                if (btn && btn.parentNode) {
-                    btn.remove();
-                    console.log('🗑️ Bouton admin existant supprimé');
-                }
-            });
-            
-            // Créer UN SEUL bouton admin si l'utilisateur est admin
-            if (currentUserRole === 'admin' && !document.getElementById('adminLink')) {
-                const adminLink = document.createElement('a');
-                adminLink.href = 'admin.html';
-                adminLink.className = 'btn admin-btn-fixed';
-                adminLink.innerHTML = '<span class="icon-css-admin"></span> Admin';
-                adminLink.id = 'adminLink';
-                
-                // Positionnement à côté du profil
-                const userInfo = document.getElementById('userInfo');
-                if (userInfo) {
-                    adminLink.style.cssText = 'margin-left: 10px; background: linear-gradient(135deg, #ff0000, #cc0000); color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 2px 10px rgba(255,0,0,0.3); transition: all 0.3s;';
-                    userInfo.appendChild(adminLink);
-                } else {
-                    adminLink.style.cssText = 'position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #ff0000, #cc0000); color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; z-index: 1000; font-size: 0.8rem; font-weight: bold; box-shadow: 0 2px 10px rgba(255,0,0,0.3); transition: all 0.3s;';
-                    document.body.appendChild(adminLink);
-                }
-                
-                // Effet hover
-                adminLink.addEventListener('mouseenter', () => {
-                    adminLink.style.background = '#cc0000';
-                    adminLink.style.transform = 'scale(1.05)';
-                });
-                
-                adminLink.addEventListener('mouseleave', () => {
-                    adminLink.style.background = '#ff0000';
-                    adminLink.style.transform = 'scale(1)';
-                });
-                
-                document.body.appendChild(adminLink);
-                console.log('✅ Unique bouton admin créé');
-            }
-        }
-        
-        // Remplacer toutes les fonctions de création de boutons admin
-        function checkAndShowAdminLink() {
             ensureSingleAdminButton();
         }
         
