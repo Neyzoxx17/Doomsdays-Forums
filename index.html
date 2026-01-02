@@ -1879,6 +1879,7 @@
         let notificationCount = 0;
         let notificationsListener = null;
         let chatMessages = [];
+        let connectedUsers = [];
         
         console.log('✅ Firebase initialized successfully');
     </script>
@@ -2601,6 +2602,12 @@
             if (adminLink) {
                 adminLink.remove();
             }
+        }
+        
+        // Open customization modal
+        function openCustomizationModal() {
+            console.log('Opening customization modal...');
+            alert('Fonction de personnalisation en cours de développement!');
         }
 
         // Hide customization link
