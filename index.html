@@ -1738,54 +1738,66 @@
         function listenToMessages() {
             console.log('Démarrage écoute des messages Firebase');
             
+            // Check if database is available
+            if (!database) {
+                console.warn('⚠️ Base de données non disponible, écoute des messages désactivée');
+                return;
+            }
+            
             // Clear existing messages first
             const messagesContainer = document.getElementById('chatMessages');
             if (messagesContainer) {
                 messagesContainer.innerHTML = '';
             }
             
-            database.ref('messages').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
-                console.log('Messages reçus de Firebase:', snapshot.val());
-                const messages = snapshot.val();
-                
-                if (!messagesContainer) {
-                    console.error('Container des messages non trouvé');
-                    return;
-                }
-                
-                // Clear and rebuild all messages to avoid duplicates
-                messagesContainer.innerHTML = '';
-                
-                // Add all Firebase messages with avatars
-                if (messages) {
-                    Object.values(messages).forEach(async msg => {
-                        const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                        console.log('Ajout du message:', msg);
-                        
-                        // Get user avatar
-                        let avatarUrl = null;
-                        if (msg.user) {
-                            try {
-                                const snapshot = await database.ref('users').orderByChild('username').equalTo(msg.user).once('value');
-                                const users = snapshot.val();
-                                if (users) {
-                                    const userId = Object.keys(users)[0];
-                                    const userData = users[userId];
-                                    avatarUrl = userData.avatar || null;
+            try {
+                database.ref('messages').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
+                    console.log('Messages reçus de Firebase:', snapshot.val());
+                    const messages = snapshot.val();
+                    
+                    if (!messagesContainer) {
+                        console.error('Container des messages non trouvé');
+                        return;
+                    }
+                    
+                    // Clear and rebuild all messages to avoid duplicates
+                    messagesContainer.innerHTML = '';
+                    
+                    // Add all Firebase messages with avatars
+                    if (messages) {
+                        Object.values(messages).forEach(async msg => {
+                            const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                            console.log('Ajout du message:', msg);
+                            
+                            // Get user avatar
+                            let avatarUrl = null;
+                            if (msg.user && database) {
+                                try {
+                                    const snapshot = await database.ref('users').orderByChild('username').equalTo(msg.user).once('value');
+                                    const users = snapshot.val();
+                                    if (users) {
+                                        const userId = Object.keys(users)[0];
+                                        const userData = users[userId];
+                                        avatarUrl = userData.avatar || null;
+                                    }
+                                } catch (error) {
+                                    console.warn('⚠️ Erreur lors de la récupération de l\'avatar:', error.message);
                                 }
-                            } catch (error) {
-                                console.error('Error fetching user avatar:', error);
                             }
-                        }
-                        
-                        addMessageFromFirebase(msg.user, msg.text, time, avatarUrl);
-                    });
-                }
-                
-                // Scroll to bottom
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                console.log('Messages affichés, total:', Object.keys(messages || {}).length);
-            });
+                            
+                            addMessageFromFirebase(msg.user, msg.text, time, avatarUrl);
+                        });
+                    }
+                    
+                    // Scroll to bottom
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    console.log('Messages affichés, total:', Object.keys(messages || {}).length);
+                }, (error) => {
+                    console.error('❌ Erreur d\'écoute des messages Firebase:', error.message);
+                });
+            } catch (error) {
+                console.error('❌ Erreur lors de la configuration de l\'écoute des messages:', error.message);
+            }
         }
 
         function addMessageFromFirebase(author, text, time, avatarUrl = null) {
@@ -1851,11 +1863,38 @@
         }
 
         function listenToOnlineUsers() {
-            database.ref('users').on('value', (snapshot) => {
-                const users = snapshot.val();
-                const onlineCount = users ? Object.keys(users).length : 0;
-                document.getElementById('onlineCount').textContent = onlineCount;
-            });
+            console.log('Démarrage écoute des utilisateurs en ligne');
+            
+            // Check if database is available
+            if (!database) {
+                console.warn('⚠️ Base de données non disponible, écoute des utilisateurs en ligne désactivée');
+                return;
+            }
+            
+            try {
+                database.ref('users').on('value', (snapshot) => {
+                    const users = snapshot.val();
+                    let onlineCount = 0;
+                    if (users) {
+                        Object.values(users).forEach(user => {
+                            if (user.status === 'online') {
+                                onlineCount++;
+                            }
+                        });
+                    }
+                    
+                    const onlineCountElement = document.getElementById('onlineUsersCount');
+                    if (onlineCountElement) {
+                        onlineCountElement.textContent = onlineCount;
+                    } else {
+                        console.warn('⚠️ Élément onlineUsersCount non trouvé');
+                    }
+                }, (error) => {
+                    console.error('❌ Erreur d\'écoute des utilisateurs en ligne:', error.message);
+                });
+            } catch (error) {
+                console.error('❌ Erreur lors de la configuration de l\'écoute des utilisateurs en ligne:', error.message);
+            }
         }
 
         // Initialize Firebase listeners with retry mechanism
@@ -2955,16 +2994,28 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Chat initialisé');
             
-            // Add error handling for Firebase initialization
+            // Add comprehensive error handling for Firebase initialization
             try {
-                // Start listening for messages if user is logged in
-                if (auth.currentUser) {
-                    listenToMessages();
-                    listenToOnlineUsers();
+                // Check if Firebase is properly initialized
+                if (typeof firebase === 'undefined' || !firebase.apps || firebase.apps.length === 0) {
+                    console.warn('⚠️ Firebase non initialisé, chargement des fonctionnalités de base');
+                    return;
+                }
+                
+                // Start listening for messages if user is logged in and Firebase is ready
+                if (auth && auth.currentUser) {
+                    try {
+                        listenToMessages();
+                        listenToOnlineUsers();
+                    } catch (error) {
+                        console.warn('⚠️ Erreur lors du démarrage de l\'écoute Firebase:', error.message);
+                        // Continue without real-time features
+                    }
                 }
             } catch (error) {
-                console.error('❌ Erreur lors de l\'initialisation:', error);
+                console.error('❌ Erreur lors de l\'initialisation:', error.message || error);
                 // Continue without chat functionality if Firebase fails
+                console.log('🔄 Mode dégradé : certaines fonctionnalités peuvent être limitées');
             }
         });
 
