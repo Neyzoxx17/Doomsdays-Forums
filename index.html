@@ -2609,6 +2609,48 @@
             console.log('Opening customization modal...');
             alert('Fonction de personnalisation en cours de développement!');
         }
+        
+        // Initialize real-time data
+        function initializeRealTimeData() {
+            // Simulate connected users
+            const userNames = ['Alex', 'Marie', 'Thomas', 'Sophie', 'Lucas', 'Emma', 'Nathan', 'Léa'];
+            const roles = ['admin', 'moderator', 'vip', 'member'];
+            
+            for (let i = 0; i < 5; i++) {
+                connectedUsers.push({
+                    name: userNames[Math.floor(Math.random() * userNames.length)] + Math.floor(Math.random() * 100),
+                    role: roles[Math.floor(Math.random() * roles.length)],
+                    status: 'online',
+                    lastSeen: new Date()
+                });
+            }
+            
+            // Update online count with real users
+            updateOnlineUsers();
+        }
+        
+        function updateOnlineUsers() {
+            const totalUsers = connectedUsers.length + 1; // +1 for current user
+            document.getElementById('onlineCount').textContent = totalUsers;
+            
+            // Simulate users joining/leaving
+            if (Math.random() > 0.8) {
+                const randomUser = connectedUsers[Math.floor(Math.random() * connectedUsers.length)];
+                if (Math.random() > 0.5) {
+                    // User joins
+                    if (randomUser.status === 'offline') {
+                        randomUser.status = 'online';
+                        updateOnlineUsers();
+                    }
+                } else {
+                    // User leaves
+                    if (randomUser.status === 'online') {
+                        randomUser.status = 'offline';
+                        updateOnlineUsers();
+                    }
+                }
+            }
+        }
 
         // Hide customization link
         function hideCustomizationLink() {
@@ -3418,47 +3460,7 @@
         }, 6000);
 
         // Real-time synchronization simulation
-        
-        function initializeRealTimeData() {
-            // Simulate connected users
-            const userNames = ['Alex', 'Marie', 'Thomas', 'Sophie', 'Lucas', 'Emma', 'Nathan', 'Léa'];
-            const roles = ['admin', 'moderator', 'vip', 'member'];
-            
-            for (let i = 0; i < 5; i++) {
-                connectedUsers.push({
-                    name: userNames[Math.floor(Math.random() * userNames.length)] + Math.floor(Math.random() * 100),
-                    role: roles[Math.floor(Math.random() * roles.length)],
-                    status: 'online',
-                    lastSeen: new Date()
-                });
-            }
-            
-            // Update online count with real users
-            updateOnlineUsers();
-        }
-        
-        function updateOnlineUsers() {
-            const totalUsers = connectedUsers.length + 1; // +1 for current user
-            document.getElementById('onlineCount').textContent = totalUsers;
-            
-            // Simulate users joining/leaving
-            if (Math.random() > 0.8) {
-                const randomUser = connectedUsers[Math.floor(Math.random() * connectedUsers.length)];
-                if (Math.random() > 0.5) {
-                    // User joins
-                    if (randomUser.status === 'offline') {
-                        randomUser.status = 'online';
-                        addSystemMessage(`${randomUser.name} s'est connecté(e)`);
-                    }
-                } else {
-                    // User leaves
-                    if (randomUser.status === 'online') {
-                        randomUser.status = 'offline';
-                        addSystemMessage(`${randomUser.name} s'est déconnecté(e)`);
-                    }
-                }
-            }
-        }
+        // Functions moved to global scope to avoid ReferenceError
         
         function addSystemMessage(message) {
             const messagesContainer = document.getElementById('chatMessages');
