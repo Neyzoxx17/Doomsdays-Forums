@@ -1459,6 +1459,75 @@
         </div>
     </header>
 
+    <!-- Critical functions - MUST load BEFORE any onclick handlers -->
+    <script>
+        console.log('🚀 Loading critical functions...');
+        
+        // Modal functions - DEFINED BEFORE HTML
+        function openModal(modalId) {
+            console.log('Opening modal:', modalId);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
+                console.log('✅ Modal opened successfully');
+            } else {
+                console.error('❌ Modal not found:', modalId);
+            }
+        }
+
+        function closeModal(modalId) {
+            console.log('Closing modal:', modalId);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                console.log('✅ Modal closed successfully');
+            } else {
+                console.error('❌ Modal not found:', modalId);
+            }
+        }
+
+        // Other critical functions
+        function openCategory(categoryName) {
+            console.log('Opening category:', categoryName);
+            window.location.href = `category-posts.html?category=${categoryName}`;
+        }
+
+        function openThread(threadId) {
+            console.log('Opening thread:', threadId);
+            window.location.href = `post-detail.html?id=${threadId}`;
+        }
+
+        function viewProfile(username) {
+            console.log('Viewing profile:', username);
+            window.location.href = `public-profile.html?user=${username}`;
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            const currentDisplay = panel.style.display;
+            panel.style.display = currentDisplay === 'block' ? 'none' : 'block';
+        }
+
+        function clearNotifications() {
+            console.log('Clearing notifications...');
+            const notificationsList = document.getElementById('notificationsList');
+            notificationsList.innerHTML = '<div class="notification-empty">Aucune notification</div>';
+            
+            const badge = document.getElementById('notificationBadge');
+            badge.style.display = 'none';
+            badge.textContent = '0';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        console.log('✅ All critical functions loaded successfully');
+    </script>
+
     <!-- Notification System -->
     <button class="notification-btn" id="notificationBtn" onclick="toggleNotifications()">
         <span class="bell-icon"></span>
@@ -1784,73 +1853,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
     <script src="security.js"></script>
-    
-    <!-- Critical functions - MUST load immediately -->
-    <script>
-        // Modal functions - DEFINED IMMEDIATELY
-        function openModal(modalId) {
-            console.log('Opening modal:', modalId);
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'block';
-                console.log('Modal found and opened');
-            } else {
-                console.error('Modal not found:', modalId);
-            }
-        }
-
-        function closeModal(modalId) {
-            console.log('Closing modal:', modalId);
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'none';
-                console.log('Modal found and closed');
-            } else {
-                console.error('Modal not found:', modalId);
-            }
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        }
-
-        // Other critical functions
-        function openCategory(categoryName) {
-            console.log('Opening category:', categoryName);
-            window.location.href = `category-posts.html?category=${categoryName}`;
-        }
-
-        function openThread(threadId) {
-            console.log('Opening thread:', threadId);
-            window.location.href = `post-detail.html?id=${threadId}`;
-        }
-
-        function viewProfile(username) {
-            console.log('Viewing profile:', username);
-            window.location.href = `public-profile.html?user=${username}`;
-        }
-
-        function toggleNotifications() {
-            const panel = document.getElementById('notificationPanel');
-            const currentDisplay = panel.style.display;
-            panel.style.display = currentDisplay === 'block' ? 'none' : 'block';
-        }
-
-        function clearNotifications() {
-            console.log('Clearing notifications...');
-            const notificationsList = document.getElementById('notificationsList');
-            notificationsList.innerHTML = '<div class="notification-empty">Aucune notification</div>';
-            
-            const badge = document.getElementById('notificationBadge');
-            badge.style.display = 'none';
-            badge.textContent = '0';
-        }
-
-        console.log('✅ Critical functions loaded successfully');
-    </script>
     <script>
         // Real-time Firebase functions
         function sendMessageToFirebase(message) {
